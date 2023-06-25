@@ -1,0 +1,29 @@
+{
+	"appName": "Budsjett.app",
+
+	"accountNamePlaceholder": "Brukskonto",
+	"accounts": "Kontoar",
+	"addAccount": "Legg til konto",
+
+	"createAccount": "Opprett konto",
+	"createBudget": "Opprett budsjett",
+	"downloadBudget": "Last ned budsjett",
+
+	"errorNoIndexedDB": "Nettlesaren din støtter ikkje IndexedDB og kan difor ikkje køyre denne appen.",
+
+	"loading": "Lastar ...",
+
+	"monthNames": ["Januar", "Februar", "Mars", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Desember"],
+	"nameOfAccount": "Namn på konto:",
+	"nameTheBudget": "Gi budsjettet eit namn:",
+	"namePlaceholder": "Min privatøkonomi",
+	"newBudget": "Nytt budsjett",
+	"noAccountsCreated": "Ingen kontoar oppretta.",
+
+	"selectBudget": "Velg budsjett",
+	"showAllBudgets": "Vis alle ...",
+	"sidebarButtonBudget": "Budsjett",
+	"sidebarButtonSettings": "Innstillingar",
+
+	"FINAL_LINE_TO_AVOID_TRAILING_COMMA": ""
+}
