@@ -59,6 +59,15 @@ function AutoSuggest( props : Props ) {
 		}
 	}
 
+	const selectOption = (event : React.MouseEvent, index : number) => {
+		event.preventDefault();
+		setValue({
+			key: selection[index].key,
+			value: selection[index].value});
+		setText(selection[index].value);
+		setSelectedIndex(0);
+	}
+
 	const updateText = (newText : string) => {
 		setText(newText);
 		const search = dictionary.filter((el) => el.value.toLowerCase() === newText.toLowerCase());
@@ -72,9 +81,22 @@ function AutoSuggest( props : Props ) {
 
 	return (
 		<div className="autocomplete">
-			<input type="text" value={text} onChange={(event) => updateText(event.target.value)} autoComplete='off' onKeyDown={event => onKeyDown(event)} onFocus={event => onFocus(event)} onBlur={event => onBlur(event)} form={form} tabIndex={tabIndex} className={required ? (originalValue.key ? 'valid' : 'invalid') : ''} />
+			<input 
+				type="text" 
+				value={text} 
+				onChange={(event) => updateText(event.target.value)}
+				autoComplete='off'
+				onKeyDown={event => onKeyDown(event)}
+				onFocus={event => onFocus(event)}
+				onBlur={event => onBlur(event)}
+				form={form}
+				tabIndex={tabIndex}
+				className={required ? (originalValue.key ? 'valid' : 'invalid') : ''}
+				name={props.name}
+				id={props.id} 
+			/>
 			{selection.length ? <div className="autocomplete-options">{
-				selection.map((el, index) => <div className={index === selectedIndex ? 'selected' : ''} key={el.key}>{el.displayValue || el.value}</div>)
+				selection.map((el, index) => <div className={index === selectedIndex ? 'selected' : ''} key={el.key} onMouseDown={(event) => selectOption(event, index)}>{el.displayValue || el.value}</div>)
 			}</div> : undefined}
 		</div>
 	)
@@ -88,6 +110,8 @@ interface Props {
 	form? : string,
 	tabIndex? : number,
 	required? : boolean,
+	name?: string,
+	id?: string,
 }
 
 

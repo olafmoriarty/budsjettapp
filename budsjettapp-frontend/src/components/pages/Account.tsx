@@ -14,6 +14,7 @@ function Account(props : DefaultProps) {
 	const [transactions, setTransactions] = useState([] as Transaction[]);
 	const [showAddNew, setShowAddNew] = useState('' as string);
 	const accountId = Number(params.id);
+	const [selectedTransactions, setSelectedTransactions] = useState([] as number[]);
 
 	const account = accounts.filter(el => el.id === accountId).length ? accounts.filter(el => el.id === accountId)[0] : undefined;
 
@@ -43,6 +44,29 @@ function Account(props : DefaultProps) {
 		if (close) {
 			setShowAddNew('');
 		}
+	}
+
+	const registerCheckbox = (id : number | undefined, value? : boolean)  => {
+		let includeId : boolean;
+		if (value === undefined) {
+			includeId = !selectedTransactions.includes(id || -1);
+		}
+		else {
+			includeId = value;
+		}
+
+		if (!id) {
+			return;
+		}
+		if (includeId && selectedTransactions.includes(id)) {
+			return;
+		}
+		if (includeId) {
+			setSelectedTransactions([ ...selectedTransactions, id ]);
+			return;
+		}
+		setSelectedTransactions(selectedTransactions.filter(el => el !== id));
+		return;
 	}
 
 	if (!account) {
@@ -98,8 +122,8 @@ function Account(props : DefaultProps) {
 						}
 						return -1;
 					})
-					.map((el) => <tr key={el.id}>
-						<td className="checkbox-td"><input type="checkbox" /></td>
+					.map((el) => <tr className="transaction-row" key={el.id} onClick={() => registerCheckbox(el.id)}>
+						<td className="checkbox-td"><input type="checkbox" checked={selectedTransactions.includes(el.id || -1)} onChange={(event) => registerCheckbox(el.id, event.target.checked)} /></td>
 						<td className="date-td">{formatDate(el.date, t.dateFormat)}</td>
 						<td className="payee-td">{el.payeeId ? payeesById[el.payeeId]?.name : (el.counterAccount ? accountsById[el.counterAccount]?.name : '')}</td>
 						<td className="category-td">{el.categoryId === undefined ? '' : categoriesById[el.categoryId]?.name}</td>

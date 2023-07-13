@@ -660,6 +660,15 @@ main.account-page {
 	border-radius: .4rem;
 }
 
+.transaction-list .new-transaction .new-transaction-buttons button {
+	background: var(--accent-green);
+	white-space: nowrap;
+}
+
+.transaction-list .new-transaction .new-transaction-buttons button.abort {
+	background: var(--accent-red);
+}
+
 .category-option-box p {
 	margin: 0;
 }
@@ -726,6 +735,7 @@ input.invalid:focus {
 	top: 100%;
 	left: 0;
 	right: 0;
+	z-index: 25;
 	
 	color: var(--black);
 	background: var(--white);
@@ -849,6 +859,134 @@ input.invalid:focus {
 		font-style: italic;
 	}
 
+	main.account-page {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.account-searchbar, .account-header .account-header-buttons button {
+		display: block;
+		margin-bottom: .5rem;
+	}
+
+	.account-page thead {
+		display: none;
+	}
+
+	.transaction-list table, .transaction-list tbody, .transaction-list tr, .transaction-list th, .transaction-list td {
+		display: block;
+	}
+
+	.transaction-list tbody {
+		padding: 1rem;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.transaction-list tbody tr {
+		width: 100%;
+		border: solid 1px var(--sidebar);
+		margin-bottom: .5rem;
+		padding: .5rem;
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		grid-gap: .5rem;
+		border-radius: .5rem;
+		background: var(--background);
+	}
+
+	.transaction-list tr:nth-child(even) {
+		background-color: var(--alternating-row);
+	}
+
+	.transaction-list tr:has(input[type=checkbox]:checked) {
+		background-color: var(--accent-yellow);
+	}
+
+	.transaction-list .transaction-row .date-td {
+		grid-row-start: 1;
+		grid-column-start: 1;
+		font-weight: bold;
+	}
+	.transaction-list .transaction-row .category-td {
+		grid-row-start: 1;
+		grid-column-start: 2;
+		text-align: right;
+	}
+
+	.transaction-list .transaction-row .payee-td {
+		grid-row-start: 2;
+		grid-column-start: 1;
+		grid-column-end: 3;
+		font-weight: bold;
+	}
+	.transaction-list .transaction-row .memo-td {
+		grid-row-start: 4;
+		grid-column-start: 1;
+		grid-column-end: 3;
+		font-style: italic;
+	}
+	.transaction-list .transaction-row .in-td {
+		grid-row-start: 3;
+		font-weight: bold;
+		font-size: 1.25rem;
+		text-align: right;
+		grid-column-start: 1;
+		grid-column-end: 2;
+		text-shadow: .25rem .25rem .25rem var(--accent-green);
+}
+	.transaction-list .transaction-row .out-td {
+		grid-row-start: 3;
+		font-weight: bold;
+		font-size: 1.25rem;
+		text-align: right;
+		grid-column-start: 2;
+		grid-column-end: 3;
+		text-shadow: .25rem .25rem .25rem var(--accent-red);
+	}
+	.transaction-list .transaction-row .edit-td {
+		grid-column-start: 2;
+		grid-column-end: 3;
+		display: flex;
+		justify-content: flex-end;
+	}
+
+	.transaction-list .new-transaction {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		height: 100vh;
+		display: block;
+		border-radius: 0;
+		border: none;
+		padding-top: 5rem;
+		overflow-y: auto;
+
+		animation-name: show-dialog;
+		animation-duration: .5s;
+		animation-timing-function: linear;
+		animation-fill-mode: both;
+	}
+
+	.transaction-list .new-transaction .new-transaction-buttons form {
+		display: flex;
+		flex-direction: column;
+		gap: .5rem;
+	}
+
+	.transaction-list .new-transaction .new-transaction-buttons button {
+		display: block;
+	}
+
+	.transaction-list .new-transaction td.in-td, .transaction-list .new-transaction td.out-td {
+		text-align: left;
+	}
+
+	.autocomplete-options {
+		position: static;
+	}
 }
 
 @media screen and (min-width: 800px) {
@@ -939,6 +1077,9 @@ input.invalid:focus {
 		position: relative;
 	}
 
+	.new-transaction label {
+		display: none;
+	}
 
 	.transaction-list .new-transaction .new-transaction-buttons {
 		position: absolute;
@@ -956,14 +1097,9 @@ input.invalid:focus {
 
 	.transaction-list .new-transaction .new-transaction-buttons button {
 		font-size: .75rem;
-		padding: .25rem;
-		background: var(--accent-green);
-		white-space: nowrap;
 	}
 
-	.transaction-list .new-transaction .new-transaction-buttons button.abort {
-		background: var(--accent-red);
-	}
+
 
 
 	/* Dialog.tsx */

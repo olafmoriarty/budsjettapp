@@ -163,9 +163,14 @@ function AddTransaction(props : Props) {
 	return (
 	<tr className="new-transaction">
 		<td className="checkbox-td"></td>
-		<td className="date-td"><input type="date" value={date} onChange={(event) => setDate(event.target.value)} autoFocus form="newTransactionForm" tabIndex={1} /></td>
+		<td className="date-td">
+			<label htmlFor='date'>{t.date}</label>
+			<input type="date" id="date" value={date} onChange={(event) => setDate(event.target.value)} autoFocus form="newTransactionForm" tabIndex={1} />
+		</td>
 		<td className="payee-td">
+			<label htmlFor='payee'>{t.payee}</label>
 			{isTransfer ? <AutoSuggest
+				id="payee"
 				originalValue={counterAccount}
 				setValue={setCounterAccount}
 				dictionary={accounts.filter(el => el.id !== accountId).map(el => {
@@ -197,16 +202,25 @@ function AddTransaction(props : Props) {
 			}) } />}
 			</td>
 		<td className="category-td">
-			{isTransfer ? undefined : <AutoSuggest dictionary={categoryValues} setValue={setCategory} originalValue={category} options={5} form="newTransactionForm" tabIndex={4} required />}
+			{isTransfer ? undefined : <>
+				<label htmlFor="category">{t.category}</label>
+				<AutoSuggest id="category" dictionary={categoryValues} setValue={setCategory} originalValue={category} options={5} form="newTransactionForm" tabIndex={4} required />
+			</>}
 		</td>
-		<td className="memo-td"><input type="text" value={memo} onChange={(event) => setMemo(event.target.value)}  form="newTransactionForm" tabIndex={5} /></td>
-		<td className="out-td"><NumberInput bp={props.bp} name="out" id="out" amount={amountOut} setAmount={setAmountOut}
+		<td className="memo-td">
+			<label htmlFor="memo">{t.memo}</label>
+			<input id="memo" type="text" value={memo} onChange={(event) => setMemo(event.target.value)}  form="newTransactionForm" tabIndex={5} /></td>
+		<td className="out-td">
+			<label htmlFor="out">{t.out}</label>
+			<NumberInput bp={props.bp} name="out" id="out" amount={amountOut} setAmount={setAmountOut}
 			form="newTransactionForm"
 			tabIndex={6}
 		/></td>
-		<td className="in-td"><NumberInput bp={props.bp} name="in" id="in" amount={amountIn} setAmount={setAmountIn}
+		<td className="in-td">
+			<label htmlFor="in">{t.in}</label>
+			<NumberInput bp={props.bp} name="in" id="in" amount={amountIn} setAmount={setAmountIn}
 		form="newTransactionForm"
-		tabIndex={6}
+		tabIndex={7}
  /></td>
 		<td className="edit-td"></td>
 		<td className="new-transaction-buttons">
