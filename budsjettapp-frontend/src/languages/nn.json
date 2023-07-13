@@ -1,29 +1,79 @@
 {
 	"appName": "Budsjett.app",
 
+	"decimalSign": ",",
+	"numberOfDecimals": 2,
+	"thousandsSign": "\u00A0",
+	"dateFormat": "{dd}.{mm}.{yyyy}",
+
+	"accountBalance": "Balanse på konto:",
+	"accountBalanceDate": "Dato for balanse:",
+	"accountBalanceMemo": "Inngåande balanse",
 	"accountNamePlaceholder": "Brukskonto",
+	"accountNotFound": "Den valgte kontoen blei ikkje funne.",
 	"accounts": "Kontoar",
+	"accountSettings": "Kontoinnstillingar",
 	"addAccount": "Legg til konto",
 
+	"balance": "Balanse",
+	"budget": "Budsjett",
+
+	"cancel": "Avbryt",
+	"category": "Kategori",
+	"categoryName": "Namn på kategorien:",
 	"createAccount": "Opprett konto",
 	"createBudget": "Opprett budsjett",
+
+	"date": "Dato",
+	"deleteCategory": "Slett kategori",
+	"deleteCategoryDotDotDot": "Slett kategori ...",
 	"downloadBudget": "Last ned budsjett",
 
+	"editCategory": "Rediger kategori",
 	"errorNoIndexedDB": "Nettlesaren din støtter ikkje IndexedDB og kan difor ikkje køyre denne appen.",
+
+	"hideCategory": "Skjul kategorien frå kategorilista",
+	"hideCategoryButton": "Skjul kategori",
+
+	"in": "Inn",
+	"income": "Inntekt",
+	"iUnderstand": "OK, eg skjønner",
 
 	"loading": "Lastar ...",
 
-	"monthNames": ["Januar", "Februar", "Mars", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Desember"],
+	"memo": "Kommentar",
+	"monthNames": ["januar", "februar", "mars", "april", "mai", "juni", "juli", "august", "september", "oktober", "november", "desember"],
+
 	"nameOfAccount": "Namn på konto:",
 	"nameTheBudget": "Gi budsjettet eit namn:",
 	"namePlaceholder": "Min privatøkonomi",
 	"newBudget": "Nytt budsjett",
-	"noAccountsCreated": "Ingen kontoar oppretta.",
+	"newCategory": "Ny kategori",
+	"newCategoryName": "Ny kategori",
+	"newTransaction": "Ny betaling",
+	"newTransfer": "Ny overføring",
+	"newMainCategory": "Ny hovudkategori",
+	"noAccountsCreated": "Ingen kontoar oppretta. Trykk her for å opprette ein konto.",
 
+	"out": "Ut",
+	"outflows": "Utgifter",
+
+	"parentCategory": "Foreldrekategori:",
+	"payee": "Betalt til/frå",
+
+	"save": "Lagre",
+	"saveAndAdd": "Lagre og legg til ny",
+	"saveChanges": "Lagre endringar",
 	"selectBudget": "Velg budsjett",
 	"showAllBudgets": "Vis alle ...",
+	"showCategoryButton": "Vis kategori",
+	"showHiddenCategories": "Vis skjulte kategoriar",
 	"sidebarButtonBudget": "Budsjett",
+	"sidebarButtonReports": "Rapportar",
 	"sidebarButtonSettings": "Innstillingar",
+	"sidebarButtonSync": "Synkroniser",
+
+	"toBudget": "å fordele",
 
 	"FINAL_LINE_TO_AVOID_TRAILING_COMMA": ""
 }

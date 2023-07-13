@@ -2,11 +2,15 @@ import React, {useState, useEffect} from 'react'
 import getBudgets from '../../functions/database/getBudgets';
 import { Budget, DefaultProps } from '../../interfaces/interfaces';
 
+import { useNavigate } from 'react-router-dom';
+
 function StartPage(props : DefaultProps) {
 	const {t, db, selectBudget, openDialog} = props.bp;
 	const [allBudgets, setAllBudgets] = useState([] as Budget[]);
 	const [showAllBudgets, setShowAllBudgets] = useState(false);
 	const budgetsToShow = 3;
+
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		if (db) {
@@ -24,7 +28,10 @@ function StartPage(props : DefaultProps) {
 				.slice(0, showAllBudgets ? undefined : budgetsToShow)
 				.map((el, index) => <button 
 					className="button select-budget"
-					onClick={() => selectBudget(el)}
+					onClick={() => {
+						selectBudget(el);
+						navigate('/');
+					}}
 					key={index}
 					>{el.name}</button>)}
 			{allBudgets.length > budgetsToShow && !showAllBudgets ? <button className="button select-budget" onClick={() => setShowAllBudgets(true)}>{t.showAllBudgets}</button> : undefined}

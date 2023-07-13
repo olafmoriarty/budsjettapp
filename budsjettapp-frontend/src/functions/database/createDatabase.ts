@@ -7,7 +7,7 @@ const createDatabase = async () => {
 	}
 
 	const db = await openDB<BudgetInterface>('budgetApp', 2, {
-		upgrade(db) {
+		upgrade(db, oldVersion, newVersion, transaction, event) {
 			if (!db.objectStoreNames.contains('budgets')) {
 				const budgets = db.createObjectStore('budgets', {
 					keyPath: 'id',
@@ -42,6 +42,11 @@ const createDatabase = async () => {
 				transactions.createIndex('externalId', 'externalId');
 				transactions.createIndex('budgetId', 'budgetId');
 				transactions.createIndex('accountId', 'accountId');
+				transactions.createIndex('categoryId', 'categoryId');
+			}
+			else {
+				const store = transaction.objectStore("transactions");
+				store.createIndex('categoryId', 'categoryId');
 			}
 
 			if (!db.objectStoreNames.contains('payees')) {
@@ -51,6 +56,18 @@ const createDatabase = async () => {
 				});
 				payees.createIndex('externalId', 'externalId');
 				payees.createIndex('budgetId', 'budgetId');
+			}
+
+			if (!db.objectStoreNames.contains('budgeted')) {
+				const budgeted = db.createObjectStore('budgeted', {
+					keyPath: 'id',
+					autoIncrement: true,
+				});
+				budgeted.createIndex('externalId', 'externalId');
+				budgeted.createIndex('budgetId', 'budgetId');
+				budgeted.createIndex('categoryMonth', ['budgetId', 'category', 'month']);
+				budgeted.createIndex('category', ['budgetId', 'category']);
+				budgeted.createIndex('month', ['budgetId', 'month']);
 			}
 		}
 	});

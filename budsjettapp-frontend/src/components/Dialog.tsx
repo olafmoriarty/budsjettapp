@@ -1,40 +1,62 @@
-import React, {useState} from 'react';
+import React, {ReactText, useState} from 'react';
 
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
-import { BP } from '../interfaces/interfaces';
+import { BP, DialogParams } from '../interfaces/interfaces';
 import AddBudget from './dialogs/AddBudget';
 import AddAccount from './dialogs/AddAccount';
+import EditCategory from './dialogs/EditCategory';
 
 function Dialog(props : DialogProps) {
 	const {bp, dialogToShow} = props;
-	const {dialogBox} = bp;
+	const {dialogBox, openDialog} = bp;
+
+	let dialogName : string;
+	let dialogParams : DialogParams;
+
+	if (typeof dialogToShow === "string" ) {
+		dialogName = dialogToShow;
+		dialogParams = {};
+	}
+	else {
+		dialogName = dialogToShow[0];
+		dialogParams = dialogToShow[1];
+	}
 
 	const [closeDialog, setCloseDialog] = useState(false);
 
 	const closeDialogBox = (event : React.AnimationEvent) => {
 		if (dialogBox && dialogBox.current && (event.animationName === 'hide-dialog' || event.animationName === 'hide-and-move-dialog')) {
-			console.log(event.animationName);
 			setCloseDialog(false);
+			openDialog('');
 			dialogBox.current.close();
 		}
 	}
 
-	let selectedCompontent : JSX.Element = <div></div>;
-	switch (dialogToShow) {
+	let selectedComponent : JSX.Element = <div></div>;
+	switch (dialogName) {
 		case 'addAccount':
-			selectedCompontent = <AddAccount bp={bp} />;
+			selectedComponent = <AddAccount bp={bp} />;
 			break;
 		case 'addBudget':
-			selectedCompontent = <AddBudget bp={bp} />;
+			selectedComponent = <AddBudget bp={bp} />;
 			break;
+		case 'editCategory':
+			selectedComponent = <EditCategory bp={bp} id={dialogParams.id} setCloseDialog={setCloseDialog} />
+	}
+
+	const onKeyDown = (event : React.KeyboardEvent) => {
+		if (event.key === 'Escape') {
+			event.preventDefault();
+			setCloseDialog(true);
+		}
 	}
 
 	return (
-	<dialog ref={dialogBox} className={`modal ${closeDialog ? 'hide' : ''}`} onAnimationEnd={(event) => closeDialogBox(event)}>
+	<dialog ref={dialogBox} className={`modal ${closeDialog ? 'hide' : ''}`} onAnimationEnd={(event) => closeDialogBox(event)} onKeyDown={event => onKeyDown(event)}>
 		<button className="modal-close" onClick={() => setCloseDialog(true)}><Icon icon={faTimes} /></button>
-		{selectedCompontent}
+		{selectedComponent}
 	</dialog>
   )
 }

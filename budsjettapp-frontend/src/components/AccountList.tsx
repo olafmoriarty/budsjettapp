@@ -5,9 +5,10 @@ import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 import { DefaultProps } from '../interfaces/interfaces';
+import prettyNumber from '../functions/prettyNumber';
 
 function AccountList(props : DefaultProps) {
-	const {t, accounts} = props.bp;
+	const {t, accounts, accountBalances, numberOptions, setShowSidebar} = props.bp;
 
 	return (
 		<section className="account-list">
@@ -16,9 +17,9 @@ function AccountList(props : DefaultProps) {
 				<button className="icon" onClick={() => props.bp.openDialog('addAccount') }><Icon icon={faPlus} /></button>
 			</div>
 			{accounts.length ? accounts.map(el => <div className="account-list-account" key={el.id}>
-				<p><Link to={el.id ? `/account/${el.id}` : '/'}>{el.name}</Link></p>
-				<p>1 000,00</p>
-				</div>) : <p className="no-accounts">{t.noAccountsCreated}</p>}
+				<p><Link to={el.id ? `/account/${el.id}` : '/'} onClick={() => setShowSidebar(false)}>{el.name}</Link></p>
+				<p>{prettyNumber(accountBalances[el.id || 0] || 0, numberOptions)}</p>
+				</div>) : <p className="no-accounts" onClick={() => props.bp.openDialog('addAccount')}>{t.noAccountsCreated}</p>}
 		</section>
 	)
 }

@@ -1,12 +1,24 @@
 import React, {useState, useEffect} from 'react';
-import { DefaultProps } from '../../interfaces/interfaces';
-import MonthCategory from './MonthCategory';
-import MonthHeader from './MonthHeader';
+import { DragDropContext, DropResult, Droppable } from 'react-beautiful-dnd';
+import { BudgetNumbers, Category, DefaultProps } from '../../interfaces/interfaces';
+import MonthHeader from './budget/MonthHeader';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretDown, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faAnglesLeft, faAngleLeft, faAngleRight, faAnglesRight } from '@fortawesome/free-solid-svg-icons';
+
+import sortBySort from '../../functions/sortBySort';
+
+import addCategory from '../../functions/database/addCategory';
+import BudgetMasterCategory from './budget/BudgetMasterCategory';
+import moveCategory from '../../functions/moveCategory';
+import getBudgetNumbersDB from '../../functions/database/getBudgetNumbersDB';
 
 function BudgetScreen(props : DefaultProps) {
-	const { activeBudget, setShowSidebar, categories, setCategories } = props.bp;
+	const { db, t, activeBudget, showSidebar, setShowSidebar, categories, setCategories } = props.bp;
+
+	const [categoryToEdit, setCategoryToEdit] = useState(undefined as number | undefined);
+
+	const [budgetNumbers, setBudgetNumbers] = useState({} as BudgetNumbers);
+	const [showHidden, setShowHidden] = useState(false);
 
 	const d = new Date();
 	const [currentMonth, setCurrentMonth] = useState(
@@ -14,78 +26,98 @@ function BudgetScreen(props : DefaultProps) {
 	);
 
 	useEffect(() => {
-		setShowSidebar(false);
-	}, [setShowSidebar]);
+		// If budgetNumbers is already set, get the numbers
+		getBudgetNumbersDB( db, activeBudget.id || 0, currentMonth - 1, currentMonth + 1 )
+		.then((newBudgetNumbers) => {
+				setBudgetNumbers(newBudgetNumbers);
+		});
+	}, [currentMonth]);
 
 	if (!activeBudget || !activeBudget.id) {
 		return null;
 	}
 
-	const addCategory = (parent? : number) => {
-		console.log('Test');
-		console.log(parent);
+	const createCategory = (parent? : number) => {
 		let newCategories =  [...categories];
+
 		if (activeBudget.id) {
-			newCategories.push({name: 'Ny kategori', parent: parent, budgetId: activeBudget.id },
-			);
-			setCategories(newCategories);
+
+			const sort = categories.filter((el) => el.parent === parent).length + 1;
+
+			let newCategory = {
+				name: t.newCategoryName, 
+				parent: parent, 
+				budgetId: activeBudget.id,
+				sort: sort,
+				synced: false,
+			} as Category;
+			addCategory(db, newCategory)
+			.then((categoryId) => {
+				newCategory.id = categoryId; 
+				newCategories.push(newCategory);
+				setCategories(newCategories);
+				setCategoryToEdit(categoryId);
+			});
 		}
 	}
 
+	const onDragEnd = (result : DropResult) => {
+		if (!result.destination) {
+			return;
+		}
+		moveCategory(props.bp, Number(result.draggableId), result.destination?.index, result.type === "SUBCAT" && result.source.droppableId !== result.destination.droppableId ? Number(result.destination.droppableId) : undefined);
+		return;
+	}
+
+	const bbp = {
+		budgetNumbers: budgetNumbers, 
+		setBudgetNumbers: setBudgetNumbers, 
+		categoryToEdit: categoryToEdit, 
+		setCategoryToEdit: setCategoryToEdit, 
+		createCategory: createCategory, 
+		currentMonth: currentMonth, 
+		showHidden: showHidden
+	};
+
 	return (
 	<main className="budget">
-		<table>
-			<thead>
-				<tr>
-					<th className="category-name"></th>
-					<th className="previous-month"><MonthHeader monthId={currentMonth - 1} bp={props.bp} /></th>
-					<th className="current-month"><MonthHeader monthId={currentMonth} bp={props.bp} /></th>
-					<th className="next-month"><MonthHeader monthId={currentMonth + 1} bp={props.bp} /></th>
-				</tr>
-			</thead>
-			<tbody>
-				{categories.filter((el) => !el.parent).map((el, index) => <>
-				<tr className="master-category" key={el.id}>
-					<td className="category-name"><FontAwesomeIcon icon={faCaretDown} /> {el.name}</td>
-					<td className="previous-month">
-						<MonthCategory isMasterCategory={true} month={currentMonth - 1} category={el.id} categoryIndex={index * 20} bp={props.bp} />
-					</td>
-					<td className="current-month">
-						<MonthCategory isMasterCategory={true} month={currentMonth} category={el.id} categoryIndex={index * 20} bp={props.bp} />
-					</td>
-					<td className="next-month">
-						<MonthCategory isMasterCategory={true} month={currentMonth + 1} category={el.id} categoryIndex={index * 20} bp={props.bp} />
-					</td>
-				</tr>
-				{categories.filter((subcat) => subcat.parent === el.id).map((subEl, subIndex) => <tr key={subEl.id}>
-					<td className="category-name"><button className="link hoverlink">{subEl.name}</button></td>
-					<td className="previous-month">
-						<MonthCategory month={currentMonth - 1} category={subEl.id} categoryIndex={index * 20 + subIndex} bp={props.bp} />
-					</td>
-					<td className="current-month">
-						<MonthCategory month={currentMonth} category={subEl.id} categoryIndex={index * 20 + subIndex} bp={props.bp} />
-					</td>
-					<td className="next-month">
-						<MonthCategory month={currentMonth + 1} category={subEl.id} categoryIndex={index * 20 + subIndex} bp={props.bp} />
-					</td>
-				</tr>)}
-				<tr className="add-new-category">
-					<td className="category-name"><button className="link hoverlink" onClick={() => addCategory(el.id)}><FontAwesomeIcon icon={faPlus} /> Ny kategori</button></td>
-					<td></td>
-					<td></td>
-					<td></td>
-				</tr>
-				</>)}
-				<tr className="master-category">
-					<td className="category-name"><button className="link hoverlink" onClick={() => addCategory()}><FontAwesomeIcon icon={faPlus} /> Ny hovudkategori</button></td>
-						<td></td>
-						<td></td>
-						<td></td>
-				</tr>
-			</tbody>
-		</table>
+		<nav className="select-month-buttons">
+			<button className="icon prev-three" onClick={() => setCurrentMonth(currentMonth - 3)}><FontAwesomeIcon icon={faAnglesLeft} /></button>
+			<button className="icon prev-one" onClick={() => setCurrentMonth(currentMonth - 1)}><FontAwesomeIcon icon={faAngleLeft} /></button>
+			<button className="icon next-one" onClick={() => setCurrentMonth(currentMonth + 1)}><FontAwesomeIcon icon={faAngleRight} /></button>
+			<button className="icon next-three" onClick={() => setCurrentMonth(currentMonth + 3)}><FontAwesomeIcon icon={faAnglesRight} /></button>
+		</nav>
+
+		<DragDropContext onDragEnd={onDragEnd}>
+			<Droppable droppableId='masterCategories' type="MASTER">
+				{(provided, snapshot) => (
+				<table ref={provided.innerRef} {...provided.droppableProps}>
+					<thead>
+						<tr>
+							<th className="category-name">
+							</th>
+							<th className="previous-month"><MonthHeader monthId={currentMonth - 1} bp={props.bp} bbp={bbp} /></th>
+							<th className="current-month"><MonthHeader monthId={currentMonth} bp={props.bp} bbp={bbp} /></th>
+							<th className="next-month"><MonthHeader monthId={currentMonth + 1} bp={props.bp} bbp={bbp} /></th>
+						</tr>
+					</thead>
+					{categories.filter((el) => !el.parent && (showHidden || !el.hidden) && !el.deleted).sort((a, b) => sortBySort(a, b)).map((el, index) => <BudgetMasterCategory key={el.id} bp={props.bp} category={el} index={index} bbp={bbp} />)}
+					<tbody>
+						<tr className="master-category">
+							<td className="category-name"><button className="link hoverlink" onClick={() => createCategory()}><FontAwesomeIcon icon={faPlus} /> {t.newMainCategory}</button></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+					</tbody>
+					{provided.placeholder}
+				</table>
+				)}
+			</Droppable>
+		</DragDropContext>
+		{categories.filter(el => el.hidden === true).length ? <p className="show-hidden-categories"><label><input name="show-hidden-categories" type="checkbox" checked={showHidden} onChange={(event) => setShowHidden(event.currentTarget.checked)} /> {t.showHiddenCategories}</label></p> : undefined}
 	</main>
   )
 }
 
-export default BudgetScreen
+export default BudgetScreen;

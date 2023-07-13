@@ -8,16 +8,26 @@
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
+      "src": "icons/budsjettapp-192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "logo512.png",
-      "type": "image/png",
-      "sizes": "512x512"
-    }
-  ],
+	"src": "icons/budsjettapp-384.png",
+	"type": "image/png",
+	"sizes": "384x384"
+	},
+	{
+	"src": "icons/budsjettapp-512.png",
+	"type": "image/png",
+	"sizes": "512x512"
+	},
+	{
+	"src": "icons/budsjettapp-1024.png",
+	"type": "image/png",
+	"sizes": "1014x1024"
+	}
+	],
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#0d2149",

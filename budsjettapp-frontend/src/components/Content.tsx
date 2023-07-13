@@ -4,6 +4,7 @@ import StartPage from './pages/StartPage';
 import { BP } from '../interfaces/interfaces';
 import Settings from './pages/Settings';
 import BudgetScreen from './pages/BudgetScreen';
+import Account from './pages/Account';
 
 function Content(props : ContentProps) {
 	const {bp} = props;
@@ -14,6 +15,7 @@ function Content(props : ContentProps) {
 	return <Routes>
 		<Route path="/settings" element={<Settings bp={bp} />} />
 		<Route path="/settings/select-budget" element={<StartPage bp={bp} />} />
+		<Route path="/account/:id" element={<Account bp={bp} />} />
 		<Route path="/*" element={<BudgetScreen bp={bp} />} />
 	</Routes>
 }

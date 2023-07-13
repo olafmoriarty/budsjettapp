@@ -5,10 +5,6 @@ import { BP } from '../../interfaces/interfaces';
 function Settings(props : SettingsProps) {
 	const {t, setShowSidebar} = props.bp;
 
-	useEffect(() => {
-		setShowSidebar(false);
-	}, [setShowSidebar]);
-
 	return (
 		<main className="settings">
 			<Link to="select-budget" className="button">{t.selectBudget}</Link>
