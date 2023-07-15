@@ -61,15 +61,19 @@
 	"parentCategory": "Foreldrekategori:",
 	"payee": "Betalt til/frå",
 
+	"reconcileAccount": "Avstem konto",
+
 	"save": "Lagre",
 	"saveAndAdd": "Lagre og legg til ny",
 	"saveChanges": "Lagre endringar",
+	"scheduledPayments": "Planlagte betalinger ({x})",
 	"selectBudget": "Velg budsjett",
 	"showAllBudgets": "Vis alle ...",
 	"showCategoryButton": "Vis kategori",
 	"showHiddenCategories": "Vis skjulte kategoriar",
 	"sidebarButtonBudget": "Budsjett",
 	"sidebarButtonReports": "Rapportar",
+	"sidebarButtonSaveToCloud": "Lagre i skyen",
 	"sidebarButtonSettings": "Innstillingar",
 	"sidebarButtonSync": "Synkroniser",
 

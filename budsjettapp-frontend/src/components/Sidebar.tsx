@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { BP, DefaultProps } from '../interfaces/interfaces';
 import AccountList from './AccountList';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartLine, faCogs, faCoins, faRotate, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faChartLine, faCloudArrowUp, faCogs, faCoins, faRotate, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 
 function Sidebar(props : DefaultProps) {
@@ -23,10 +23,14 @@ function Sidebar(props : DefaultProps) {
 
 		<AccountList bp={props.bp} />
 
-		<Link to="/" className="button big-button" onClick={() => setShowSidebar(false)}>
+		{activeBudget.externalId ? <Link to="/" className="button big-button" onClick={() => setShowSidebar(false)}>
 			<span className="button-icon"><FontAwesomeIcon icon={faRotate} /></span>
 			<span className="button-text">{t.sidebarButtonSync}</span>
-		</Link>
+		</Link> :
+		<Link to="/" className="button big-button" onClick={() => setShowSidebar(false)}>
+			<span className="button-icon"><FontAwesomeIcon icon={faCloudArrowUp} /></span>
+			<span className="button-text">{t.sidebarButtonSaveToCloud}</span>
+		</Link>}
 
 		<Link to="/" className="button big-button" onClick={() => setShowSidebar(false)}>
 			<span className="button-icon"><FontAwesomeIcon icon={faChartLine} /></span>
