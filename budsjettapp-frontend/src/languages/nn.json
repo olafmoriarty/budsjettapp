@@ -17,6 +17,7 @@
 
 	"balance": "Balanse",
 	"budget": "Budsjett",
+	"budgetName": "Namn på budsjett:",
 
 	"cancel": "Avbryt",
 	"category": "Kategori",
@@ -30,7 +31,10 @@
 	"downloadBudget": "Last ned budsjett",
 
 	"editCategory": "Rediger kategori",
+	"editCurrentBudget": "Rediger aktivt budsjett",
 	"errorNoIndexedDB": "Nettlesaren din støtter ikkje IndexedDB og kan difor ikkje køyre denne appen.",
+	"exportBudget": "Eksporter budsjett",
+	"exportBudgetDotDotDot": "Eksporter budsjett ...",
 
 	"hideCategory": "Skjul kategorien frå kategorilista",
 	"hideCategoryButton": "Skjul kategori",
@@ -66,6 +70,7 @@
 	"save": "Lagre",
 	"saveAndAdd": "Lagre og legg til ny",
 	"saveChanges": "Lagre endringar",
+	"saveSettings": "Lagre innstillingar",
 	"scheduledPayments": "Planlagte betalinger ({x})",
 	"selectBudget": "Velg budsjett",
 	"showAllBudgets": "Vis alle ...",

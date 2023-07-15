@@ -86,7 +86,7 @@ function Account(props : DefaultProps) {
 					<div className="account-header-buttons">
 						<button className="button new-transaction-button" onClick={() => setShowAddNew('transaction')}>{t.newTransaction}</button>
 						<button className="button" onClick={() => setShowAddNew('transfer')}>{t.newTransfer}</button>
-						<button className="button">{t.scheduledPayments.replace('{x}', '0')}</button>
+						<button className="button">{t.scheduledPayments?.replace('{x}', '0')}</button>
 						<button className="button">{t.reconcileAccount}</button>
 						<button className="button">{t.accountSettings}</button>
 					</div>

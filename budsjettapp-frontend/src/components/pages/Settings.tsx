@@ -8,6 +8,8 @@ function Settings(props : SettingsProps) {
 	return (
 		<main className="settings">
 			<Link to="select-budget" className="button">{t.selectBudget}</Link>
+			<Link to="edit-budget" className="button">{t.editCurrentBudget}</Link>
+			<Link to="export-budget" className="button">{t.exportBudget}</Link>
 		</main>
 	)
 }
