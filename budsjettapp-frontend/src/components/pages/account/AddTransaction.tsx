@@ -97,7 +97,7 @@ function AddTransaction(props : Props) {
 	const onSubmit = async (event : React.FormEvent, close? : boolean) => {
 		event.preventDefault();
 		// Check that all fields are correctly filled in
-		if (!activeBudget || !activeBudget.id || !date || !/^\d{4}-\d{2}-\d{2}$/.test(date) || (!isTransfer && !category.key) || (isTransfer && !counterAccount.key)) {
+		if (!activeBudget || !activeBudget.id || !date || !/^\d{4}-\d{2}-\d{2}$/.test(date) || (!isTransfer && category.key === undefined) || (isTransfer && !counterAccount.key)) {
 			return;
 		}
 
@@ -214,20 +214,20 @@ function AddTransaction(props : Props) {
 			<label htmlFor="out">{t.out}</label>
 			<NumberInput bp={props.bp} name="out" id="out" amount={amountOut} setAmount={setAmountOut}
 			form="newTransactionForm"
-			tabIndex={6}
+			tabIndex={category.key === 0 ? 7 : 6}
 		/></td>
 		<td className="in-td">
 			<label htmlFor="in">{t.in}</label>
 			<NumberInput bp={props.bp} name="in" id="in" amount={amountIn} setAmount={setAmountIn}
 		form="newTransactionForm"
-		tabIndex={7}
+		tabIndex={category.key === 0 ? 6 : 7}
  /></td>
 		<td className="edit-td"></td>
 		<td className="new-transaction-buttons">
 			<form id="newTransactionForm" onSubmit={(event) => onSubmit(event, true)}>
-				<button className="button submit" type="submit">{t.save}</button>
-				<button className="button submit" onClick={(event) => onSubmit(event, false)}>{t.saveAndAdd}</button>
-				<button className="button abort" onClick={(event) => updateAccount(true)}>{t.cancel}</button>
+				<button className="button submit" type="submit" tabIndex={8}>{t.save}</button>
+				<button className="button submit" onClick={(event) => onSubmit(event, false)} tabIndex={9}>{t.saveAndAdd}</button>
+				<button className="button abort" onClick={(event) => updateAccount(true)} tabIndex={10}>{t.cancel}</button>
 			</form>
 		</td>
 	</tr>

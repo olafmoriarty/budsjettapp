@@ -75,7 +75,7 @@ function App() {
 	 * Changes the active budget.
 	 * @param budget - The new budget.
 	 */
-	const selectBudget = (budget : Budget) => {
+	const selectBudget = (budget : Budget | undefined) => {
 		setActiveBudget(budget);
 	}
 
@@ -104,6 +104,13 @@ function App() {
 
 			setShowSidebar(true);
 			localStorage.setItem("activeBudget", JSON.stringify(activeBudget));
+		}
+		else {
+			// Clear out cache if no budget is set
+			setAccounts([]);
+			setCategories([]);
+			setPayees([]);
+			setAccountBalances({});
 		}
 	}, [activeBudget]);
 

@@ -26,6 +26,10 @@
 	"createBudget": "Opprett budsjett",
 
 	"date": "Dato",
+	"deleteBudget": "Slett budsjettet",
+	"deleteBudgetAreYouSure": "Er du heilt sikker på at du vil slette dette budsjettet? Når du sletter eit budsjett, sletter du òg alle transaksjonar, kontoar, kategoriar og budsjetterte beløp som er knytta til dette budsjettet.",
+	"deleteBudgetAbort": "Nei, det vil eg ikkje",
+	"deleteBudgetConfirm": "Ja, slett budsjettet",
 	"deleteCategory": "Slett kategori",
 	"deleteCategoryDotDotDot": "Slett kategori ...",
 	"downloadBudget": "Last ned budsjett",

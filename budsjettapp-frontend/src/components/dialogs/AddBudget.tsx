@@ -1,10 +1,13 @@
 import React, {useState} from 'react';
 import addBudget from '../../functions/database/addBudget';
 import { Budget, DefaultProps } from '../../interfaces/interfaces';
+import { useNavigate } from 'react-router-dom';
 
 function AddBudget(props : DefaultProps) {
 	const [values, setValues] = useState({} as {[key : string] : string});
 	const {db, t, selectBudget, dialogBox} = props.bp;
+
+	const navigate = useNavigate();
 
 	const changeValues = (ev : React.FormEvent<HTMLInputElement>) => {
 		let newValues = {...values};
@@ -20,6 +23,7 @@ function AddBudget(props : DefaultProps) {
 			newBudget.id = budgetId;
 			selectBudget(newBudget);
 			dialogBox.current?.close();
+			navigate('/');
 		});
 	}
 

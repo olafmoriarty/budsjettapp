@@ -139,7 +139,7 @@ export interface BP {
 		thousandsSign : string,
 	},
 
-	selectBudget : (a : Budget) => void,
+	selectBudget : (a : Budget | undefined) => void,
 	selectAccount : (a : Account) => void,
 	openDialog : (a : string | [string, DialogParams]) => void,
 	setAccounts : (a : Account[]) => void,

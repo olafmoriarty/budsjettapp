@@ -91,7 +91,7 @@ function AutoSuggest( props : Props ) {
 				onBlur={event => onBlur(event)}
 				form={form}
 				tabIndex={tabIndex}
-				className={required ? (originalValue.key ? 'valid' : 'invalid') : ''}
+				className={required ? (originalValue.key !== undefined ? 'valid' : 'invalid') : ''}
 				name={props.name}
 				id={props.id} 
 			/>
