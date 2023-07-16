@@ -419,6 +419,7 @@ main.budget .select-month-buttons {
 	display: flex;
 	background: var(--background-transparent);
 	border-radius: .5rem;
+	z-index: 10;
 }
 
 main.budget .select-month-buttons button {
@@ -601,6 +602,44 @@ main.budget .show-hidden-categories {
 main.budget .show-hidden-categories label {
 	vertical-align: middle;
 }
+
+main.budget .budget-scroll-left .current-month,
+main.budget .budget-scroll-left .previous-month,
+main.budget .budget-scroll-left .next-month {
+	animation-name: move-in-from-left;
+	animation-duration: .25s;
+	animation-fill-mode: both;
+	animation-timing-function: linear;
+}
+
+main.budget .budget-scroll-right .current-month,
+main.budget .budget-scroll-right .previous-month,
+main.budget .budget-scroll-right .next-month {
+	animation-name: move-in-from-right;
+	animation-duration: .25s;
+	animation-fill-mode: both;
+	animation-timing-function: linear;
+
+}
+
+@keyframes move-in-from-left {
+	0% {
+	  transform: translateX(-100%);
+	}
+	100% {
+	  transform: translateX(0);
+	}
+}
+
+@keyframes move-in-from-right {
+	0% {
+	  transform: translateX(100%);
+	}
+	100% {
+	  transform: translateX(0);
+	}
+}
+
 
 /* Account.tsx */
 
@@ -855,6 +894,20 @@ input.invalid:focus {
 		display: none;
 	}
 
+	main.budget .budget-scroll-left .category-name {
+		animation-name: move-in-from-left;
+		animation-duration: .25s;
+		animation-fill-mode: both;
+		animation-timing-function: linear;
+	}
+
+	main.budget .budget-scroll-right .category-name {
+		animation-name: move-in-from-right;
+		animation-duration: .25s;
+		animation-fill-mode: both;
+		animation-timing-function: linear;
+	}
+
 	main.budget tr {
 		margin-bottom: .25rem;
 	}
@@ -897,9 +950,28 @@ input.invalid:focus {
 		flex-direction: column;
 	}
 
-	.account-searchbar, .account-header .account-header-buttons button {
+	.account-searchbar {
 		display: block;
 		margin-bottom: .5rem;
+	}
+
+	.account-header .account-header-buttons {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		flex-grow: 1;
+		gap: .5rem;
+		justify-content: flex-start;
+		flex-wrap: wrap;
+		margin-bottom: 1rem;
+	}
+
+	.account-header .account-header-buttons button {
+		display: block;
+	}
+
+	.account-header .account-header-buttons .new-transaction-button {
+		grid-column-start: 1;
+		grid-column-end: 3;
 	}
 
 	.account-page thead {
@@ -1053,6 +1125,11 @@ input.invalid:focus {
 
 	main.budget .select-month-buttons {
 		left: calc(min(25vw, 20rem) + 2rem);
+	}
+
+	main.budget .category-name {
+		position: relative;
+		z-index: 5;
 	}
 
 	main.budget .category-name .main-part-of-cell {

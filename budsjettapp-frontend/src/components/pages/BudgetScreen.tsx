@@ -20,6 +20,8 @@ function BudgetScreen(props : DefaultProps) {
 	const [budgetNumbers, setBudgetNumbers] = useState({} as BudgetNumbers);
 	const [showHidden, setShowHidden] = useState(false);
 
+	const [scrollDirection, setScrollDirection] = useState(undefined as 'left' | 'right' | undefined);
+
 	const d = new Date();
 	const [currentMonth, setCurrentMonth] = useState(
 		((d.getFullYear() - 2000) * 12) + d.getMonth()
@@ -79,31 +81,36 @@ function BudgetScreen(props : DefaultProps) {
 		showHidden: showHidden
 	};
 
+	const scrollBudget = (direction : 'left' | 'right', scrollLength = 1) => {
+		setScrollDirection(direction);
+		setCurrentMonth(direction === 'left' ? currentMonth - scrollLength : currentMonth + scrollLength);
+	}
+
 	return (
 	<main className="budget">
 		<nav className="select-month-buttons">
-			<button className="icon prev-three" onClick={() => setCurrentMonth(currentMonth - 3)}><FontAwesomeIcon icon={faAnglesLeft} /></button>
-			<button className="icon prev-one" onClick={() => setCurrentMonth(currentMonth - 1)}><FontAwesomeIcon icon={faAngleLeft} /></button>
-			<button className="icon next-one" onClick={() => setCurrentMonth(currentMonth + 1)}><FontAwesomeIcon icon={faAngleRight} /></button>
-			<button className="icon next-three" onClick={() => setCurrentMonth(currentMonth + 3)}><FontAwesomeIcon icon={faAnglesRight} /></button>
+			<button className="icon prev-three" onClick={() => scrollBudget('left', 3)}><FontAwesomeIcon icon={faAnglesLeft} /></button>
+			<button className="icon prev-one" onClick={() => scrollBudget('left')}><FontAwesomeIcon icon={faAngleLeft} /></button>
+			<button className="icon next-one" onClick={() => scrollBudget('right')}><FontAwesomeIcon icon={faAngleRight} /></button>
+			<button className="icon next-three" onClick={() => scrollBudget('right', 3)}><FontAwesomeIcon icon={faAnglesRight} /></button>
 		</nav>
 
 		<DragDropContext onDragEnd={onDragEnd}>
 			<Droppable droppableId='masterCategories' type="MASTER">
 				{(provided, snapshot) => (
-				<table ref={provided.innerRef} {...provided.droppableProps}>
+				<table className={`budget ${scrollDirection === 'left' ? 'budget-scroll-left' : (scrollDirection === 'right' ? 'budget-scroll-right' : '')}`} ref={provided.innerRef} {...provided.droppableProps}>
 					<thead>
 						<tr>
 							<th className="category-name">
 							</th>
-							<th className="previous-month"><MonthHeader monthId={currentMonth - 1} bp={props.bp} bbp={bbp} /></th>
-							<th className="current-month"><MonthHeader monthId={currentMonth} bp={props.bp} bbp={bbp} /></th>
-							<th className="next-month"><MonthHeader monthId={currentMonth + 1} bp={props.bp} bbp={bbp} /></th>
+							<th className="previous-month" key={`header-${currentMonth}-prev`}><MonthHeader monthId={currentMonth - 1} bp={props.bp} bbp={bbp} /></th>
+							<th className="current-month" key={`header-${currentMonth}`}><MonthHeader monthId={currentMonth} bp={props.bp} bbp={bbp} /></th>
+							<th className="next-month" key={`header-${currentMonth}-next`}><MonthHeader monthId={currentMonth + 1} bp={props.bp} bbp={bbp} /></th>
 						</tr>
 					</thead>
 					{categories.filter((el) => !el.parent && (showHidden || !el.hidden) && !el.deleted).sort((a, b) => sortBySort(a, b)).map((el, index) => <BudgetMasterCategory key={el.id} bp={props.bp} category={el} index={index} bbp={bbp} />)}
 					<tbody>
-						<tr className="master-category">
+						<tr className="master-category" key={`add-master-category-${currentMonth}`}>
 							<td className="category-name"><button className="link hoverlink" onClick={() => createCategory()}><FontAwesomeIcon icon={faPlus} /> {t.newMainCategory}</button></td>
 							<td></td>
 							<td></td>

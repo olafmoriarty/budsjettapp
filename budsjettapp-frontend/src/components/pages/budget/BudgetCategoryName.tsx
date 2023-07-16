@@ -37,7 +37,6 @@ const BudgetCategoryName = (props : CategoryNameProps) => {
 		const newCategory = { ...props.category, name: categoryName, synced: false, } as Category;
 		addCategory(bp.db, newCategory)
 		.then(el => {
-			console.log(el);
 			const newCategories = bp.categories.map(oldCategory => oldCategory.id === newCategory.id ? newCategory : oldCategory);
 			bp.setCategories(newCategories);
 			props.bbp.setCategoryToEdit(undefined);

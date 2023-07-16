@@ -34,7 +34,7 @@ function BudgetMasterCategory(props : MasterCategoryProps) {
 				<BudgetCategory category={category} bp={props.bp} bbp={props.bbp} tabIndex={index * 20} dragIndex={index} isMaster={true} provided={dragProvided} masterCategoryOpen={masterCategoryOpen} setMasterCategoryOpen={setMasterCategoryOpen} />
 				{masterCategoryOpen ? categories.filter((subcat) => subcat.parent === category.id && (props.bbp.showHidden || !subcat.hidden)).sort((a, b) => sortBySort(a, b)).map((subEl, subIndex) => <BudgetCategory key={subEl.id} category={subEl} bp={props.bp} bbp={props.bbp} tabIndex={index * 20 + subIndex} dragIndex={subIndex} />) : undefined}
 				{masterCategoryOpen ? <tr className="add-new-category">
-					<td className="category-name"><button className="link hoverlink" onClick={() => createCategory(category.id)}><FontAwesomeIcon icon={faPlus} /> {t.newCategory}</button></td>
+					<td className="category-name" key={`add-category-${category.id}-${props.bbp.currentMonth}`}><button className="link hoverlink" onClick={() => createCategory(category.id)}><FontAwesomeIcon icon={faPlus} /> {t.newCategory}</button></td>
 					<td></td>
 					<td></td>
 					<td></td>

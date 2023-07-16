@@ -15,7 +15,7 @@ function BudgetCategory(props : BudgetCategoryProps) {
 	const {categoryToEdit, setCategoryToEdit, currentMonth} = props.bbp;
 
 	const cells = <>
-		<td className={`category-name${!isMaster ? ' no-icon' : ''}`} {...provided?.dragHandleProps}>
+		<td className={`category-name${!isMaster ? ' no-icon' : ''}`} {...provided?.dragHandleProps} key={`category-name-${currentMonth}`}>
 			{isMaster ? <button className="link toggle-master-category" onClick={() => {
 				if (!setMasterCategoryOpen) {
 					return;
@@ -24,13 +24,13 @@ function BudgetCategory(props : BudgetCategoryProps) {
 			}}><FontAwesomeIcon icon={masterCategoryOpen ? faCaretDown : faCaretUp} /></button> : undefined}
 			<BudgetCategoryName category={category} bp={props.bp} bbp={props.bbp} />
 		</td>
-		<td className="previous-month">
+		<td className="previous-month" key={`monthcategory-${category.id}-${currentMonth}-prev`}>
 			<MonthCategory month={currentMonth - 1} category={category.id ? category.id : 0} categoryIndex={tabIndex} bp={props.bp} bbp={props.bbp} isMasterCategory={isMaster} />
 		</td>
-		<td className="current-month">
+		<td className="current-month" key={`monthcategory-${category.id}-${currentMonth}`}>
 			<MonthCategory month={currentMonth} category={category.id ? category.id : 0} categoryIndex={tabIndex} bp={props.bp} bbp={props.bbp} isMasterCategory={isMaster} />
 		</td>
-		<td className="next-month">
+		<td className="next-month" key={`monthcategory-${category.id}-${currentMonth}-next`}>
 			<MonthCategory month={currentMonth + 1} category={category.id ? category.id : 0} categoryIndex={tabIndex} bp={props.bp} bbp={props.bbp} isMasterCategory={isMaster} />
 		</td>
 	</>
