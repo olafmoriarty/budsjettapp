@@ -7,6 +7,7 @@ import { BP, DialogParams } from '../interfaces/interfaces';
 import AddBudget from './dialogs/AddBudget';
 import AddAccount from './dialogs/AddAccount';
 import EditCategory from './dialogs/EditCategory';
+import EditAccount from './dialogs/EditAccount';
 
 function Dialog(props : DialogProps) {
 	const {bp, dialogToShow} = props;
@@ -40,11 +41,15 @@ function Dialog(props : DialogProps) {
 			selectedComponent = <AddAccount bp={bp} />;
 			break;
 		case 'addBudget':
-			selectedComponent = <AddBudget bp={bp} />;
+			selectedComponent = <AddBudget bp={bp} setCloseDialog={setCloseDialog} />;
 			break;
 		case 'editCategory':
 			selectedComponent = <EditCategory bp={bp} id={dialogParams.id} setCloseDialog={setCloseDialog} />
-	}
+			break;
+		case 'editAccount':
+			selectedComponent = <EditAccount bp={bp} account={dialogParams.account} setCloseDialog={setCloseDialog} />
+			break;
+		}
 
 	const onKeyDown = (event : React.KeyboardEvent) => {
 		if (event.key === 'Escape') {
@@ -63,7 +68,7 @@ function Dialog(props : DialogProps) {
 
 interface DialogProps {
 	bp : BP,
-	dialogToShow : string,
+	dialogToShow : string | [string, DialogParams],
 }
 
 export default Dialog;

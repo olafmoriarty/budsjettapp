@@ -9,7 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPencil } from '@fortawesome/free-solid-svg-icons';
 
 function Account(props : DefaultProps) {
-	const {accounts, categories, payees, t, activeBudget, db, numberOptions, accountBalances} = props.bp;
+	const {accounts, categories, payees, t, activeBudget, db, numberOptions, accountBalances, openDialog} = props.bp;
 	const params = useParams();
 	const [transactions, setTransactions] = useState([] as Transaction[]);
 	const [showAddNew, setShowAddNew] = useState('' as string);
@@ -88,7 +88,9 @@ function Account(props : DefaultProps) {
 						<button className="button" onClick={() => setShowAddNew('transfer')}>{t.newTransfer}</button>
 						<button className="button">{t.scheduledPayments?.replace('{x}', '0')}</button>
 						<button className="button">{t.reconcileAccount}</button>
-						<button className="button">{t.accountSettings}</button>
+						<button className="button" onClick={() => openDialog(['editAccount', {
+							account: account,
+						}])}>{t.accountSettings}</button>
 					</div>
 					<div className="account-balance">
 						<h3>{t.accountBalance}</h3>
@@ -140,4 +142,4 @@ function Account(props : DefaultProps) {
 	)
 }
 
-export default Account
+export default Account;

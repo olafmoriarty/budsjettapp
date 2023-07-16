@@ -12,7 +12,7 @@ import { Account, DefaultProps } from '../../interfaces/interfaces';
 /**
  * Content of the modal window used to create a new account.
  * @param props The BudgetProps (BP) element created in App.tsx.
- * @returns 
+ * @returns The "Create new account" form.
  */
 function AddAccount(props : DefaultProps) {
 

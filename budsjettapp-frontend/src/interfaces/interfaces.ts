@@ -182,6 +182,7 @@ export interface BudgetNumbersSingleCategory {
 
 export interface DialogParams {
 	id?: number,
+	account?: Account,
 }
 
 export interface AccountBalances {

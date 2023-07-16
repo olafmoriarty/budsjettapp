@@ -5,7 +5,7 @@ const addAccount = async (db : IDBPDatabase<BudgetInterface> | undefined, accoun
 	if (db) {
 		const tx = db.transaction('accounts', 'readwrite');
 		const store = tx.objectStore('accounts');
-		const added = await store.add(account);
+		const added = await store.put(account);
 		await tx.done;
 		return added;
 	}
