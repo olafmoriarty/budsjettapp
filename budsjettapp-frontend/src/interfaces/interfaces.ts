@@ -163,6 +163,15 @@ export interface BBP {
 	showHidden : boolean,
 }
 
+export interface BAP {
+	payeesById : {[key : number] : Payee},
+	categoriesById : {[key : number] : Category},
+	accountsById : {[key : number] : Account},
+	registerCheckbox : (id : number | undefined, value? : boolean) => void,
+	updateAccount : (close?: boolean, newTransaction?: Transaction) => void,
+	accountId : number,
+}
+
 export interface DefaultProps {
 	bp : BP,
 }

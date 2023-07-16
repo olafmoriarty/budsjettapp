@@ -4,9 +4,7 @@ import { Account as AccountType, Category, DefaultProps, Payee, Transaction } fr
 import getTransactionsDB from '../../functions/database/getTransactionsDB';
 import prettyNumber from '../../functions/prettyNumber';
 import AddTransaction from './account/AddTransaction';
-import formatDate from '../../functions/formatDate';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPencil } from '@fortawesome/free-solid-svg-icons';
+import AccountTransaction from './account/AccountTransaction';
 
 function Account(props : DefaultProps) {
 	const {accounts, categories, payees, t, activeBudget, db, numberOptions, accountBalances, openDialog} = props.bp;
@@ -73,6 +71,7 @@ function Account(props : DefaultProps) {
 		return <main><p>{t.accountNotFound}</p></main>;
 	}
 
+	const bap = {payeesById, categoriesById, accountsById, registerCheckbox, accountId, updateAccount};
 	return (
 		<main className="account-page">
 			<div className="account-header">
@@ -112,7 +111,7 @@ function Account(props : DefaultProps) {
 					</tr>
 				</thead>
 				<tbody>
-					{showAddNew && account.id ? <AddTransaction bp={props.bp} updateAccount={updateAccount} accountId={account.id} isTransfer={showAddNew === 'transfer'} /> : undefined}
+					{showAddNew && account.id ? <AddTransaction bp={props.bp} bap={bap} updateAccount={updateAccount} accountId={account.id} isTransfer={showAddNew === 'transfer'} /> : undefined}
 					{transactions
 					.sort((a, b) => {
 						if (a.date < b.date) {
@@ -126,16 +125,7 @@ function Account(props : DefaultProps) {
 						}
 						return -1;
 					})
-					.map((el) => <tr className="transaction-row" key={el.id} onClick={() => registerCheckbox(el.id)}>
-						<td className="checkbox-td"><input type="checkbox" checked={selectedTransactions.includes(el.id || -1)} onChange={(event) => registerCheckbox(el.id, event.target.checked)} /></td>
-						<td className="date-td">{formatDate(el.date, t.dateFormat)}</td>
-						<td className="payee-td">{el.payeeId ? payeesById[el.payeeId]?.name : (el.counterAccount ? accountsById[el.counterAccount]?.name : '')}</td>
-						<td className="category-td">{el.categoryId === undefined ? '' : categoriesById[el.categoryId]?.name}</td>
-						<td className="memo-td">{el.memo}</td>
-						<td className="out-td">{el.out ? prettyNumber(el.out, numberOptions) : ''}</td>
-						<td className="in-td">{el.in ? prettyNumber(el.in, numberOptions) : ''}</td>
-						<td className="edit-td"><button className="icon-block"><FontAwesomeIcon icon={faPencil} /></button></td>
-					</tr>)}
+					.map((el) => <AccountTransaction bp={props.bp} bap={bap} transaction={el} checked={selectedTransactions.includes(el.id || -1)} key={el.id} />)}
 				</tbody>
 			</table>
 		</main>

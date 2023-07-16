@@ -32,10 +32,12 @@
 	"deleteBudgetConfirm": "Ja, slett budsjettet",
 	"deleteCategory": "Slett kategori",
 	"deleteCategoryDotDotDot": "Slett kategori ...",
+	"deleteTransaction": "Slett transaksjon",
 	"downloadBudget": "Last ned budsjett",
 
 	"editCategory": "Rediger kategori",
 	"editCurrentBudget": "Rediger aktivt budsjett",
+	"editTransaction": "Rediger transaksjon",
 	"errorNoIndexedDB": "Nettlesaren din støtter ikkje IndexedDB og kan difor ikkje køyre denne appen.",
 	"exportBudget": "Eksporter budsjett",
 	"exportBudgetDotDotDot": "Eksporter budsjett ...",

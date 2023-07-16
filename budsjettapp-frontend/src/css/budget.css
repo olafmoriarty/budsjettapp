@@ -721,6 +721,49 @@ main.account-page {
 	text-align: right;
 }
 
+.transaction-list .edit-td {
+	position: relative;
+}
+
+.transaction-list .edit-td .icon-block {
+	min-width: 1rem;
+	min-height: 1rem;
+	border-radius: .5rem;
+}
+
+.transaction-list .edit-td .icon-block.open {
+	color: var(--sidebar-text);
+	background-color: var(--sidebar);
+}
+
+.transaction-menu {
+	position: absolute;
+	top: 100%;
+	right: 0;
+	border: solid 1px var(--sidebar);
+	background: var(--white);
+	z-index: 1;
+	padding: 0;
+	border-radius: .25rem;
+}
+
+.transaction-menu ul {
+	list-style-type: none;
+}
+
+.transaction-menu li {
+	border-bottom: solid 1px var(--sidebar);
+}
+
+.transaction-menu li:last-child {
+	border-bottom: none;
+}
+
+.transaction-menu button {
+	padding: .25rem .5rem;
+	white-space: nowrap;
+}
+
 .new-transaction input, .new-transaction select {
 	width: 100%;
 	font-size: .8rem;
@@ -1058,6 +1101,7 @@ input.invalid:focus {
 
 	.transaction-list .new-transaction {
 		position: fixed;
+		z-index: 100;
 		top: 0;
 		left: 0;
 		right: 0;

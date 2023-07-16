@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { BP, Category, DictionaryEntry, Transaction, BudgetNumbers } from '../../../interfaces/interfaces'
+import { BP, Category, DictionaryEntry, Transaction, BudgetNumbers, BAP } from '../../../interfaces/interfaces'
 import NumberInput from '../../NumberInput'
 import AutoSuggest from '../../AutoSuggest';
 import prettyNumber from '../../../functions/prettyNumber';
@@ -9,17 +9,37 @@ import addTransactionDB from '../../../functions/database/addTransactionDB';
 import getBudgetNumbersDB from '../../../functions/database/getBudgetNumbersDB';
 
 function AddTransaction(props : Props) {
-	const {updateAccount, accountId, isTransfer} = props;
+	const {bap, updateAccount, accountId, transaction} = props;
 	const {db, t, defaultDate, setDefaultDate, categories, activeBudget, payees, setPayees, accounts, updateAccountBalances} = props.bp;
 
-	const [date, setDate] = useState(defaultDate);
-	const [payee, setPayee] = useState( {key : undefined, value: ''} as DictionaryEntry );
-	const [counterAccount, setCounterAccount] = useState( {key : undefined, value: ''} as DictionaryEntry );
+	const isTransfer = props.isTransfer || (transaction && transaction.counterAccount);
+
+	let startDate = defaultDate;
+	let startPayee = {key: undefined, value: ''} as DictionaryEntry;
+	let startCategory = {key: undefined, value: ''} as DictionaryEntry;
+	let startCounterAccount = {key: undefined, value: ''} as DictionaryEntry;
+	let startMemo = '';
+	let startAmountIn = 0;
+	let startAmountOut = 0;
+
+	if (transaction) {
+		startDate = transaction.date;
+		startPayee = {key : transaction.payeeId, value: transaction.payeeId ? bap.payeesById[transaction.payeeId].name : ''};
+		startCounterAccount = {key : transaction.counterAccount, value: transaction.counterAccount ? bap.accountsById[transaction.counterAccount].name : ''};
+		startCategory = {key : transaction.categoryId, value: transaction.categoryId !== undefined ? bap.categoriesById[transaction.categoryId].name : ''};
+		startMemo = transaction.memo || '';
+		startAmountIn = transaction.in || 0;
+		startAmountOut = transaction.out || 0;
+	}
+
+	const [date, setDate] = useState(startDate);
+	const [payee, setPayee] = useState(startPayee);
+	const [counterAccount, setCounterAccount] = useState(startCounterAccount);
 	const [budgetNumbers, setBudgetNumbers] = useState( {} as BudgetNumbers);
-	const [category, setCategory] = useState( {key : undefined, value: ''} as DictionaryEntry );
-	const [memo, setMemo] = useState('');
-	const [amountIn, setAmountIn] = useState(0);
-	const [amountOut, setAmountOut] = useState(0);
+	const [category, setCategory] = useState(startCategory);
+	const [memo, setMemo] = useState(startMemo);
+	const [amountIn, setAmountIn] = useState(startAmountIn);
+	const [amountOut, setAmountOut] = useState(startAmountOut);
 
 	let month = getMonth(date);
 
@@ -35,13 +55,13 @@ function AddTransaction(props : Props) {
 	}, [month]);
 
 	const resetForm = () => {
-		setDate(defaultDate);
-		setPayee({key : undefined, value : ''});
-		setCategory({key : undefined, value : ''});
-		setCounterAccount({key : undefined, value : ''});
-		setMemo('');
-		setAmountIn(0);
-		setAmountOut(0);
+		setDate(startDate);
+		setPayee(startPayee);
+		setCategory(startCategory);
+		setCounterAccount(startCounterAccount);
+		setMemo(startMemo);
+		setAmountIn(startAmountIn);
+		setAmountOut(startAmountOut);
 		getBudgetNumbersDB(db, activeBudget.id, month, month)
 		.then(numbers => {
 			setBudgetNumbers(numbers);
@@ -136,12 +156,21 @@ function AddTransaction(props : Props) {
 			newTransaction.counterAccount = counterAccount.key;
 		}
 
+		if (transaction) {
+			newTransaction = { ...transaction, ...newTransaction };
+		}
+
 		const newId = await addTransactionDB(db, newTransaction);
 		newTransaction.id = newId;
 
 		if (isTransfer) {
 			let counterTransaction = { ...newTransaction };
-			delete(counterTransaction.id);
+			if (transaction) {
+				counterTransaction.id = transaction.counterTransaction;
+			}
+			else {
+				delete(counterTransaction.id);
+			}
 			counterTransaction.accountId = counterAccount.key || 0;
 			counterTransaction.counterTransaction = newId;
 			counterTransaction.counterAccount = accountId;
@@ -150,8 +179,10 @@ function AddTransaction(props : Props) {
 
 			const counterId = await addTransactionDB(db, counterTransaction);
 
-			newTransaction.counterTransaction = counterId;
-			await addTransactionDB(db, newTransaction);
+			if (!transaction) {
+				newTransaction.counterTransaction = counterId;
+				await addTransactionDB(db, newTransaction);
+			}
 		}
 
 		setDefaultDate(date);
@@ -178,6 +209,7 @@ function AddTransaction(props : Props) {
 				})
 				}
 				form="newTransactionForm"
+				required
 				tabIndex={2}
 			/> : 
 			<AutoSuggest 
@@ -209,25 +241,26 @@ function AddTransaction(props : Props) {
 		</td>
 		<td className="memo-td">
 			<label htmlFor="memo">{t.memo}</label>
-			<input id="memo" type="text" value={memo} onChange={(event) => setMemo(event.target.value)}  form="newTransactionForm" tabIndex={5} /></td>
+			<input id="memo" type="text" value={memo} onChange={(event) => setMemo(event.target.value)}  form="newTransactionForm" tabIndex={6} /></td>
 		<td className="out-td">
 			<label htmlFor="out">{t.out}</label>
 			<NumberInput bp={props.bp} name="out" id="out" amount={amountOut} setAmount={setAmountOut}
 			form="newTransactionForm"
-			tabIndex={category.key === 0 ? 7 : 6}
+			tabIndex={category.key === 0 ? 8 : 7}
 		/></td>
 		<td className="in-td">
 			<label htmlFor="in">{t.in}</label>
 			<NumberInput bp={props.bp} name="in" id="in" amount={amountIn} setAmount={setAmountIn}
 		form="newTransactionForm"
-		tabIndex={category.key === 0 ? 6 : 7}
+		tabIndex={category.key === 0 ? 7 : 8}
  /></td>
 		<td className="edit-td"></td>
 		<td className="new-transaction-buttons">
 			<form id="newTransactionForm" onSubmit={(event) => onSubmit(event, true)}>
-				<button className="button submit" type="submit" tabIndex={8}>{t.save}</button>
-				<button className="button submit" onClick={(event) => onSubmit(event, false)} tabIndex={9}>{t.saveAndAdd}</button>
-				<button className="button abort" onClick={(event) => updateAccount(true)} tabIndex={10}>{t.cancel}</button>
+				<button className="button submit" type="submit" tabIndex={9}>{t.save}</button>
+				{transaction ? undefined : 
+				<button className="button submit" onClick={(event) => onSubmit(event, false)} tabIndex={10}>{t.saveAndAdd}</button>}
+				<button className="button abort" onClick={(event) => updateAccount(true)} tabIndex={11}>{t.cancel}</button>
 			</form>
 		</td>
 	</tr>
@@ -236,6 +269,7 @@ function AddTransaction(props : Props) {
 
 interface Props {
 	bp: BP,
+	bap: BAP,
 	transaction?: Transaction,
 	updateAccount: (c? : boolean | undefined, t? : Transaction | undefined) => void,
 	accountId: number,
