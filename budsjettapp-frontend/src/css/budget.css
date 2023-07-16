@@ -682,6 +682,10 @@ main.account-page {
 	margin: 0;
 }
 
+.account-header .account-balance .account-balance-amount.negative {
+	text-shadow: .25rem .25rem .125rem var(--accent-red);
+}
+
 .account-header .account-header-buttons .new-transaction-button {
 	background: var(--accent-yellow);
 }

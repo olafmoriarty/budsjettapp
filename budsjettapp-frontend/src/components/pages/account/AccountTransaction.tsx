@@ -5,24 +5,34 @@ import prettyNumber from '../../../functions/prettyNumber';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
 import AddTransaction from './AddTransaction';
+import deleteTransactionDB from '../../../functions/database/deleteTransactionDB';
 
 function AccountTransaction(props : Props) {
 	const {bp, bap, transaction, checked} = props;
-	const {t, numberOptions} = bp;
-	const {categoriesById, accountsById, payeesById, registerCheckbox} = bap;
+	const {db, t, numberOptions} = bp;
+	const {categoriesById, accountsById, payeesById, transactions, setTransactions, registerCheckbox} = bap;
 
 	const [editRow, setEditRow] = useState(false);
 	const [showMenu, setShowMenu] = useState(false);
 
 	const updateTransaction = (close? :  boolean, newTransaction? : Transaction) => {
 		if (newTransaction) {
-			bap.updateAccount(false, newTransaction);
+			const newTransactions = [ ... transactions.filter((el) => el.id !== newTransaction.id), newTransaction ];
+			setTransactions(newTransactions);
 		}
 		if (close) {
 			setEditRow(false);
 		}
 	}
 
+	const deleteTransaction = () => {
+		deleteTransactionDB(db, transaction)
+		.then(() => {
+			bp.updateAccountBalances();
+			const newTransactions = [ ... transactions.filter((el) => el.id !== transaction.id)];
+			setTransactions(newTransactions);
+		});
+	}
 
 	if (editRow) {
 		return <AddTransaction bp={bp} bap={bap} updateAccount={updateTransaction} accountId={bap.accountId} transaction={transaction} />
@@ -50,8 +60,7 @@ function AccountTransaction(props : Props) {
 							event.stopPropagation();
 						}}>{t.editTransaction}</button></li>
 						<li><button className="link" onClick={(event) => {
-							setEditRow(true);
-							setShowMenu(false);
+							deleteTransaction();
 							event.stopPropagation();
 						}}>{t.deleteTransaction}</button></li>
 					</ul>

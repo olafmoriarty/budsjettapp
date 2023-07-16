@@ -71,7 +71,7 @@ function Account(props : DefaultProps) {
 		return <main><p>{t.accountNotFound}</p></main>;
 	}
 
-	const bap = {payeesById, categoriesById, accountsById, registerCheckbox, accountId, updateAccount};
+	const bap = {payeesById, categoriesById, accountsById, registerCheckbox, accountId, transactions, setTransactions};
 	return (
 		<main className="account-page">
 			<div className="account-header">
@@ -93,7 +93,7 @@ function Account(props : DefaultProps) {
 					</div>
 					<div className="account-balance">
 						<h3>{t.accountBalance}</h3>
-						<p className="account-balance-amount">{account.id && accountBalances[account.id] ? prettyNumber(accountBalances[account.id], numberOptions) : ''}</p>
+						<p className={`account-balance-amount ${account.id && accountBalances[account.id] && accountBalances[account.id] < 0 ? 'negative' : ''}`}>{account.id && accountBalances[account.id] !== undefined ? prettyNumber(accountBalances[account.id], numberOptions) : ''}</p>
 					</div>
 				</div>
 			</div>

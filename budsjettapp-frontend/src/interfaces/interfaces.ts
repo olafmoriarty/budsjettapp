@@ -120,6 +120,7 @@ export interface Transaction {
 	counterAccount?: number,
 	counterTransaction?: number,
 	synced?: boolean,
+	deleted?: boolean,
 }
 
 export interface BP {
@@ -168,7 +169,8 @@ export interface BAP {
 	categoriesById : {[key : number] : Category},
 	accountsById : {[key : number] : Account},
 	registerCheckbox : (id : number | undefined, value? : boolean) => void,
-	updateAccount : (close?: boolean, newTransaction?: Transaction) => void,
+	transactions : Transaction[],
+	setTransactions : (a : Transaction[]) => void,
 	accountId : number,
 }
 
