@@ -41,6 +41,11 @@
 	"errorNoIndexedDB": "Nettlesaren din støtter ikkje IndexedDB og kan difor ikkje køyre denne appen.",
 	"exportBudget": "Eksporter budsjett",
 	"exportBudgetDotDotDot": "Eksporter budsjett ...",
+	"exportFormat": "Kva format ønskjer du å laste ned budsjettet i?",
+	"exportFormatJson": "JSON",
+	"exportFormatJsonLabel": "Lastar ned ei fil i JSON-format. Dersom du ønskjer å importere budsjettet ditt på ein annan PC eller mobildings, er det denne fila du trenger å laste ned.",
+	"exportFormatExcel": "Excel",
+	"exportFormatExcelLabel": "Lastar ned eit Excel-ark som inneheld alle transaksjonar du har registrert i budsjettet.",
 
 	"hideCategory": "Skjul kategorien frå kategorilista",
 	"hideCategoryButton": "Skjul kategori",

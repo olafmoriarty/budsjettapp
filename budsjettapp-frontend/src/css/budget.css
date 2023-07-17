@@ -381,7 +381,7 @@ main.subsettings h3 {
 	margin-bottom: .5rem;
 }
 
-main.subsettings input {
+main.subsettings input[type=text] {
 	width: 100%;
 	border-radius: .5rem;
 	font-family: var(--main-font);
@@ -389,6 +389,11 @@ main.subsettings input {
 	padding: .5rem;
 	display: block;
 	margin-bottom: 1rem;
+}
+
+main.subsettings .format-explanation {
+	font-style: italic;
+	font-size: .9rem;
 }
 
 main.subsettings p:has(label) {
