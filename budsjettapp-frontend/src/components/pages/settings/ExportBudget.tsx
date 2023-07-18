@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { BP, Category, Payee, Account } from '../../../interfaces/interfaces';
 import {utils, writeFile} from 'xlsx';
 import getTransactionsDB from '../../../functions/database/getTransactionsDB';
+import getAllDB from '../../../functions/database/getAllDB';
+import downloadTextFile from '../../../functions/downloadTextFile';
 
 /**
  * Form to download an export file of the current budget.
@@ -55,8 +57,13 @@ function ExportBudget(props : Props) {
 	 * @param format The format of the export file, "excel" or "json"
 	 */
 	const runExport = async (format : 'excel' | 'json') => {
+
+		// Abort if we don't have a budget number
+		if (!activeBudget.id) {
+			return;
+		}
 		// Get an array of all transactions
-		let transactions = await getTransactionsDB(db, activeBudget.id || 0, {}) || [];
+		let transactions = await getTransactionsDB(db, activeBudget.id, {}) || [];
 
 		// Create an Excel file using Sheets.js
 		if (format === 'excel') {
@@ -117,6 +124,22 @@ function ExportBudget(props : Props) {
 			// Navigate back to settings page.
 			navigate('/settings');
 		}
+
+		// Create a JSON object and download it
+		if (format === 'json') {
+
+			// Get all data from database
+			const allData = await getAllDB(db, activeBudget.id);
+
+			// Stringify it
+			const allDataString = JSON.stringify(allData);
+
+			// Download it
+			downloadTextFile(allDataString, 'Budget.json', 'json');
+
+			// Navigate back to settings page
+			navigate('/settings');
+		}
 	}
 
 	// Output the form.
@@ -153,4 +176,4 @@ interface Props {
 	bp: BP,
 }
 
-export default ExportBudget
+export default ExportBudget;

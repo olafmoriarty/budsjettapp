@@ -205,3 +205,8 @@ export interface DictionaryEntry {
 	value: string, 
 	displayValue?: string | JSX.Element
 }
+
+export interface Archive {
+	[key : string]: Budget | (Transaction | Account | Category |  Payee |  Budgeted)[],
+}
+
