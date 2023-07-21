@@ -18,7 +18,10 @@ function AddBudget(props : Props) {
 
 	const submit = (ev : React.FormEvent<HTMLFormElement>) => {
 		ev.preventDefault();
-		let newBudget = {name: values.budgetName} as Budget;
+		let newBudget = {
+			name: values.budgetName,
+			sync: 1,
+		} as Budget;
 		addBudget(db, newBudget)
 		.then((budgetId) => {
 			newBudget.id = budgetId;

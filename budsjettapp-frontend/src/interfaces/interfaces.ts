@@ -7,6 +7,10 @@ export interface BudgetInterface extends DBSchema {
 		value: Budget,
 		indexes: {
 			'externalId': number,
+			'sync': [
+				budgetId: number,
+				sync: number,
+			],
 		},
 	},
 	'accounts': {
@@ -15,6 +19,10 @@ export interface BudgetInterface extends DBSchema {
 		indexes: {
 			'externalId': number,
 			'budgetId': number,
+			'sync': [
+				budgetId: number,
+				sync: number,
+			],
 		}
 	},
 	'categories': {
@@ -23,6 +31,10 @@ export interface BudgetInterface extends DBSchema {
 		indexes: {
 			'externalId': number,
 			'budgetId': number,
+			'sync': [
+				budgetId: number,
+				sync: number,
+			],
 		}
 	},
 	'transactions': {
@@ -33,6 +45,10 @@ export interface BudgetInterface extends DBSchema {
 			'budgetId': number,
 			'accountId': number,
 			'categoryId': number,
+			'sync': [
+				budgetId: number,
+				sync: number,
+			],
 		}
 	},
 	'payees': {
@@ -41,6 +57,10 @@ export interface BudgetInterface extends DBSchema {
 		indexes: {
 			'externalId': number,
 			'budgetId': number,
+			'sync': [
+				budgetId: number,
+				sync: number,
+			],
 		}
 	},
 	'budgeted': {
@@ -55,6 +75,10 @@ export interface BudgetInterface extends DBSchema {
 			],
 			'month': number,
 			'category': number,
+			'sync': [
+				budgetId: number,
+				sync: number,
+			],
 		}
 	},
 }
@@ -63,7 +87,7 @@ export interface Budget {
 	id?: number,
 	name: string,
 	externalId?: number,
-	synced?: boolean,
+	sync?: number,
 }
 
 export interface Account {
@@ -71,7 +95,7 @@ export interface Account {
 	budgetId: number,
 	name: string,
 	externalId?: number,
-	synced?: boolean,
+	sync?: number,
 }
 
 export interface Category {
@@ -82,7 +106,7 @@ export interface Category {
 	parent?: number,
 	externalId?: number,
 	hidden?: boolean,
-	synced?: boolean,
+	sync?: number,
 	deleted?: boolean,
 }
 
@@ -92,14 +116,14 @@ export interface Payee {
 	name: string,
 	lastUsed?: number,
 	externalId?: number,
-	synced?: boolean,
+	sync?: number,
 }
 
 export interface Budgeted {
 	id?: number,
 	budgetId: number,
 	externalId?: number,
-	synced?: boolean,
+	sync?: number,
 	month: number,
 	category: number,
 	amount: number,
@@ -119,7 +143,7 @@ export interface Transaction {
 	out?: number,
 	counterAccount?: number,
 	counterTransaction?: number,
-	synced?: boolean,
+	sync?: number,
 	deleted?: boolean,
 }
 

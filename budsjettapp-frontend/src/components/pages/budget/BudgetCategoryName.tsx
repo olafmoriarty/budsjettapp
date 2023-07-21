@@ -34,7 +34,7 @@ const BudgetCategoryName = (props : CategoryNameProps) => {
 			return;
 		}
 
-		const newCategory = { ...props.category, name: categoryName, synced: false, } as Category;
+		const newCategory = { ...props.category, name: categoryName, sync: 1, } as Category;
 		addCategory(bp.db, newCategory)
 		.then(el => {
 			const newCategories = bp.categories.map(oldCategory => oldCategory.id === newCategory.id ? newCategory : oldCategory);

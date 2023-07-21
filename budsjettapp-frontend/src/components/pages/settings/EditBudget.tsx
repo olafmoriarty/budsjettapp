@@ -61,7 +61,7 @@ function EditBudget(props : DefaultProps) {
 		// Create a new budget object
 		const newBudget = { ...activeBudget };
 		newBudget.name = values.name;
-		newBudget.synced = false;
+		newBudget.sync = 1;
 
 		// Set that budget object as the active budget
 		selectBudget(newBudget);

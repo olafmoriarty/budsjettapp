@@ -63,8 +63,15 @@ function EditCategory( props : EditCategoryProps ) {
 				newCategory.hidden = true;
 			}
 			if (mode === 'delete') {
-				newCategory = { id: category.id, externalId: category.externalId, budgetId: category.budgetId, name: '', deleted: true, }
+				newCategory = { 
+					id: category.id, 
+					externalId: category.externalId, 
+					budgetId: category.budgetId, 
+					name: '', 
+					deleted: true, 
+				}
 			}
+			newCategory.sync = 1;
 			addCategory(bp.db, newCategory)
 			.then(() => {
 				if (category && (category.parent !== parentInput || mode === 'hide')) {

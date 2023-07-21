@@ -126,10 +126,10 @@ function AddTransaction(props : Props) {
 			newPayee = payee.key;
 		}
 		else if (payee.value) {
-			newPayee = await addPayeeDB(db, {budgetId: activeBudget.id, name: payee.value });
+			newPayee = await addPayeeDB(db, {budgetId: activeBudget.id, name: payee.value, sync: 1, });
 			setPayees([ 
 				...payees, 
-				{budgetId: activeBudget.id, name: payee.value, id: newPayee} 
+				{budgetId: activeBudget.id, name: payee.value, id: newPayee, sync: 1} 
 			]);
 		}
 		else {
@@ -145,7 +145,7 @@ function AddTransaction(props : Props) {
 			memo: memo,
 			in: amountIn,
 			out: amountOut,
-			synced: false,
+			sync: 1,
 		} as Transaction;
 
 		if (!isTransfer) {

@@ -46,6 +46,7 @@ function MonthCategory(props : Props) {
 			month: month, 
 			category: category,
 			amount: inputValueFloat,
+			sync: 1,
 		} as Budgeted;
 		if (monthNumbers && monthNumbers.id) {
 			newValue.id = monthNumbers.id;

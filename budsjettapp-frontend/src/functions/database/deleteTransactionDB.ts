@@ -14,7 +14,7 @@ const deleteTransactionDB = async (db : IDBPDatabase<BudgetInterface> | undefine
 				date: '',
 				month: 0,
 				accountId: 0,
-				synced: false,
+				sync: 1,
 				deleted: true,
 			} as Transaction;
 			await store.put(newTransaction);

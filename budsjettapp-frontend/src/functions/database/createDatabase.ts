@@ -6,7 +6,7 @@ const createDatabase = async () => {
 		return undefined;
 	}
 
-	const db = await openDB<BudgetInterface>('budgetApp', 2, {
+	const db = await openDB<BudgetInterface>('budgetApp', 3, {
 		upgrade(db, oldVersion, newVersion, transaction, event) {
 			if (!db.objectStoreNames.contains('budgets')) {
 				const budgets = db.createObjectStore('budgets', {
@@ -14,6 +14,12 @@ const createDatabase = async () => {
 					autoIncrement: true,
 				});
 				budgets.createIndex('externalId', 'externalId');
+			}
+			else {
+				if (oldVersion < 3) {
+					const store = transaction.objectStore("budgets");
+					store.createIndex('sync', 'sync');
+				}
 			}
 
 			if (!db.objectStoreNames.contains('accounts')) {
@@ -24,6 +30,12 @@ const createDatabase = async () => {
 				accounts.createIndex('externalId', 'externalId');
 				accounts.createIndex('budgetId', 'budgetId');
 			}
+			else {
+				if (oldVersion < 3) {
+					const store = transaction.objectStore("accounts");
+					store.createIndex('sync', ['budgetId', 'sync']);
+				}
+			}
 
 			if (!db.objectStoreNames.contains('categories')) {
 				const categories = db.createObjectStore('categories', {
@@ -32,6 +44,12 @@ const createDatabase = async () => {
 				});
 				categories.createIndex('externalId', 'externalId');
 				categories.createIndex('budgetId', 'budgetId');
+			}
+			else {
+				if (oldVersion < 3) {
+					const store = transaction.objectStore("categories");
+					store.createIndex('sync', ['budgetId', 'sync']);
+				}
 			}
 
 			if (!db.objectStoreNames.contains('transactions')) {
@@ -46,7 +64,12 @@ const createDatabase = async () => {
 			}
 			else {
 				const store = transaction.objectStore("transactions");
-				store.createIndex('categoryId', 'categoryId');
+				if (oldVersion < 2) {
+					store.createIndex('categoryId', 'categoryId');
+				}
+				if (oldVersion < 3) {
+					store.createIndex('sync', ['budgetId', 'sync']);
+				}
 			}
 
 			if (!db.objectStoreNames.contains('payees')) {
@@ -56,6 +79,12 @@ const createDatabase = async () => {
 				});
 				payees.createIndex('externalId', 'externalId');
 				payees.createIndex('budgetId', 'budgetId');
+			}
+			else {
+				if (oldVersion < 3) {
+					const store = transaction.objectStore("payees");
+					store.createIndex('sync', ['budgetId', 'sync']);
+				}
 			}
 
 			if (!db.objectStoreNames.contains('budgeted')) {
@@ -68,6 +97,12 @@ const createDatabase = async () => {
 				budgeted.createIndex('categoryMonth', ['budgetId', 'category', 'month']);
 				budgeted.createIndex('category', ['budgetId', 'category']);
 				budgeted.createIndex('month', ['budgetId', 'month']);
+			}
+			else {
+				if (oldVersion < 3) {
+					const store = transaction.objectStore("budgeted");
+					store.createIndex('sync', ['budgetId', 'sync']);
+				}
 			}
 		}
 	});

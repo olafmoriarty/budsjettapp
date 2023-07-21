@@ -66,6 +66,7 @@ function AddAccount(props : DefaultProps) {
 		let newAccount = {
 			name: values.accountName,
 			budgetId: activeBudget.id,
+			sync: 1,
 		} as Account;
 
 		// Submit account to database
@@ -90,6 +91,7 @@ function AddAccount(props : DefaultProps) {
 				memo: t.accountBalanceMemo,
 				in: accountBalance > 0 ? accountBalance : 0,
 				out: accountBalance < 0 ? 0 - accountBalance : 0,
+				sync: 1,
 			})
 			.then (() => {
 				// Add new account to account balance list

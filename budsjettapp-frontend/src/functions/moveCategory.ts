@@ -26,7 +26,7 @@ const moveCategory = (bp : BP, categoryId : number, newIndex : number, newParent
 
 	// Update parent and sorting index for all categories in parent category
 	newCategories.forEach((el, index) => {
-		newCategories[index] = {...el, parent: parent, sort: index + 1, synced: el.sort === index + 1 && el.parent === parent ? true : false};
+		newCategories[index] = {...el, parent: parent, sort: index + 1, sync: el.sort === index + 1 && el.parent === parent ? undefined : 1};
 	});
 
 	// If the category is moving to a new parent category ...
@@ -37,7 +37,7 @@ const moveCategory = (bp : BP, categoryId : number, newIndex : number, newParent
 
 		// Update sorting index for all categories in old parent category
 		oldSorted.forEach((el, index) => {
-			oldSorted[index] = {...el, sort: index + 1, synced: el.sort === index + 1 ? true : false}
+			oldSorted[index] = {...el, sort: index + 1, sync: el.sort === index + 1 ? undefined : 1}
 		});
 
 		// Concatenate arrays for further processing
@@ -45,7 +45,7 @@ const moveCategory = (bp : BP, categoryId : number, newIndex : number, newParent
 	}
 
 	// Remove unchanged categories
-	newCategories = newCategories.filter(el => !el.synced);
+	newCategories = newCategories.filter(el => el.sync === 1);
 
 	// Category ids to update
 	const newCategoryIds = newCategories.map(el => el.id);

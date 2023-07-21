@@ -49,7 +49,7 @@ function EditAccount(props : Props) {
 		// Create an account object with the new account name.
 		let newAccount = { ...account };
 		newAccount.name = values.name;
-		newAccount.synced = false;
+		newAccount.sync = 1;
 
 		// Add account to database.
 		addAccount(db, newAccount)
