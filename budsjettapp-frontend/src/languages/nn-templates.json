@@ -1,0 +1,73 @@
+[
+	{
+		"name": "SIFOs referansebudsjett",
+		"categories": [
+			[
+				"Individspesifikke",
+				"Mat og drikke",
+				"Klede og sko",
+				"Personlig pleie",
+				"Leik og mediebruk",
+				"Reise (kollektivt)",
+				"Spedbarnsutstyr"
+			],
+			[
+				"Hushaldsspesifikke",
+				"Andre daglegvarar",
+				"Hushaldningsartiklar",
+				"Møbler",
+				"Mediebruk og fritid",
+				"Bilkostnadar",
+				"Barnehage",
+				"SFO"
+			],
+			[
+				"Anna",
+				"Bolig",
+				"Strøm",
+				"Ferie",
+				"Gaver og feiringer",
+				"Uteliv",
+				"Nødfond"
+			]
+		]
+	},
+	{
+		"name": "Luksusfellen",
+		"categories": [
+			[
+				"Bolig",
+				"Husleie",
+				"Strøm"
+			],
+			[
+				"Mat",
+				"Dagligvarer",
+				"Restaurantmat"
+			],
+			[
+				"Transport",
+				"Bensin",
+				"Andre bilutgifter",
+				"Kollektivtransport"
+			],
+			[
+				"Klede",
+				"Klede"
+			],
+			[
+				"Sparing",
+				"Nødfond"
+			],
+			[
+				"Anna",
+				"Telefon",
+				"Strømming/TV",
+				"Barnehage",
+				"SFO",
+				"Reise"
+			],
+			["Gjeld"]
+		]
+	}
+]

@@ -69,6 +69,7 @@
 	"newTransfer": "Ny overføring",
 	"newMainCategory": "Ny hovudkategori",
 	"noAccountsCreated": "Ingen kontoar oppretta. Trykk her for å opprette ein konto.",
+	"noTemplateEmptyBudget": "Ingen mal - tomt budsjett",
 
 	"out": "Ut",
 	"outflows": "Utgifter",
@@ -82,7 +83,7 @@
 	"saveAndAdd": "Lagre og legg til ny",
 	"saveChanges": "Lagre endringar",
 	"saveSettings": "Lagre innstillingar",
-	"scheduledPayments": "Planlagte betalinger ({x})",
+	"scheduledPayments": "Planlagte betalinger",
 	"selectBudget": "Velg budsjett",
 	"showAllBudgets": "Vis alle ...",
 	"showCategoryButton": "Vis kategori",
@@ -93,6 +94,7 @@
 	"sidebarButtonSettings": "Innstillingar",
 	"sidebarButtonSync": "Synkroniser",
 
+	"templateLabel": "Kategorimal:",
 	"toBudget": "å fordele",
 
 	"FINAL_LINE_TO_AVOID_TRAILING_COMMA": ""

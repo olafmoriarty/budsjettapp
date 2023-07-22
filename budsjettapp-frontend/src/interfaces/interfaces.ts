@@ -233,4 +233,3 @@ export interface DictionaryEntry {
 export interface Archive {
 	[key : string]: Budget | (Transaction | Account | Category |  Payee |  Budgeted)[],
 }
-
