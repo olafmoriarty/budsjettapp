@@ -9,7 +9,7 @@ function MonthHeader(props : Props) {
 	const year = (Math.floor(monthId / 12) + 2000).toString();
 	let monthString = bp.t.monthNames[monthId % 12];
 
-	const income = budgetNumbers[monthId]?.[0].spentTotal || 0;
+	const income = budgetNumbers[monthId]?.[0]?.spentTotal || 0;
 
 	const budgetedTotal = budgetNumbers[monthId] ? Object.keys(budgetNumbers[monthId]).reduce((accumulator, value) => accumulator + budgetNumbers[monthId][Number(value)].budgetedTotal, 0) : 0;
 

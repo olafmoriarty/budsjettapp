@@ -171,6 +171,7 @@ function App() {
 		}
 	}
 
+
 	/* Create an object containing many of the important variables and
 	   functions defined in this file so that they can easily be passed on to
 	   other components. */

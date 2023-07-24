@@ -35,9 +35,6 @@ function AddBudget(props : Props) {
 		const budgetId = await addBudget(db, newBudget)
 		newBudget.id = budgetId;
 		if (template) {
-			console.log(templates);
-			console.log(template);
-			console.log(typeof template);
 			const categories = templates[template - 1].categories;
 			for (let i = 0; i < categories.length; i++) {
 				const newMasterCategory = {
@@ -70,7 +67,7 @@ function AddBudget(props : Props) {
 			<p><label htmlFor="budgetName">{t.nameTheBudget}</label></p>
 			<input type="text" name="budgetName" id="budgetName" placeholder={t.namePlaceholder} value={values.budgetName === undefined ? '' : values.budgetName} onChange={(event) => changeValues(event)} required />
 			<p>{t.templateLabel}</p>
-			{templates.map((el, index) => <p><label><input type="radio" name="template" value={index + 1} checked={template === index + 1} onChange={() => setTemplate(index + 1)} /> {el.name}</label></p>)}
+			{templates.map((el, index) => <p key={index + 1}><label><input type="radio" name="template" value={index + 1} checked={template === index + 1} onChange={() => setTemplate(index + 1)} /> {el.name}</label></p>)}
 			<p><label><input type="radio" name="template" value={0} checked={template === 0} onChange={() => setTemplate(0)} /> {t.noTemplateEmptyBudget}</label></p>
 			<button className="button" type="submit">{t.createBudget}</button>
 		</form>
