@@ -10,8 +10,10 @@ import sortBySort from '../../../functions/sortBySort';
 
 function BudgetMasterCategory(props : MasterCategoryProps) {
 	const {category, index} = props;
-	const {createCategory} = props.bbp;
+	const {createCategory, categoryRefs} = props.bbp;
 	const {categories, t} = props.bp;
+
+	categoryRefs[index] = [];
 
 	const [masterCategoryOpen, setMasterCategoryOpen] = useState(true);
 
@@ -32,7 +34,7 @@ function BudgetMasterCategory(props : MasterCategoryProps) {
 				{(dropProvided, snapshot) => (
 				<tbody ref={mergeRefs(dragProvided.innerRef, dropProvided.innerRef)} {...dragProvided.draggableProps} {...dropProvided.droppableProps}>
 				<BudgetCategory category={category} bp={props.bp} bbp={props.bbp} tabIndex={index * 20} dragIndex={index} isMaster={true} provided={dragProvided} masterCategoryOpen={masterCategoryOpen} setMasterCategoryOpen={setMasterCategoryOpen} />
-				{masterCategoryOpen ? categories.filter((subcat) => subcat.parent === category.id && (props.bbp.showHidden || !subcat.hidden)).sort((a, b) => sortBySort(a, b)).map((subEl, subIndex) => <BudgetCategory key={subEl.id} category={subEl} bp={props.bp} bbp={props.bbp} tabIndex={index * 20 + subIndex} dragIndex={subIndex} />) : undefined}
+				{masterCategoryOpen ? categories.filter((subcat) => subcat.parent === category.id && (props.bbp.showHidden || !subcat.hidden)).sort((a, b) => sortBySort(a, b)).map((subEl, subIndex) => <BudgetCategory key={subEl.id} category={subEl} bp={props.bp} bbp={props.bbp} tabIndex={index * 20 + subIndex} categoryRefIndex1={index} dragIndex={subIndex} />) : undefined}
 				{masterCategoryOpen ? <tr className="add-new-category">
 					<td className="category-name" key={`add-category-${category.id}-${props.bbp.currentMonth}`}><button className="link hoverlink" onClick={() => createCategory(category.id)}><FontAwesomeIcon icon={faPlus} /> {t.newCategory}</button></td>
 					<td></td>

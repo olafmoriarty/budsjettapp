@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { DragDropContext, DropResult, Droppable } from 'react-beautiful-dnd';
 import { BudgetNumbers, Category, DefaultProps } from '../../interfaces/interfaces';
 import MonthHeader from './budget/MonthHeader';
@@ -15,8 +15,10 @@ import getBudgetNumbersDB from '../../functions/database/getBudgetNumbersDB';
 function BudgetScreen(props : DefaultProps) {
 	const { db, t, activeBudget, showSidebar, setShowSidebar, categories, setCategories } = props.bp;
 
+	// Which category (name) is currently being edited?
 	const [categoryToEdit, setCategoryToEdit] = useState(undefined as number | undefined);
 
+	// State to store budget numbers
 	const [budgetNumbers, setBudgetNumbers] = useState({} as BudgetNumbers);
 	const [showHidden, setShowHidden] = useState(false);
 
@@ -26,6 +28,8 @@ function BudgetScreen(props : DefaultProps) {
 	const [currentMonth, setCurrentMonth] = useState(
 		((d.getFullYear() - 2000) * 12) + d.getMonth()
 	);
+
+	const categoryRefs = useRef([]);
 
 	useEffect(() => {
 		// If budgetNumbers is already set, get the numbers
@@ -78,7 +82,8 @@ function BudgetScreen(props : DefaultProps) {
 		setCategoryToEdit: setCategoryToEdit, 
 		createCategory: createCategory, 
 		currentMonth: currentMonth, 
-		showHidden: showHidden
+		showHidden: showHidden,
+		categoryRefs: categoryRefs.current,
 	};
 
 	const scrollBudget = (direction : 'left' | 'right', scrollLength = 1) => {

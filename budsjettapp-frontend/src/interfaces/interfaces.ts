@@ -186,6 +186,7 @@ export interface BBP {
 	createCategory : (a : number | undefined) => void,
 	currentMonth : number,
 	showHidden : boolean,
+	categoryRefs : {[key : number] : HTMLInputElement}[][],
 }
 
 export interface BAP {

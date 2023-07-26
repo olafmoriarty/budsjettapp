@@ -74,7 +74,13 @@ button {
 	display: block;
 }
 
-.negative-number {color: var(--accent-red)}
+.negative-number {
+	color: var(--accent-red);
+}
+
+.green-number {
+	color: var(--accent-green);
+}
 
 main {
 	height: 100vh;
@@ -439,7 +445,7 @@ main.budget .select-month-buttons button {
 main.budget table {
 	width: 100%;
 	border-collapse: collapse;
-	margin-bottom: 3rem;
+	margin-bottom: 6rem;
 }
 
 main.budget .month-name:first-letter {
@@ -600,8 +606,8 @@ main.budget table tr:last-child td:last-child {
 }
 
 main.budget .show-hidden-categories {
-	margin-top: -2.5rem;
-	margin-bottom: 3rem;
+	margin-top: -5.5rem;
+	margin-bottom: 6rem;
 	font-size: .8rem;
 }
 main.budget .show-hidden-categories label {

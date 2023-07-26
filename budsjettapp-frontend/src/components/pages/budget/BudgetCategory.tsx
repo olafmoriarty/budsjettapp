@@ -11,8 +11,12 @@ import { Draggable, DraggableProvided } from 'react-beautiful-dnd';
 
 
 function BudgetCategory(props : BudgetCategoryProps) {
-	const {category, dragIndex, tabIndex, isMaster, provided, masterCategoryOpen, setMasterCategoryOpen} = props;
-	const {categoryToEdit, setCategoryToEdit, currentMonth} = props.bbp;
+	const {category, dragIndex, tabIndex, isMaster, provided, masterCategoryOpen, setMasterCategoryOpen, categoryRefIndex1} = props;
+	const {categoryToEdit, setCategoryToEdit, currentMonth, categoryRefs} = props.bbp;
+
+	if (categoryRefIndex1 !== undefined) {
+		categoryRefs[categoryRefIndex1][dragIndex] = {};
+	}
 
 	const cells = <>
 		<td className={`category-name${!isMaster ? ' no-icon' : ''}`} {...provided?.dragHandleProps} key={`category-name-${currentMonth}`}>
@@ -25,13 +29,13 @@ function BudgetCategory(props : BudgetCategoryProps) {
 			<BudgetCategoryName category={category} bp={props.bp} bbp={props.bbp} />
 		</td>
 		<td className="previous-month" key={`monthcategory-${category.id}-${currentMonth}-prev`}>
-			<MonthCategory month={currentMonth - 1} category={category.id ? category.id : 0} categoryIndex={tabIndex} bp={props.bp} bbp={props.bbp} isMasterCategory={isMaster} />
+			<MonthCategory month={currentMonth - 1} category={category.id ? category.id : 0} categoryIndex={tabIndex} categoryRefIndex1={categoryRefIndex1} categoryRefIndex2={dragIndex} bp={props.bp} bbp={props.bbp} isMasterCategory={isMaster} />
 		</td>
 		<td className="current-month" key={`monthcategory-${category.id}-${currentMonth}`}>
-			<MonthCategory month={currentMonth} category={category.id ? category.id : 0} categoryIndex={tabIndex} bp={props.bp} bbp={props.bbp} isMasterCategory={isMaster} />
+			<MonthCategory month={currentMonth} category={category.id ? category.id : 0} categoryIndex={tabIndex} categoryRefIndex1={categoryRefIndex1} categoryRefIndex2={dragIndex} bp={props.bp} bbp={props.bbp} isMasterCategory={isMaster} />
 		</td>
 		<td className="next-month" key={`monthcategory-${category.id}-${currentMonth}-next`}>
-			<MonthCategory month={currentMonth + 1} category={category.id ? category.id : 0} categoryIndex={tabIndex} bp={props.bp} bbp={props.bbp} isMasterCategory={isMaster} />
+			<MonthCategory month={currentMonth + 1} category={category.id ? category.id : 0} categoryIndex={tabIndex} categoryRefIndex1={categoryRefIndex1} categoryRefIndex2={dragIndex} bp={props.bp} bbp={props.bbp} isMasterCategory={isMaster} />
 		</td>
 	</>
 
@@ -62,6 +66,7 @@ interface BudgetCategoryProps {
 	category : Category,
 	tabIndex: number,
 	dragIndex: number,
+	categoryRefIndex1?: number,
 	bp: BP,
 	bbp: BBP,
 	isMaster? : boolean,

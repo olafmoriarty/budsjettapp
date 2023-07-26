@@ -22,8 +22,8 @@ function MonthHeader(props : Props) {
 	return (
 	<div className="month-header">
 		<p className="month-name">{monthString + ' ' + year}</p>
-		<p className="money-to-budget">{prettyNumber(income - budgetedTotal, numberOptions)}</p>
-		<p className="to-budget">{t.toBudget}</p>
+		<p className={`money-to-budget ${income - budgetedTotal < 0 ? 'negative-number' : (income === budgetedTotal ? 'green-number' : '')}`}>{prettyNumber(income - budgetedTotal, numberOptions)}</p>
+		<p className={`to-budget ${income - budgetedTotal < 0 ? 'negative-number' : ''}`}>{income - budgetedTotal < 0 ? t.overbudgeted : t.toBudget}</p>
 		<div className="b-o-b">
 			<div>{t.budget}</div>
 			<div>{t.outflows}</div>
