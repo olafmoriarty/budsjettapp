@@ -6,6 +6,7 @@
 	"thousandsSign": "\u00A0",
 	"dateFormat": "{dd}.{mm}.{yyyy}",
 
+	"aboutCloudStorage": "Skylagring på Budsjett.app er ei tilleggsteneste som ikkje er inkludert i gratisdelen av appen. Du kan prøve tenesta gratis i 90 dagar. Deretter kostar det 100 kr i året.",
 	"accountBalance": "Balanse på konto:",
 	"accountBalanceDate": "Dato for balanse:",
 	"accountBalanceMemo": "Inngåande balanse",
@@ -14,6 +15,10 @@
 	"accounts": "Kontoar",
 	"accountSettings": "Kontoinnstillingar",
 	"addAccount": "Legg til konto",
+	"advantagesBullet1": "Du har alltid ein kopi av budsjettet ditt som er lagra på ein trygg stad, slik at du ikkje mister all informasjonen din dersom du bytter nettlesar, sletter nettlesardata eller mister telefonen i do",
+	"advantagesBullet2": "Du kan opne budsjettet på fleire einingar, slik at du t.d. kan setja opp månadsbudsjettet på PC-en og registrere kjøp på mobilen når du står i butikken",
+	"advantagesBullet3": "Du kan dele budsjettet ditt med andre brukarar, slik at alle i husholdninga kan ha tilgang til budsjettet frå kvar sin brukar - og så lenge du som budsjetteigar har ein gyldig lisens, får alle dei du deler det med tilgong gratis",
+	"advantagesBullet4": "Du bidrar til å gi meg motivasjon til å halde fram med å vidareutvikle Budsjett.app :-)",
 
 	"balance": "Balanse",
 	"budget": "Budsjett",
@@ -24,7 +29,10 @@
 	"categoryName": "Namn på kategorien:",
 	"createAccount": "Opprett konto",
 	"createBudget": "Opprett budsjett",
-
+	"createUser": "Opprett brukar",
+	"createUserWhatHappensIfCancelled": "Kva skjer dersom eg ikkje forlenger abonnementet?",
+	"createUserWhatHappensIfCancelledText": "Du trenger ein gyldig lisens eller prøvelisens for å laste opp ny informasjon til skybudsjettet ditt. Etter at lisensen din er utløpt, vil difor den informasjonen du legger inn i budsjettet ditt ikkje bli lasta opp til skyen. Du kan framleis laste ned den informasjonen som er lagra i skyen til så mange einingar du måtte ønskje. Du kan sjølvsagt òg halde fram med å bruke gratisversjonen av Budsjett.app.",
+	"createUserWhyPay": "Kva får eg for å betale for Budsjett.app?",
 	"date": "Dato",
 	"deleteBudget": "Slett budsjettet",
 	"deleteBudgetAreYouSure": "Er du heilt sikker på at du vil slette dette budsjettet? Når du sletter eit budsjett, sletter du òg alle transaksjonar, kontoar, kategoriar og budsjetterte beløp som er knytta til dette budsjettet.",
@@ -50,11 +58,13 @@
 	"hideCategory": "Skjul kategorien frå kategorilista",
 	"hideCategoryButton": "Skjul kategori",
 
+	"iHaveAnUser": "Eg har allereie ein brukar",
 	"in": "Inn",
 	"income": "Inntekt",
 	"iUnderstand": "OK, eg skjønner",
 
 	"loading": "Lastar ...",
+	"logIn": "Logg inn",
 
 	"memo": "Kommentar",
 	"monthNames": ["januar", "februar", "mars", "april", "mai", "juni", "juli", "august", "september", "oktober", "november", "desember"],
@@ -77,6 +87,8 @@
 
 	"parentCategory": "Foreldrekategori:",
 	"payee": "Betalt til/frå",
+	"pleaseSelectAnUsername": "Ver vennleg og oppgi eit brukarnamn:",
+	"pleaseSelectAPassword": "Ver vennleg og oppgi eit passord:",
 
 	"reconcileAccount": "Avstem konto",
 
@@ -94,9 +106,12 @@
 	"sidebarButtonSaveToCloud": "Lagre i skyen",
 	"sidebarButtonSettings": "Innstillingar",
 	"sidebarButtonSync": "Synkroniser",
+	"startFreeTrial": "Start gratis prøveperiode",
 
 	"templateLabel": "Kategorimal:",
 	"toBudget": "å fordele",
+
+	"username": "Brukarnamn:",
 
 	"FINAL_LINE_TO_AVOID_TRAILING_COMMA": ""
 }

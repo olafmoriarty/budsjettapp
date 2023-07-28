@@ -1,9 +1,9 @@
 import React, {useEffect} from 'react';
 import { Link } from 'react-router-dom';
-import { BP } from '../../interfaces/interfaces';
+import { useBudget } from '../../contexts/BudgetContext';
 
-function Settings(props : SettingsProps) {
-	const {t, setShowSidebar} = props.bp;
+function Settings() {
+	const {t, setShowSidebar} = useBudget();
 
 	return (
 		<main className="settings">
@@ -14,7 +14,4 @@ function Settings(props : SettingsProps) {
 	)
 }
 
-interface SettingsProps {
-	bp : BP,
-}
 export default Settings;

@@ -3,15 +3,15 @@ import React, {ReactText, useState} from 'react';
 import { FontAwesomeIcon as Icon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
-import { BP, DialogParams } from '../interfaces/interfaces';
+import { DialogParams } from '../interfaces/interfaces';
 import AddBudget from './dialogs/AddBudget';
 import AddAccount from './dialogs/AddAccount';
 import EditCategory from './dialogs/EditCategory';
 import EditAccount from './dialogs/EditAccount';
+import { useBudget } from '../contexts/BudgetContext';
 
-function Dialog(props : DialogProps) {
-	const {bp, dialogToShow} = props;
-	const {dialogBox, openDialog} = bp;
+function Dialog() {
+	const {dialogBox, openDialog, dialogToShow} = useBudget();
 
 	let dialogName : string;
 	let dialogParams : DialogParams;
@@ -38,16 +38,16 @@ function Dialog(props : DialogProps) {
 	let selectedComponent : JSX.Element = <div></div>;
 	switch (dialogName) {
 		case 'addAccount':
-			selectedComponent = <AddAccount bp={bp} />;
+			selectedComponent = <AddAccount />;
 			break;
 		case 'addBudget':
-			selectedComponent = <AddBudget bp={bp} setCloseDialog={setCloseDialog} />;
+			selectedComponent = <AddBudget setCloseDialog={setCloseDialog} />;
 			break;
 		case 'editCategory':
-			selectedComponent = <EditCategory bp={bp} id={dialogParams.id} setCloseDialog={setCloseDialog} />
+			selectedComponent = <EditCategory id={dialogParams.id} setCloseDialog={setCloseDialog} />
 			break;
 		case 'editAccount':
-			selectedComponent = <EditAccount bp={bp} account={dialogParams.account} setCloseDialog={setCloseDialog} />
+			selectedComponent = <EditAccount account={dialogParams.account} setCloseDialog={setCloseDialog} />
 			break;
 		}
 
@@ -64,11 +64,6 @@ function Dialog(props : DialogProps) {
 		{selectedComponent}
 	</dialog>
   )
-}
-
-interface DialogProps {
-	bp : BP,
-	dialogToShow : string | [string, DialogParams],
 }
 
 export default Dialog;

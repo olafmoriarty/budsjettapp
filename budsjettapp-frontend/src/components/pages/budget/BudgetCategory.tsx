@@ -6,7 +6,7 @@ import MonthCategory from './MonthCategory';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown, faCaretUp } from '@fortawesome/free-solid-svg-icons';
 
-import { BBP, BP, Category } from '../../../interfaces/interfaces'
+import { BBP, Category } from '../../../interfaces/interfaces'
 import { Draggable, DraggableProvided } from 'react-beautiful-dnd';
 
 
@@ -26,16 +26,16 @@ function BudgetCategory(props : BudgetCategoryProps) {
 				}
 				setMasterCategoryOpen(!masterCategoryOpen);
 			}}><FontAwesomeIcon icon={masterCategoryOpen ? faCaretDown : faCaretUp} /></button> : undefined}
-			<BudgetCategoryName category={category} bp={props.bp} bbp={props.bbp} />
+			<BudgetCategoryName category={category} bbp={props.bbp} />
 		</td>
 		<td className="previous-month" key={`monthcategory-${category.id}-${currentMonth}-prev`}>
-			<MonthCategory month={currentMonth - 1} category={category.id ? category.id : 0} categoryIndex={tabIndex} categoryRefIndex1={categoryRefIndex1} categoryRefIndex2={dragIndex} bp={props.bp} bbp={props.bbp} isMasterCategory={isMaster} />
+			<MonthCategory month={currentMonth - 1} category={category.id ? category.id : 0} categoryIndex={tabIndex} categoryRefIndex1={categoryRefIndex1} categoryRefIndex2={dragIndex} bbp={props.bbp} isMasterCategory={isMaster} />
 		</td>
 		<td className="current-month" key={`monthcategory-${category.id}-${currentMonth}`}>
-			<MonthCategory month={currentMonth} category={category.id ? category.id : 0} categoryIndex={tabIndex} categoryRefIndex1={categoryRefIndex1} categoryRefIndex2={dragIndex} bp={props.bp} bbp={props.bbp} isMasterCategory={isMaster} />
+			<MonthCategory month={currentMonth} category={category.id ? category.id : 0} categoryIndex={tabIndex} categoryRefIndex1={categoryRefIndex1} categoryRefIndex2={dragIndex} bbp={props.bbp} isMasterCategory={isMaster} />
 		</td>
 		<td className="next-month" key={`monthcategory-${category.id}-${currentMonth}-next`}>
-			<MonthCategory month={currentMonth + 1} category={category.id ? category.id : 0} categoryIndex={tabIndex} categoryRefIndex1={categoryRefIndex1} categoryRefIndex2={dragIndex} bp={props.bp} bbp={props.bbp} isMasterCategory={isMaster} />
+			<MonthCategory month={currentMonth + 1} category={category.id ? category.id : 0} categoryIndex={tabIndex} categoryRefIndex1={categoryRefIndex1} categoryRefIndex2={dragIndex} bbp={props.bbp} isMasterCategory={isMaster} />
 		</td>
 	</>
 
@@ -67,7 +67,6 @@ interface BudgetCategoryProps {
 	tabIndex: number,
 	dragIndex: number,
 	categoryRefIndex1?: number,
-	bp: BP,
 	bbp: BBP,
 	isMaster? : boolean,
 	provided? : DraggableProvided,

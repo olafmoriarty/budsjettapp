@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { BP, Category, DictionaryEntry, Transaction, BudgetNumbers, BAP } from '../../../interfaces/interfaces'
+import { Category, DictionaryEntry, Transaction, BudgetNumbers, BAP } from '../../../interfaces/interfaces'
 import NumberInput from '../../NumberInput'
 import AutoSuggest from '../../AutoSuggest';
 import prettyNumber from '../../../functions/prettyNumber';
@@ -7,10 +7,11 @@ import getMonth from '../../../functions/getMonth';
 import addPayeeDB from '../../../functions/database/addPayeeDB';
 import addTransactionDB from '../../../functions/database/addTransactionDB';
 import getBudgetNumbersDB from '../../../functions/database/getBudgetNumbersDB';
+import { useBudget } from '../../../contexts/BudgetContext';
 
 function AddTransaction(props : Props) {
 	const {bap, updateAccount, accountId, transaction} = props;
-	const {db, t, defaultDate, setDefaultDate, categories, activeBudget, payees, setPayees, accounts, updateAccountBalances} = props.bp;
+	const {db, t, defaultDate, setDefaultDate, categories, activeBudget, payees, setPayees, accounts, updateAccountBalances, numberOptions} = useBudget();
 
 	const isTransfer = props.isTransfer || (transaction && transaction.counterAccount);
 
@@ -108,7 +109,7 @@ function AddTransaction(props : Props) {
 		const displayValue = <div className="category-option-box">
 		<p className="category-option-parent">{categoryIndex[el.parent || 0]?.name} &gt;</p>
 		<p className="category-option-name">{el.name}</p>
-		<p className="category-option-balance">{prettyNumber(budgetNumbers[month] && el.id && budgetNumbers[month][el.id] ? budgetNumbers[month][el.id].budgetedTotal - budgetNumbers[month][el.id].spentTotal : 0, props.bp.numberOptions)}</p>
+		<p className="category-option-balance">{prettyNumber(budgetNumbers[month] && el.id && budgetNumbers[month][el.id] ? budgetNumbers[month][el.id].budgetedTotal - budgetNumbers[month][el.id].spentTotal : 0, numberOptions)}</p>
 		</div>;
 
 		return {key: el.id, value: el.name, displayValue: displayValue };
@@ -244,13 +245,13 @@ function AddTransaction(props : Props) {
 			<input id="memo" type="text" value={memo} onChange={(event) => setMemo(event.target.value)}  form="newTransactionForm" tabIndex={6} /></td>
 		<td className="out-td">
 			<label htmlFor="out">{t.out}</label>
-			<NumberInput bp={props.bp} name="out" id="out" amount={amountOut} setAmount={setAmountOut}
+			<NumberInput name="out" id="out" amount={amountOut} setAmount={setAmountOut}
 			form="newTransactionForm"
 			tabIndex={category.key === 0 ? 8 : 7}
 		/></td>
 		<td className="in-td">
 			<label htmlFor="in">{t.in}</label>
-			<NumberInput bp={props.bp} name="in" id="in" amount={amountIn} setAmount={setAmountIn}
+			<NumberInput name="in" id="in" amount={amountIn} setAmount={setAmountIn}
 		form="newTransactionForm"
 		tabIndex={category.key === 0 ? 7 : 8}
  /></td>
@@ -268,7 +269,6 @@ function AddTransaction(props : Props) {
 }
 
 interface Props {
-	bp: BP,
 	bap: BAP,
 	transaction?: Transaction,
 	updateAccount: (c? : boolean | undefined, t? : Transaction | undefined) => void,

@@ -1,4 +1,4 @@
-import { BP } from "../interfaces/interfaces";
+import { BP } from "../contexts/BudgetContext";
 import addCategory from "./database/addCategory";
 import sortBySort from "./sortBySort";
 

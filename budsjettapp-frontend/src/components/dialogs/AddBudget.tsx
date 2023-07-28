@@ -1,13 +1,14 @@
 import React, {useState} from 'react';
 import addBudget from '../../functions/database/addBudget';
-import { BP, Budget, Category, DefaultProps } from '../../interfaces/interfaces';
+import { Budget, Category } from '../../interfaces/interfaces';
 import { useNavigate } from 'react-router-dom';
 import addCategory from '../../functions/database/addCategory';
+import { useBudget } from '../../contexts/BudgetContext';
 
 function AddBudget(props : Props) {
 	const [values, setValues] = useState({} as {[key : string] : string});
 	const [template, setTemplate] = useState(0);
-	const {db, t, selectBudget, dialogBox} = props.bp;
+	const {db, t, selectBudget, dialogBox} = useBudget();
 	const {setCloseDialog} = props;
 
 	const navigate = useNavigate();
@@ -75,7 +76,6 @@ function AddBudget(props : Props) {
 }
 
 interface Props {
-	bp : BP,
 	setCloseDialog : (a : boolean) => void,
 }
 

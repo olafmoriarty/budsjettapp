@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import { Account, BP } from '../../interfaces/interfaces'
+import { Account } from '../../interfaces/interfaces'
 import addAccount from '../../functions/database/addAccount';
+import { useBudget } from '../../contexts/BudgetContext';
 
 /**
  * Content of the modal window used to edit the settings of an account.
@@ -11,7 +12,7 @@ import addAccount from '../../functions/database/addAccount';
 function EditAccount(props : Props) {
 	// Get variables from props
 	const {account, setCloseDialog} = props;
-	const {db, t, accounts, setAccounts} = props.bp;
+	const {db, t, accounts, setAccounts} = useBudget();
 
 	// Save form values to state
 	const [values, setValues] = useState({
@@ -77,7 +78,6 @@ function EditAccount(props : Props) {
 }
 
 interface Props {
-	bp : BP,
 	setCloseDialog : (a : boolean) => void,
 	account : Account | undefined,
 }

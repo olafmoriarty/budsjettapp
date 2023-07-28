@@ -147,37 +147,6 @@ export interface Transaction {
 	deleted?: boolean,
 }
 
-export interface BP {
-	db : IDBPDatabase<BudgetInterface> | undefined,
-	t : {[key : string] : string},
-
-	activeBudget : Budget,
-	accounts : Account[],
-	categories : Category[],
-	payees : Payee[],
-	showSidebar : boolean,
-	accountBalances : AccountBalances,
-	defaultDate : string,
-	numberOptions : {
-		numberOfDecimals : number,
-		decimalSign : string,
-		thousandsSign : string,
-	},
-
-	selectBudget : (a : Budget | undefined) => void,
-	selectAccount : (a : Account) => void,
-	openDialog : (a : string | [string, DialogParams]) => void,
-	setAccounts : (a : Account[]) => void,
-	setCategories : (a : Category[]) => void,
-	setPayees : (a : Payee[]) => void,
-	setShowSidebar : (a : boolean) => void,
-	setAccountBalances : (a : AccountBalances) => void,
-	setDefaultDate : (a : string) => void,
-	updateAccountBalances : () => void,
-
-	dialogBox : RefObject<HTMLDialogElement>,
-}
-
 export interface BBP {
 	budgetNumbers : BudgetNumbers,
 	setBudgetNumbers : (a : BudgetNumbers) => void,
@@ -197,10 +166,6 @@ export interface BAP {
 	transactions : Transaction[],
 	setTransactions : (a : Transaction[]) => void,
 	accountId : number,
-}
-
-export interface DefaultProps {
-	bp : BP,
 }
 
 export interface BudgetNumbers {

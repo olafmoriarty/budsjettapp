@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import { DefaultProps } from '../../../interfaces/interfaces'
 import addBudget from '../../../functions/database/addBudget';
 import { useNavigate } from 'react-router-dom';
 import deleteBudgetDB from '../../../functions/database/deleteBudgetDB';
+import { useBudget } from '../../../contexts/BudgetContext';
 
 /**
  * Form to edit the settings of a budget (e.g. its name).
  * @param props The BudgetProps (BP) element created in App.tsx.
  * @returns An "edit budget" form as a JSX element.
  */
-function EditBudget(props : DefaultProps) {
+function EditBudget() {
 
 	// Get props
-	const {t, db, activeBudget, selectBudget} = props.bp;
+	const {t, db, activeBudget, selectBudget} = useBudget();
 
 	// Get useNavigate() from router so that we can go back to Settings page
 	// later

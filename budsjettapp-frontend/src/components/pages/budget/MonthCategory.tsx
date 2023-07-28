@@ -1,10 +1,12 @@
 import React, {useState, useEffect} from 'react'
 import prettyNumber from '../../../functions/prettyNumber';
-import { BBP, BP, BudgetNumbersSingleCategory, Budgeted } from '../../../interfaces/interfaces';
+import { BBP, BudgetNumbersSingleCategory, Budgeted } from '../../../interfaces/interfaces';
 import addBudgeted from '../../../functions/database/addBudgeted';
+import { useBudget } from '../../../contexts/BudgetContext';
 
 function MonthCategory(props : Props) {
-	const {bp, month, categoryIndex, isMasterCategory, category, categoryRefIndex1, categoryRefIndex2} = props;
+	const {month, categoryIndex, isMasterCategory, category, categoryRefIndex1, categoryRefIndex2} = props;
+	const bp = useBudget();
 	const {budgetNumbers, setBudgetNumbers, currentMonth, categoryRefs} = props.bbp;
 
 	const numberOptions = {
@@ -88,7 +90,7 @@ function MonthCategory(props : Props) {
 	}
 
 	const onKeyDown = (event : React.KeyboardEvent) => {
-		if (!['ArrowUp', 'ArrowDown', 'Enter'].includes(event.key)) {
+		if (!['ArrowUp', 'ArrowDown', 'Enter', 'Escape'].includes(event.key)) {
 			return;
 		}
 
@@ -101,9 +103,12 @@ function MonthCategory(props : Props) {
 		let masterCategory = categoryRefIndex1;
 		let subCategory = categoryRefIndex2;
 
-		console.log(categoryRefs);
+		if (event.key === 'Escape') {
+			categoryRefs[masterCategory][subCategory][month].blur();
+			return;
+		}
+
 		if (event.key === 'ArrowUp') {
-			console.log(subCategory);
 			subCategory--;
 
 			if (subCategory < 0) {
@@ -117,7 +122,6 @@ function MonthCategory(props : Props) {
 			}
 		}
 		if (event.key === 'ArrowDown' || event.key === 'Enter') {
-			console.log(subCategory);
 			subCategory++;
 
 			if (subCategory > categoryRefs[masterCategory].length - 1) {
@@ -164,7 +168,6 @@ interface Props {
 	categoryIndex: number,
 	categoryRefIndex1?: number,
 	categoryRefIndex2?: number,
-	bp: BP,
 	bbp: BBP,
 }
 

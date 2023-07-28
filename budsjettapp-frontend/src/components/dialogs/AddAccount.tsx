@@ -7,14 +7,15 @@ import addTransactionDB from '../../functions/database/addTransactionDB';
 import getMonth from '../../functions/getMonth';
 import yyyymmdd from '../../functions/yyyymmdd';
 
-import { Account, DefaultProps } from '../../interfaces/interfaces';
+import { Account } from '../../interfaces/interfaces';
+import { useBudget } from '../../contexts/BudgetContext';
 
 /**
  * Content of the modal window used to create a new account.
  * @param props The BudgetProps (BP) element created in App.tsx.
  * @returns The "Create new account" form.
  */
-function AddAccount(props : DefaultProps) {
+function AddAccount() {
 
 	// State: object containing string values generated from form fields
 	const [values, setValues] = useState({} as {[key : string] : string});
@@ -23,7 +24,7 @@ function AddAccount(props : DefaultProps) {
 	const [accountBalance, setAccountBalance] = useState(0);
 
 	// Get contents of budget props
-	const {db, t, selectAccount, accounts, setAccounts, dialogBox, activeBudget, accountBalances, setAccountBalances} = props.bp;
+	const {db, t, selectAccount, accounts, setAccounts, dialogBox, activeBudget, accountBalances, setAccountBalances} = useBudget();
 
 	// On mount ...
 	useEffect(() => {
@@ -112,7 +113,7 @@ function AddAccount(props : DefaultProps) {
 			<div className="accountBalanceSettings">
 				<div>
 					<p><label htmlFor="accountBalance">{t.accountBalance}</label></p>
-					<NumberInput bp={props.bp} name="accountBalance" id="accountBalance" amount={accountBalance} setAmount={setAccountBalance}  />
+					<NumberInput name="accountBalance" id="accountBalance" amount={accountBalance} setAmount={setAccountBalance}  />
 				</div>				
 				<div>
 					<p><label htmlFor="accountBalanceDate">{t.accountBalanceDate}</label></p>

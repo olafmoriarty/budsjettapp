@@ -57,6 +57,10 @@ button {
 	background: transparent;
 	border: none;
 	font-family: var(--main-font);
+	font-size: 1rem;
+	color: var(--black);
+	text-decoration: underline;
+	text-align: left;
 }
 
 .icon {
@@ -183,6 +187,14 @@ input.number-input {
 
 }
 
+.big-button.syncing .button-icon svg {
+	animation-name: rotate-spinner;
+	animation-timing-function: linear;
+	animation-iteration-count: infinite;
+	animation-duration:3s;
+	color: var(--white);
+}
+
 @keyframes show-sidebar {
 	0% { transform: translateX(-110%); }
 	100% { transform: translateX(0%); }
@@ -230,7 +242,7 @@ input.number-input {
 	margin-bottom: .5rem;
 }
 
-.dialog-form input[type=text], .dialog-form input[type=date], .dialog-form select {
+.dialog-form input[type=text], .dialog-form input[type=password], .dialog-form input[type=date], .dialog-form select {
 	display: block;
 	width: 100%;
 	font-size: 1rem;
@@ -887,6 +899,19 @@ input.invalid:focus {
 	background: var(--sidebar);
 	color: var(--sidebar-text);
 }
+
+/* LogIn.tsx */
+
+.why-pay {
+	margin-left: 2rem;
+	margin-top: 1rem;
+}
+
+.why-pay li {
+	margin: 0 0 1rem;
+}
+
+
 
 @media screen and (max-width: 800px) {
 

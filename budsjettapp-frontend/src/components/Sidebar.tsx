@@ -1,13 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BP, DefaultProps } from '../interfaces/interfaces';
 import AccountList from './AccountList';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartLine, faCloudArrowUp, faCogs, faCoins, faRotate, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faChartLine, faCogs, faCoins, faTimes } from '@fortawesome/free-solid-svg-icons';
+import SyncButton from './sidebar/SyncButton';
+import { useBudget } from '../contexts/BudgetContext';
 
 
-function Sidebar(props : DefaultProps) {
-	const {t, activeBudget, showSidebar, setShowSidebar} = props.bp;
+function Sidebar() {
+	const {t, activeBudget, showSidebar, setShowSidebar} = useBudget();
 
 	if (!activeBudget) {
 		return <div className="sidebar sidebar-no-budget"></div>
@@ -21,16 +22,9 @@ function Sidebar(props : DefaultProps) {
 			<span className="button-text">{t.sidebarButtonBudget}</span>
 		</Link>
 
-		<AccountList bp={props.bp} />
+		<AccountList />
 
-		{activeBudget.externalId ? <Link to="/" className="button big-button" onClick={() => setShowSidebar(false)}>
-			<span className="button-icon"><FontAwesomeIcon icon={faRotate} /></span>
-			<span className="button-text">{t.sidebarButtonSync}</span>
-		</Link> :
-		<Link to="/" className="button big-button" onClick={() => setShowSidebar(false)}>
-			<span className="button-icon"><FontAwesomeIcon icon={faCloudArrowUp} /></span>
-			<span className="button-text">{t.sidebarButtonSaveToCloud}</span>
-		</Link>}
+		<SyncButton />
 
 		<Link to="/" className="button big-button" onClick={() => setShowSidebar(false)}>
 			<span className="button-icon"><FontAwesomeIcon icon={faChartLine} /></span>

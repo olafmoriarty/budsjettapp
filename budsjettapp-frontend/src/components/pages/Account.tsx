@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Account as AccountType, Category, DefaultProps, Payee, Transaction } from '../../interfaces/interfaces'
+import { Account as AccountType, Category, Payee, Transaction } from '../../interfaces/interfaces'
 import getTransactionsDB from '../../functions/database/getTransactionsDB';
 import prettyNumber from '../../functions/prettyNumber';
 import AddTransaction from './account/AddTransaction';
 import AccountTransaction from './account/AccountTransaction';
+import { useBudget } from '../../contexts/BudgetContext';
 
-function Account(props : DefaultProps) {
-	const {accounts, categories, payees, t, activeBudget, db, numberOptions, accountBalances, openDialog} = props.bp;
+function Account() {
+	const {accounts, categories, payees, t, activeBudget, db, numberOptions, accountBalances, openDialog} = useBudget();
 	const params = useParams();
 	const [transactions, setTransactions] = useState([] as Transaction[]);
 	const [showAddNew, setShowAddNew] = useState('' as string);
@@ -111,7 +112,7 @@ function Account(props : DefaultProps) {
 					</tr>
 				</thead>
 				<tbody>
-					{showAddNew && account.id ? <AddTransaction bp={props.bp} bap={bap} updateAccount={updateAccount} accountId={account.id} isTransfer={showAddNew === 'transfer'} /> : undefined}
+					{showAddNew && account.id ? <AddTransaction bap={bap} updateAccount={updateAccount} accountId={account.id} isTransfer={showAddNew === 'transfer'} /> : undefined}
 					{transactions
 					.sort((a, b) => {
 						if (a.date < b.date) {
@@ -125,7 +126,7 @@ function Account(props : DefaultProps) {
 						}
 						return -1;
 					})
-					.map((el) => <AccountTransaction bp={props.bp} bap={bap} transaction={el} checked={selectedTransactions.includes(el.id || -1)} key={el.id} />)}
+					.map((el) => <AccountTransaction bap={bap} transaction={el} checked={selectedTransactions.includes(el.id || -1)} key={el.id} />)}
 				</tbody>
 			</table>
 		</main>

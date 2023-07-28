@@ -2,10 +2,10 @@ import React from 'react'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
-import { DefaultProps } from '../interfaces/interfaces';
+import { useBudget } from '../contexts/BudgetContext';
 
-function ShowMenuButton(props : DefaultProps) {
-	const {showSidebar, setShowSidebar, activeBudget} = props.bp;
+function ShowMenuButton() {
+	const {showSidebar, setShowSidebar, activeBudget} = useBudget();
 	if (!activeBudget || showSidebar) {
 		return null;
 	}

@@ -1,22 +1,23 @@
 import React from 'react'
 import prettyNumber from '../../../functions/prettyNumber';
-import { BBP, BP } from '../../../interfaces/interfaces';
+import { BBP } from '../../../interfaces/interfaces';
+import { useBudget } from '../../../contexts/BudgetContext';
 
 function MonthHeader(props : Props) {
-	const {monthId, bp, bbp} = props;
-	const {t} = bp;
+	const {monthId, bbp} = props;
+	const {t} = useBudget();
 	const {budgetNumbers} = bbp;
 	const year = (Math.floor(monthId / 12) + 2000).toString();
-	let monthString = bp.t.monthNames[monthId % 12];
+	let monthString = t.monthNames[monthId % 12];
 
 	const income = budgetNumbers[monthId]?.[0]?.spentTotal || 0;
 
 	const budgetedTotal = budgetNumbers[monthId] ? Object.keys(budgetNumbers[monthId]).reduce((accumulator, value) => accumulator + budgetNumbers[monthId][Number(value)].budgetedTotal, 0) : 0;
 
 	const numberOptions = {
-		numberOfDecimals: Number(bp.t.numberOfDecimals),
-		decimalSign: bp.t.decimalSign,
-		thousandsSign: bp.t.thousandsSign,
+		numberOfDecimals: Number(t.numberOfDecimals),
+		decimalSign: t.decimalSign,
+		thousandsSign: t.thousandsSign,
 	};
 
 	return (
@@ -35,7 +36,6 @@ function MonthHeader(props : Props) {
 
 interface Props {
 	monthId: number,
-	bp: BP,
 	bbp: BBP,
 }
 

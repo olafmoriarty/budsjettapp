@@ -1,12 +1,13 @@
 import React, {useState, useEffect} from 'react'
-import { BBP, BP, Category } from '../../../interfaces/interfaces';
+import { BBP, Category } from '../../../interfaces/interfaces';
 import addCategory from '../../../functions/database/addCategory';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faGear } from '@fortawesome/free-solid-svg-icons';
+import { useBudget } from '../../../contexts/BudgetContext';
 
 const BudgetCategoryName = (props : CategoryNameProps) => {
-	const {bp} = props;
+	const bp = useBudget();
 	const {id, name} = props.category;
 
 	const [categoryName, setCategoryName] = useState(name);
@@ -59,7 +60,6 @@ const BudgetCategoryName = (props : CategoryNameProps) => {
 }
 
 interface CategoryNameProps {
-	bp: BP,
 	bbp: BBP,
 	category : Category,
 }

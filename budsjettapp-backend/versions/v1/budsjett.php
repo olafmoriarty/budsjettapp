@@ -30,7 +30,13 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 }
 $auth = $user->authorize($authorization_header, $secrets);
 
-$c['auth'] = $auth;
+if (!$auth['status']) {
+	$c['status'] = $auth['status'];
+	$c['error'] = $auth['error'];
+}
 
+if (isset($auth['access_token'])) {
+	$c['accessToken'] = $auth['access_token'];
+}
 // Output content
 include(__DIR__ . '/output.php');

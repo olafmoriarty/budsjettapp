@@ -1,10 +1,11 @@
 import React, {useState, useEffect, useRef} from 'react'
 import prettyNumber from '../functions/prettyNumber';
-import { BBP, BP, BudgetNumbersSingleCategory, Budgeted } from '../interfaces/interfaces';
+import { BBP, BudgetNumbersSingleCategory, Budgeted } from '../interfaces/interfaces';
+import { useBudget } from '../contexts/BudgetContext';
 
 function NumberInput(props : Props) {
-	const {bp, amount, setAmount, tabIndex, form} = props;
-	const {numberOptions} = bp;
+	const {amount, setAmount, tabIndex, form} = props;
+	const {t, numberOptions} = useBudget();
 
 	const inputRef = useRef();
 
@@ -20,7 +21,7 @@ function NumberInput(props : Props) {
 
 	const changeInputValue = (event : React.FormEvent<HTMLInputElement>) => {
 		setInputValue(event.currentTarget.value);
-		const newFloat = parseFloat(event.currentTarget.value.replaceAll(' ', '').replaceAll(bp.t.thousandsSign, '').replace(bp.t.decimalSign, '.')) || 0;
+		const newFloat = parseFloat(event.currentTarget.value.replaceAll(' ', '').replaceAll(t.thousandsSign, '').replace(t.decimalSign, '.')) || 0;
 		setAmount(newFloat);
 		setLocalAmount(newFloat);
 	}
@@ -59,7 +60,6 @@ function NumberInput(props : Props) {
 }
 
 interface Props {
-	bp: BP,
 	name : string,
 	id : string,
 	amount : number,

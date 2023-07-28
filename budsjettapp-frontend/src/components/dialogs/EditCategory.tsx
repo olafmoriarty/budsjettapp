@@ -1,15 +1,17 @@
 import React, {useState, useEffect} from 'react'
-import { BP, Category } from '../../interfaces/interfaces'
+import { Category } from '../../interfaces/interfaces'
 import Loading from '../Loading';
 import getTransactionCountDB from '../../functions/database/getTransactionCountDB';
 import sortBySort from '../../functions/sortBySort';
 import deleteCategoryDB from '../../functions/database/deleteCategoryDB';
 import addCategory from '../../functions/database/addCategory';
 import moveCategory from '../../functions/moveCategory';
+import { useBudget } from '../../contexts/BudgetContext';
 
 function EditCategory( props : EditCategoryProps ) {
-	const {bp, setCloseDialog, id} = props;
-	const {t, categories, setCategories} = props.bp;
+	const {setCloseDialog, id} = props;
+	const bp = useBudget();
+	const {db, activeBudget, t, categories, setCategories} = bp;
 
 	const [isLoading, setIsLoading] = useState(true);
 	const [transactionCount, setTransactionCount] = useState(0);
@@ -29,7 +31,7 @@ function EditCategory( props : EditCategoryProps ) {
 
 	useEffect(() => {
 		setIsLoading(true);
-		getTransactionCountDB(bp.db, bp.activeBudget.id || 0, { category: id })
+		getTransactionCountDB(db, activeBudget.id || 0, { category: id })
 		.then(count => {
 			setTransactionCount(count || 0);
 			setIsLoading(false);
@@ -48,7 +50,7 @@ function EditCategory( props : EditCategoryProps ) {
 			return;
 		}
 		if (mode === 'delete' && !category.externalId) {
-			deleteCategoryDB(bp.db, id)
+			deleteCategoryDB(db, id)
 			.then (() => {
 				const newCategories = categories.filter(el => el.id !== id);
 				setCategories(newCategories);
@@ -62,6 +64,9 @@ function EditCategory( props : EditCategoryProps ) {
 			if (mode === 'hide') {
 				newCategory.hidden = true;
 			}
+			if (mode === 'unhide') {
+				newCategory.hidden = false;
+			}
 			if (mode === 'delete') {
 				newCategory = { 
 					id: category.id, 
@@ -72,7 +77,7 @@ function EditCategory( props : EditCategoryProps ) {
 				}
 			}
 			newCategory.sync = 1;
-			addCategory(bp.db, newCategory)
+			addCategory(db, newCategory)
 			.then(() => {
 				if (category && (category.parent !== parentInput || mode === 'hide')) {
 					moveCategory(bp, id, -1, mode === 'hide' ? category.parent : parentInput)
@@ -123,7 +128,6 @@ function EditCategory( props : EditCategoryProps ) {
 }
 
 interface EditCategoryProps {
-	bp : BP,
 	id : number | undefined,
 	setCloseDialog : (a : boolean) => void,
 }

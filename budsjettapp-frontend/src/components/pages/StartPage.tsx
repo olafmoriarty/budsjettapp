@@ -1,11 +1,13 @@
 import React, {useState, useEffect} from 'react'
 import getBudgets from '../../functions/database/getBudgets';
-import { Budget, DefaultProps } from '../../interfaces/interfaces';
+import { Budget } from '../../interfaces/interfaces';
 
 import { useNavigate } from 'react-router-dom';
+import { useBudget } from '../../contexts/BudgetContext';
 
-function StartPage(props : DefaultProps) {
-	const {t, db, selectBudget, openDialog} = props.bp;
+function StartPage() {
+	const {t, db, selectBudget, openDialog} = useBudget();
+	console.log(t);
 	const [allBudgets, setAllBudgets] = useState([] as Budget[]);
 	const [showAllBudgets, setShowAllBudgets] = useState(false);
 	const budgetsToShow = 3;

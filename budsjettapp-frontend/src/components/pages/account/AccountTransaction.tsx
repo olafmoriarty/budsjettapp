@@ -1,15 +1,16 @@
 import React, { useState } from 'react'
-import { BAP, BP, Transaction } from '../../../interfaces/interfaces';
+import { BAP, Transaction } from '../../../interfaces/interfaces';
 import formatDate from '../../../functions/formatDate';
 import prettyNumber from '../../../functions/prettyNumber';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
 import AddTransaction from './AddTransaction';
 import deleteTransactionDB from '../../../functions/database/deleteTransactionDB';
+import { useBudget } from '../../../contexts/BudgetContext';
 
 function AccountTransaction(props : Props) {
-	const {bp, bap, transaction, checked} = props;
-	const {db, t, numberOptions} = bp;
+	const {bap, transaction, checked} = props;
+	const {db, t, numberOptions, updateAccountBalances} = useBudget();
 	const {categoriesById, accountsById, payeesById, transactions, setTransactions, registerCheckbox} = bap;
 
 	const [editRow, setEditRow] = useState(false);
@@ -28,14 +29,14 @@ function AccountTransaction(props : Props) {
 	const deleteTransaction = () => {
 		deleteTransactionDB(db, transaction)
 		.then(() => {
-			bp.updateAccountBalances();
+			updateAccountBalances();
 			const newTransactions = [ ... transactions.filter((el) => el.id !== transaction.id)];
 			setTransactions(newTransactions);
 		});
 	}
 
 	if (editRow) {
-		return <AddTransaction bp={bp} bap={bap} updateAccount={updateTransaction} accountId={bap.accountId} transaction={transaction} />
+		return <AddTransaction bap={bap} updateAccount={updateTransaction} accountId={bap.accountId} transaction={transaction} />
 	}
 	return (
 		<tr className="transaction-row" key={transaction.id} onClick={() => registerCheckbox(transaction.id)} onDoubleClick={() => setEditRow(true)}>
@@ -72,7 +73,6 @@ function AccountTransaction(props : Props) {
 }
 
 interface Props {
-	bp: BP,
 	transaction: Transaction,
 	bap: BAP,
 	checked?: boolean,

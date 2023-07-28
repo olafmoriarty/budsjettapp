@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BP, Category, Payee, Account } from '../../../interfaces/interfaces';
+import { Category, Payee, Account } from '../../../interfaces/interfaces';
 import {utils, writeFile} from 'xlsx';
 import getTransactionsDB from '../../../functions/database/getTransactionsDB';
 import getAllDB from '../../../functions/database/getAllDB';
 import downloadTextFile from '../../../functions/downloadTextFile';
+import { useBudget } from '../../../contexts/BudgetContext';
 
 /**
  * Form to download an export file of the current budget.
- * @param props The BudgetProps (BP) element created in App.tsx.
  * @returns A form that lets the user export the budget in JSON or Excel format.
  */
-function ExportBudget(props : Props) {
+function ExportBudget() {
 
-	// Get variables from props.
-	const {t, db, accounts, categories, payees, activeBudget} = props.bp;
+	// Get variables from context.
+	const {t, db, accounts, categories, payees, activeBudget} = useBudget();
 
 	// State to save whether the user has picked JSON or Excel.
 	const [format, setFormat] = useState(undefined as 'json' | 'excel' | undefined);
@@ -170,10 +170,6 @@ function ExportBudget(props : Props) {
 			</form>
 		</main>
 	)
-}
-
-interface Props {
-	bp: BP,
 }
 
 export default ExportBudget;
