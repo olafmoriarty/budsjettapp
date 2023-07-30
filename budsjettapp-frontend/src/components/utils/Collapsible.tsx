@@ -12,7 +12,7 @@ function Collapsible( props : Props ) {
 
 	return (
 		<div className="collapsible">
-			<p><button className="link" onClick={toggleContent}>{props.linkText}</button></p>
+			<p><button type="button" className="link" onClick={toggleContent}>{props.linkText}</button></p>
 			{show ? content : undefined}
 		</div>
 	)

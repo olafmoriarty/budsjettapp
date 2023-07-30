@@ -6,7 +6,7 @@
 	"thousandsSign": "\u00A0",
 	"dateFormat": "{dd}.{mm}.{yyyy}",
 
-	"aboutCloudStorage": "Skylagring på Budsjett.app er ei tilleggsteneste som ikkje er inkludert i gratisdelen av appen. Du kan prøve tenesta gratis i 90 dagar. Deretter kostar det 100 kr i året.",
+	"aboutCloudStorage": "NB: Skylagring på Budsjett.app er ei tilleggsteneste som ikkje er inkludert i den gratis delen av appen. Du kan prøve tenesta gratis i 90 dagar. Deretter kostar det 100 kr i året.",
 	"accountBalance": "Balanse på konto:",
 	"accountBalanceDate": "Dato for balanse:",
 	"accountBalanceMemo": "Inngåande balanse",
@@ -46,7 +46,9 @@
 	"editCategory": "Rediger kategori",
 	"editCurrentBudget": "Rediger aktivt budsjett",
 	"editTransaction": "Rediger transaksjon",
+	"error": "FEIL:",
 	"errorNoIndexedDB": "Nettlesaren din støtter ikkje IndexedDB og kan difor ikkje køyre denne appen.",
+	"error_OFFLINE": "Klarte ikkje å koble til serveren.",
 	"exportBudget": "Eksporter budsjett",
 	"exportBudgetDotDotDot": "Eksporter budsjett ...",
 	"exportFormat": "Kva format ønskjer du å laste ned budsjettet i?",
@@ -58,6 +60,7 @@
 	"hideCategory": "Skjul kategorien frå kategorilista",
 	"hideCategoryButton": "Skjul kategori",
 
+	"iDontHaveAnUser": "Eg vil opprette ein ny brukar",
 	"iHaveAnUser": "Eg har allereie ein brukar",
 	"in": "Inn",
 	"income": "Inntekt",
@@ -86,6 +89,7 @@
 	"overbudgeted": "for mykje budsjettert",
 
 	"parentCategory": "Foreldrekategori:",
+	"password": "Passord:",
 	"payee": "Betalt til/frå",
 	"pleaseSelectAnUsername": "Ver vennleg og oppgi eit brukarnamn:",
 	"pleaseSelectAPassword": "Ver vennleg og oppgi eit passord:",

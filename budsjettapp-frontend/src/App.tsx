@@ -10,7 +10,7 @@ import ShowMenuButton from './components/ShowMenuButton';
 import Sidebar from './components/Sidebar';
 
 // Import context
-import { BudgetProvider } from './contexts/BudgetContext';
+import { ContextProvider } from './contexts/Context';
 
 /**
  * The main app file, to be called from index.tsx.
@@ -20,12 +20,12 @@ function App() {
 
 	// Return the app!
 	return (
-		<BudgetProvider>
+		<ContextProvider>
 			<Sidebar />
 			<ShowMenuButton />
 			<Content />
 			<Dialog />
-		</BudgetProvider>
+		</ContextProvider>
 	);
 
 }

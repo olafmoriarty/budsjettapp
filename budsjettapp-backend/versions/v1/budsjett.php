@@ -35,8 +35,21 @@ if (!$auth['status']) {
 	$c['error'] = $auth['error'];
 }
 
-if (isset($auth['access_token'])) {
-	$c['accessToken'] = $auth['access_token'];
+if (isset($auth['accessToken'])) {
+	$c['accessToken'] = $auth['accessToken'];
 }
+
+// Get body from submitted json
+$body = json_decode(file_get_contents("php://input"), true);
+
+// Get endpoint to open
+$endpoint = strtok('/');
+
+// Run code based on which endpoint is selected
+
+if ($endpoint === 'user') {
+	include(__DIR__ . '/user.php');
+}
+
 // Output content
 include(__DIR__ . '/output.php');

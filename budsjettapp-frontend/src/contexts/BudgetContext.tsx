@@ -68,7 +68,6 @@ export const BudgetProvider = (props : Props) => {
 
 	// Fetch language files
 	const t = require(`../languages/${lang}.json`);
-	console.log(t);
 	
 	// Get the navigate function from react-router-dom
 	const navigate = useNavigate();
@@ -177,9 +176,10 @@ export const BudgetProvider = (props : Props) => {
 	 * Fetch data from the API 
 	 * @param endpoint - the API endpoint to access
 	 */
-	const fetchFromAPI = async ( endpoint : 'sync' | 'auth', options? : {}) => {
+	const fetchFromAPI = async ( path : string, options? : FetchOptions) => {
 		const api = 'https://testapi.budsjett.app/v1/';
 
+		/*
 		// If we're trying to upload a budget, first check if budget exists
 		if (endpoint === 'sync' && (!activeBudget || !activeBudget.id)) {
 			return;
@@ -206,9 +206,22 @@ export const BudgetProvider = (props : Props) => {
 				return;
 			}
 		}
+		*/
 
-		const response = await fetch(api + endpoint + '/', {
+		let headers = {
+			'Content-Type': 'application/json',
+		} as { [key : string] : string };
 
+		if (token) {
+			headers['Authorization'] = token;
+		}
+
+		const response = await fetch(api + path, {
+			headers: headers,
+			method: 'POST',
+			mode: 'cors',
+			credentials: 'include',
+			body: options?.body ? JSON.stringify(options.body) : undefined,
 		});
 		const json = await response.json();
 
@@ -219,7 +232,12 @@ export const BudgetProvider = (props : Props) => {
 		return json;
 	}
 
-	const bp = {db, t, activeBudget, selectBudget, selectAccount, openDialog, dialogBox, accounts, setAccounts, categories, setCategories, payees, setPayees, showSidebar, setShowSidebar, accountBalances, setAccountBalances, numberOptions, defaultDate, setDefaultDate, updateAccountBalances, token, setToken, fetchFromAPI, dialogToShow} as BP;
+	interface FetchOptions {
+		body?: object,
+		auth?: string,
+	}
+
+	const bp = {db, t, activeBudget, selectBudget, selectAccount, openDialog, dialogBox, accounts, setAccounts, categories, setCategories, payees, setPayees, showSidebar, setShowSidebar, accountBalances, setAccountBalances, numberOptions, defaultDate, setDefaultDate, updateAccountBalances, dialogToShow} as BP;
 
 	return (
 		<BudgetContext.Provider value={bp}>
@@ -245,7 +263,6 @@ export interface BP {
 	showSidebar : boolean,
 	accountBalances : AccountBalances,
 	defaultDate : string,
-	token : string,
 	numberOptions : {
 		numberOfDecimals : number,
 		decimalSign : string,
@@ -261,9 +278,7 @@ export interface BP {
 	setShowSidebar : (a : boolean) => void,
 	setAccountBalances : (a : AccountBalances) => void,
 	setDefaultDate : (a : string) => void,
-	setToken : (a : string) => void,
 	updateAccountBalances : () => void,
-	fetchFromAPI : (a : string, b? : object) => Promise<object>,
 
 	dialogBox : RefObject<HTMLDialogElement>,
 	dialogToShow : string | [string, DialogParams],

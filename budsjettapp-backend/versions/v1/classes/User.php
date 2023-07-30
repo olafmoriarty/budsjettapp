@@ -79,7 +79,7 @@ class User {
 					'status' => 1,
 					'id' => $payload['id'],
 					'name' => $payload['name'],
-					'access_token' => $payload['access_token'],
+					'accessToken' => $this->jwt,
 				]);
 			}
 			else {
@@ -130,7 +130,7 @@ class User {
 			'status' => 1,
 			'id' => $new_id,
 			'name' => $username,
-			'access_token' => $this->jwt,
+			'accessToken' => $this->jwt,
 		]);
 
 	}
@@ -178,7 +178,7 @@ class User {
 			'status' => 1,
 			'id' => $new_id,
 			'name' => $username,
-			'access_token' => $this->jwt,
+			'accessToken' => $this->jwt,
 		]);
 	}
 
@@ -228,7 +228,7 @@ class User {
 		}
 
 		// If we reach this point, the token is valid. Get its payload.
-		$payload = json_decode($token_array[1], true);
+		$payload = json_decode(base64_decode($token_array[1]), true);
 
 		// Check if token has expired
 		if ($payload['exp'] < time()) {
@@ -247,8 +247,8 @@ class User {
 
 	private function set_jwts($id, $name, $secrets, $set_refresh_token = true) {
 		// Generate access token and save it to variable
-		$access_token = $this->generate_jwt([ 'id' => $id, 'name' => $name ], $secrets['access_token_secret'], 3);
-		$this->jwt = $access_token;
+		$accessToken = $this->generate_jwt([ 'id' => $id, 'name' => $name ], $secrets['access_token_secret'], 3);
+		$this->jwt = $accessToken;
 
 		if ($set_refresh_token) {
 			// Set refresh token and save it to cookie

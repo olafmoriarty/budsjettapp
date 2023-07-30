@@ -2,6 +2,9 @@
 RewriteEngine On
 RewriteBase /
 
+RewriteCond %{HTTP:Authorization} ^(.+)$
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
 RewriteCond %{HTTPS} !=on
 RewriteCond %{REMOTE_ADDR} !=127.0.0.1
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
