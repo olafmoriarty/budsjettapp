@@ -8,6 +8,14 @@ spl_autoload_register( function ($name) {
 	include( __DIR__ . '/classes/' . $name . '.php' );
 } );
 
+// Get body from submitted json
+$body = json_decode(file_get_contents("php://input"), true);
+
+// Get endpoint to open
+$endpoint = strtok('/');
+
+// Get http method
+$method = $_SERVER['REQUEST_METHOD'];
 // Get secret keys
 include(__DIR__ . '/secrets.php');
 
@@ -39,16 +47,16 @@ if (isset($auth['accessToken'])) {
 	$c['accessToken'] = $auth['accessToken'];
 }
 
-// Get body from submitted json
-$body = json_decode(file_get_contents("php://input"), true);
-
-// Get endpoint to open
-$endpoint = strtok('/');
-
 // Run code based on which endpoint is selected
 
-if ($endpoint === 'user') {
-	include(__DIR__ . '/user.php');
+$endpoints = ['user', 'budgets'];
+
+if (in_array( $endpoint, $endpoints )) {
+	include(__DIR__ . '/' . $endpoint. '.php');
+}
+else {
+	$c['status'] = 0;
+	$c['error'] = 'NO_ENDPOINT_SELECTED';
 }
 
 // Output content

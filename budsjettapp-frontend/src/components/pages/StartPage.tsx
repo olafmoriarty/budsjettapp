@@ -7,7 +7,6 @@ import { useBudget } from '../../contexts/BudgetContext';
 
 function StartPage() {
 	const {t, db, selectBudget, openDialog} = useBudget();
-	console.log(t);
 	const [allBudgets, setAllBudgets] = useState([] as Budget[]);
 	const [showAllBudgets, setShowAllBudgets] = useState(false);
 	const budgetsToShow = 3;

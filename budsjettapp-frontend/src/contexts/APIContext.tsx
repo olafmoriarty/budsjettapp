@@ -2,10 +2,16 @@ import React, {useState, createContext, useContext} from 'react';
 
 // Import CSS
 import '../css/budget.css';
+import { useBudget } from './BudgetContext';
+import getAllDB from '../functions/database/getAllDB';
+import addBudget from '../functions/database/addBudget';
+import { Account, Budget, Budgeted, Category, Payee, Transaction } from '../interfaces/interfaces';
 
 const APIContext = createContext( {} as APIContextType );
 
 export const APIProvider = (props : Props) => {
+
+	const { db, activeBudget, selectBudget } = useBudget();
 
 	// State: Access token to API
 	const [token, setToken] = useState(undefined as string | undefined);
@@ -58,6 +64,7 @@ export const APIProvider = (props : Props) => {
 			headers['Authorization'] = 'Bearer ' + token;
 		}
 
+		console.log(api + path);
 		try {
 			const response = await fetch(api + path, {
 				headers: headers,
@@ -85,12 +92,34 @@ export const APIProvider = (props : Props) => {
 		}
 	}
 
+	const syncBudget = async () => {
+		if (!activeBudget || !activeBudget.id) {
+			return;
+		}
+		const budget = await getAllDB(db, activeBudget.id);
+		const mode = activeBudget.externalId ? 'sync' : 'create';
+		console.log(budget);
+		const result = await fetchFromAPI(`budgets/?mode=${mode}`, {
+			body: budget,
+		});
+		console.log(result);
+
+		if (!result.status) {
+			return( result );
+		}
+		if (activeBudget.sync) {
+			await addBudget(db, result.data.budget);
+			selectBudget(result.data.budget);
+		}
+		return( result );
+	}
+
 	interface FetchOptions {
 		body?: object,
 		auth?: string,
 	}
 
-	const bp = {token, setToken, fetchFromAPI, isFetching, setIsFetching} as APIContextType;
+	const bp = {token, setToken, fetchFromAPI, isFetching,setIsFetching, syncBudget} as APIContextType;
 
 	return (
 		<APIContext.Provider value={bp}>
@@ -105,6 +134,19 @@ interface Props {
 	 children : JSX.Element | JSX.Element[],
 }
 
+interface SyncResult {
+	status: number,
+	error?: string,
+	data?: {
+		budget?: Budget,
+		accounts?: Account[],
+		categories?: Category[],
+		budgeted?: Budgeted[],
+		payees?: Payee[],
+		transactions?: Transaction[],
+	}
+}
+
 export interface APIContextType {
 	token : string,
 	setToken : (a : string) => void,
@@ -113,4 +155,7 @@ export interface APIContextType {
 	setIsFetching : (a : boolean) => void,
 
 	fetchFromAPI : (a : string, b? : object) => Promise<any>,
+
+	syncBudget : () => Promise<SyncResult>,
 }
+

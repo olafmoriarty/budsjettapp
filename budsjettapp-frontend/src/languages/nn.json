@@ -49,6 +49,7 @@
 	"error": "FEIL:",
 	"errorNoIndexedDB": "Nettlesaren din støtter ikkje IndexedDB og kan difor ikkje køyre denne appen.",
 	"error_OFFLINE": "Klarte ikkje å koble til serveren.",
+	"error_USER_EXISTS": "Det oppgitte brukarnamnet er allereie i bruk.",
 	"exportBudget": "Eksporter budsjett",
 	"exportBudgetDotDotDot": "Eksporter budsjett ...",
 	"exportFormat": "Kva format ønskjer du å laste ned budsjettet i?",

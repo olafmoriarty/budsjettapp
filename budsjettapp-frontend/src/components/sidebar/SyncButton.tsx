@@ -6,14 +6,14 @@ import { useAPI } from '../../contexts/APIContext';
 
 function SyncButton() {
 	const {activeBudget, setShowSidebar, t} = useBudget();
-	const {token, fetchFromAPI, isFetching, setIsFetching} = useAPI();
+	const {token, fetchFromAPI, isFetching, setIsFetching, syncBudget} = useAPI();
 
 	const onClick = async () => {
 		if (isFetching) {
 			return;
 		}
 		setIsFetching(true);		
-		await fetchFromAPI('');
+		await syncBudget();
 		setIsFetching(false);
 	}
 

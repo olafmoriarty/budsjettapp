@@ -97,6 +97,20 @@ class User {
 		]);
 	}
 
+	public function log_out() {
+		// This deletes the refresh token.
+		// In addition to calling $user->log_out(), you should set
+		// $c['accessToken'] to an empty string.
+
+		setcookie('refresh_token', '', [
+			'expires' => time() - 3600,
+			'path' => '/',
+			'secure' => true,
+			'httponly' => true,
+			'samesite' => 'None'
+		]);
+	}
+
 	private function log_in( $username, $password, $secrets ) {
 
 		// Check if username exists 
