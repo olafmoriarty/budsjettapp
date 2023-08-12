@@ -100,6 +100,24 @@ button {
 	color: var(--accent-red);
 }
 
+.warning {
+	display: flex;
+	background: var(--accent-yellow);
+	margin-bottom: 1rem;
+	border-radius: .5rem;
+	font-weight: bold;
+	align-items: center;
+	border: solid 1px var(--black);
+}
+
+.warning > * {
+	margin: 0;
+	padding: .5rem;
+}
+
+.warning > .triangle {
+	font-size: 2rem;
+}
 .error .icon {
 	display: block;
 	position: absolute;
@@ -214,6 +232,18 @@ input.number-input {
 	animation-iteration-count: infinite;
 	animation-duration:3s;
 	color: var(--white);
+}
+
+.big-button	 .sync-count {
+	display: block;
+	background: var(--accent-red);
+	color: var(--white);
+	font-weight: bold;
+	font-size: .8rem;
+	padding: .2rem .4rem;
+	border-radius: .6rem;
+	min-height: 1rem;
+	box-shadow: .125rem .125rem .125rem var(--black);
 }
 
 @keyframes show-sidebar {
@@ -495,6 +525,14 @@ main.budget .b-o-b {
 	font-size: .8rem;
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
+}
+
+main.budget .b-o-b input {
+	text-decoration: underline;
+}
+
+main.budget .b-o-b input:focus {
+	text-decoration: none;
 }
 
 main.budget .b-o-b div {
@@ -1239,6 +1277,10 @@ input.invalid:focus {
 
 	main.budget .category-name .main-part-of-cell {
 		text-align: left;
+	}
+
+	main.budget tr:has(.b-o-b input:focus) td {
+		background: var(--accent-yellow);
 	}
 	
 	/* Account.tsx */

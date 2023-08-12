@@ -18,6 +18,7 @@ import getPayeesDB from '../functions/database/getPayeesDB';
 
 // Import types and interfaces
 import { Account, Budget, BudgetInterface, Category, Payee, AccountBalances, DialogParams } from '../interfaces/interfaces';
+import generatePseudoRandom from '../functions/generatePseudoRandom';
 
 const BudgetContext = createContext( {
 	db: undefined,
@@ -63,6 +64,8 @@ export const BudgetProvider = (props : Props) => {
 	// Ref: The <dialog> box used to display dialogs
 	const dialogBox = useRef<HTMLDialogElement>(null);
 
+	// State: Device identifier
+	const [deviceIdentifier, setDeviceIdentifier] = useState('');
 	// Get app language
 	const lang = 'nn';
 
@@ -90,6 +93,16 @@ export const BudgetProvider = (props : Props) => {
 				selectBudget(JSON.parse(localStorage.getItem("activeBudget") || "{}"));
 			}
 		});
+	}, []);
+
+	// Effect: Create a "device identifier", or get one from local storage. When syncing with the API, this value is used to identify this machine so that if anything is uploaded twice it won't be added to the database twice.
+	useEffect(() => {
+		let device = localStorage.getItem("deviceIdentifier") || '';
+		if (!device) {
+			device = generatePseudoRandom(10);
+			localStorage.setItem('deviceIdentifier', device);
+		}
+		setDeviceIdentifier(device);
 	}, []);
 
 	// Effect: Whenever the active budget changes, populate all variables. Also, go to the budget screen, show the sidebar on mobile screens, and save the active budget to localStorage.
@@ -172,72 +185,7 @@ export const BudgetProvider = (props : Props) => {
 		}
 	}
 
-	/**
-	 * Fetch data from the API 
-	 * @param endpoint - the API endpoint to access
-	 */
-	const fetchFromAPI = async ( path : string, options? : FetchOptions) => {
-		const api = 'https://testapi.budsjett.app/v1/';
-
-		/*
-		// If we're trying to upload a budget, first check if budget exists
-		if (endpoint === 'sync' && (!activeBudget || !activeBudget.id)) {
-			return;
-		}
-
-		let authToken = token;
-
-		// If we're updating a budget, assume a refresh token exists
-		// - if not, check if it does before sending a giant file to the server
-		if (endpoint === 'sync' && !activeBudget?.externalId && !authToken) {
-			const response = await fetch(api + 'auth/', {
-				method: 'POST',
-				mode: 'cors',
-				credentials: 'include',
-			});
-			const json = await response.json();
-			if (json.authToken) {
-				authToken = json.authToken;
-				setToken(json.authToken);
-			}
-			else if (json.status === 0) {
-				console.log(json.error);
-				navigate('/log-in');
-				return;
-			}
-		}
-		*/
-
-		let headers = {
-			'Content-Type': 'application/json',
-		} as { [key : string] : string };
-
-		if (token) {
-			headers['Authorization'] = token;
-		}
-
-		const response = await fetch(api + path, {
-			headers: headers,
-			method: 'POST',
-			mode: 'cors',
-			credentials: 'include',
-			body: options?.body ? JSON.stringify(options.body) : undefined,
-		});
-		const json = await response.json();
-
-		if (json.accessToken) {
-			setToken(json.accessToken);
-		}
-		console.log(json);
-		return json;
-	}
-
-	interface FetchOptions {
-		body?: object,
-		auth?: string,
-	}
-
-	const bp = {db, t, activeBudget, selectBudget, selectAccount, openDialog, dialogBox, accounts, setAccounts, categories, setCategories, payees, setPayees, showSidebar, setShowSidebar, accountBalances, setAccountBalances, numberOptions, defaultDate, setDefaultDate, updateAccountBalances, dialogToShow} as BP;
+	const bp = {db, t, activeBudget, selectBudget, selectAccount, openDialog, dialogBox, accounts, setAccounts, categories, setCategories, payees, setPayees, showSidebar, setShowSidebar, accountBalances, setAccountBalances, numberOptions, defaultDate, setDefaultDate, updateAccountBalances, dialogToShow, deviceIdentifier} as BP;
 
 	return (
 		<BudgetContext.Provider value={bp}>
@@ -268,6 +216,7 @@ export interface BP {
 		decimalSign : string,
 		thousandsSign : string,
 	},
+	deviceIdentifier : string,
 
 	selectBudget : (a : Budget | undefined) => void,
 	selectAccount : (a : Account) => void,

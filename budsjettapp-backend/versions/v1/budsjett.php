@@ -36,7 +36,8 @@ $authorization_header = '';
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 	$authorization_header = $_SERVER['HTTP_AUTHORIZATION'];
 }
-$auth = $user->authorize($authorization_header, $secrets);
+$user->conn = $conn;
+$auth = $user->authorize($authorization_header, $secrets, $conn);
 
 if (!$auth['status']) {
 	$c['status'] = $auth['status'];
@@ -49,7 +50,7 @@ if (isset($auth['accessToken'])) {
 
 // Run code based on which endpoint is selected
 
-$endpoints = ['user', 'budgets'];
+$endpoints = ['users', 'budgets'];
 
 if (in_array( $endpoint, $endpoints )) {
 	include(__DIR__ . '/' . $endpoint. '.php');

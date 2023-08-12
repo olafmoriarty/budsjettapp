@@ -118,5 +118,7 @@
 
 	"username": "Brukarnamn:",
 
+	"warningUserProbablyExists": "Er du sikker på at du vil opprette ein ny brukar? Budsjettet du har opent, er allereie lasta opp i skyen. Det betyr at sannsynlegvis oppretta du ein brukar då du lasta opp dette budsjettet. Det betyr òg at dersom du opprettar ein ny brukar no, vil du ikkje ha tilgang til å redigere skyversjonen av dette budsjettet, sidan det er kobla til ein annan brukar. Trykk «Eg har allereie ein brukar» for å logge deg inn.",
+
 	"FINAL_LINE_TO_AVOID_TRAILING_COMMA": ""
 }

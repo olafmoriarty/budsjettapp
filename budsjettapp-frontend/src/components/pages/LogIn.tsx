@@ -4,6 +4,7 @@ import { useBudget } from '../../contexts/BudgetContext';
 import { useAPI } from '../../contexts/APIContext';
 import Loading from '../Loading';
 import ErrorMessage from '../utils/ErrorMessage';
+import Warning from '../utils/Warning';
 
 function LogIn() {
 	const {t, activeBudget} = useBudget();
@@ -28,11 +29,17 @@ function LogIn() {
 		setIsFetching(true);
 		let result;
 		if (mode === 'create') {
-			result = await fetchFromAPI('user/?mode=create', {
+			result = await fetchFromAPI('users/?mode=create', {
 				body: {
 					username: username,
 					password: password,
 				}
+			});
+		}
+		else {
+			const auth = 'Basic ' + window.btoa(`${username}:${password}`);
+			result = await fetchFromAPI('users/', {
+				auth: auth,
 			});
 		}
 		setIsFetching(false);
@@ -55,6 +62,7 @@ function LogIn() {
 	return (
 	<main className="subsettings">
 		<h2 className="main-heading">{mode === 'login' ? t.logIn : t.createUser}</h2>
+		{mode === 'create' && activeBudget?.externalId ? <Warning>{t.warningUserProbablyExists}</Warning> : undefined}
 		{error ? <ErrorMessage text={t[`error_${error}`] ? t[`error_${error}`] : error} setError={setError} /> : undefined}
 		<p>{mode === 'login' ?
 		<button className="link" onClick={() => setMode('create')}>{t.iDontHaveAnUser}</button> :

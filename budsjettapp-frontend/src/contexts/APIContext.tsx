@@ -5,7 +5,10 @@ import '../css/budget.css';
 import { useBudget } from './BudgetContext';
 import getAllDB from '../functions/database/getAllDB';
 import addBudget from '../functions/database/addBudget';
-import { Account, Budget, Budgeted, Category, Payee, Transaction } from '../interfaces/interfaces';
+import { Account, Archive, Budget, Budgeted, Category, Payee, Transaction } from '../interfaces/interfaces';
+import { useNavigate } from 'react-router-dom';
+import getAllToSyncDB from '../functions/database/getAllToSyncDB';
+import addAllFromSyncDB from '../functions/database/addAllFromSyncDB';
 
 const APIContext = createContext( {} as APIContextType );
 
@@ -18,6 +21,10 @@ export const APIProvider = (props : Props) => {
 
 	// State: Is the app currently fetching data from the API?
 	const [isFetching, setIsFetching] = useState(false);
+
+	const [syncCount, setSyncCount] = useState(0);
+
+	const navigate = useNavigate();
 
 	/**
 	 * Fetch data from the API 
@@ -60,19 +67,24 @@ export const APIProvider = (props : Props) => {
 			'Accept': 'application/json',
 		} as { [key : string] : string };
 
-		if (token) {
+		if (options?.auth) {
+			console.log(options.auth);
+			headers['Authorization'] = options.auth;
+		}
+		else if (token) {
 			headers['Authorization'] = 'Bearer ' + token;
 		}
 
-		console.log(api + path);
+
 		try {
 			const response = await fetch(api + path, {
 				headers: headers,
-				method: 'POST',
+				method: options?.method || 'POST',
 				mode: 'cors',
 				credentials: 'include',
 				body: options?.body ? JSON.stringify(options.body) : undefined,
 			});
+			console.log(response);
 			const json = await response.json();
 
 			if (json.accessToken) {
@@ -92,34 +104,63 @@ export const APIProvider = (props : Props) => {
 		}
 	}
 
-	const syncBudget = async () => {
+	const syncBudget = async ( options? : {
+		redirect : boolean,
+	}) => {
+		// If no active budget is set, we can't sync it, so abort.
 		if (!activeBudget || !activeBudget.id) {
 			return;
 		}
-		const budget = await getAllDB(db, activeBudget.id);
-		const mode = activeBudget.externalId ? 'sync' : 'create';
-		console.log(budget);
-		const result = await fetchFromAPI(`budgets/?mode=${mode}`, {
+
+		// Get budget content from database
+		let budget : Archive | undefined;
+		if (activeBudget.externalId) {
+			budget = await getAllToSyncDB(db, activeBudget.id);
+
+		}
+		else {
+			budget = await getAllDB(db, activeBudget.id);
+		}
+
+		// Save the number of rows to sync to state so it can be displayed on
+		// the "Sync budget" button
+		if (budget) {
+			setSyncCount(Object.keys(budget).filter((el) => el !== 'budget').reduce((accumulator, current) => accumulator + (budget ? (budget[current] as Transaction[] | Budgeted[] | Account[] | Category[] | Payee[]).length : 0), ('sync' in budget.budget && budget.budget.sync ? 1 : 0)) );
+
+		}
+
+		// Set API URL and HTTP method based on whether this is the first upload or a later synchronization
+		const method = activeBudget.externalId ? 'PATCH' : 'POST';
+		const url = activeBudget.externalId ? `budgets/${activeBudget.externalId}/` : 'budgets/';
+
+		// Send sync data to API
+		const result = await fetchFromAPI(url, {
 			body: budget,
+			method: method,
 		});
 		console.log(result);
 
+		// If error, return the error
 		if (!result.status) {
+			// If user is not authenticated and sync button is pressed, send
+			// user to login page
+			if (options?.redirect && result.error === 'USER_NOT_AUTHENTICATED') {
+				navigate('/log-in/');
+			}
+
 			return( result );
 		}
+
+		addAllFromSyncDB(db, result.data);
+
 		if (activeBudget.sync) {
-			await addBudget(db, result.data.budget);
 			selectBudget(result.data.budget);
 		}
+		setSyncCount(0);
 		return( result );
 	}
 
-	interface FetchOptions {
-		body?: object,
-		auth?: string,
-	}
-
-	const bp = {token, setToken, fetchFromAPI, isFetching,setIsFetching, syncBudget} as APIContextType;
+	const bp = {token, setToken, fetchFromAPI, isFetching,setIsFetching, syncBudget, syncCount} as APIContextType;
 
 	return (
 		<APIContext.Provider value={bp}>
@@ -156,6 +197,15 @@ export interface APIContextType {
 
 	fetchFromAPI : (a : string, b? : object) => Promise<any>,
 
-	syncBudget : () => Promise<SyncResult>,
+	syncBudget : ( options? : {
+		redirect? : boolean,
+	} ) => Promise<SyncResult>,
+
+	syncCount : number,
 }
 
+interface FetchOptions {
+	body?: object,
+	auth?: string,
+	method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
+}

@@ -6,14 +6,16 @@ import { useAPI } from '../../contexts/APIContext';
 
 function SyncButton() {
 	const {activeBudget, setShowSidebar, t} = useBudget();
-	const {token, fetchFromAPI, isFetching, setIsFetching, syncBudget} = useAPI();
+	const {isFetching, setIsFetching, syncBudget, syncCount} = useAPI();
 
 	const onClick = async () => {
 		if (isFetching) {
 			return;
 		}
 		setIsFetching(true);		
-		await syncBudget();
+		await syncBudget({
+			redirect: true,
+		});
 		setIsFetching(false);
 	}
 
@@ -22,6 +24,7 @@ function SyncButton() {
 			{activeBudget.externalId ? <>
 				<span className="button-icon"><FontAwesomeIcon icon={faRotate} /></span>
 				<span className="button-text">{t.sidebarButtonSync}</span>
+				{syncCount ? <span className="sync-count">{syncCount}</span> : undefined}
 			</> : <>
 				<span className="button-icon"><FontAwesomeIcon icon={isFetching ? faSpinner : faCloudArrowUp} /></span>
 				<span className="button-text">{t.sidebarButtonSaveToCloud}</span>

@@ -88,6 +88,8 @@ export interface Budget {
 	name: string,
 	externalId?: number,
 	sync?: number,
+	lastSyncDate?: string,
+	device: string,
 }
 
 export interface Account {
@@ -96,6 +98,7 @@ export interface Account {
 	name: string,
 	externalId?: number,
 	sync?: number,
+
 }
 
 export interface Category {
@@ -126,6 +129,7 @@ export interface Budgeted {
 	sync?: number,
 	month: number,
 	category: number,
+	exCategory?: number,
 	amount: number,
 }
 
@@ -136,13 +140,18 @@ export interface Transaction {
 	date: string,
 	month: number,
 	accountId: number,
+	exAccountId?: number,
 	payeeId?: number,
+	exPayeeId?: number,
 	categoryId?: number,
+	exCategoryId?: number,
 	memo?: string,
 	in?: number,
 	out?: number,
 	counterAccount?: number,
 	counterTransaction?: number,
+	exCounterAccount?: number,
+	exCounterTransaction?: number,
 	sync?: number,
 	deleted?: boolean,
 }

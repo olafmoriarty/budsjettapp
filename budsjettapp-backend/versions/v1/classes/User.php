@@ -2,6 +2,7 @@
 
 class User {
 	public $id;
+	public $conn;
 	public $name;
 	public $jwt;
 	
@@ -27,7 +28,7 @@ class User {
 		// If the authorization header contains a username and password, try
 		// logging in the user using these credentials
 		if ($authorization_type === 'Basic') {
-			$username_password_array = explode('.', base64_decode($authorization_token), 2);
+			$username_password_array = explode(':', base64_decode($authorization_token), 2);
 
 			$login_details = $this->log_in(
 				$username_password_array[0], 
@@ -113,6 +114,7 @@ class User {
 
 	private function log_in( $username, $password, $secrets ) {
 
+		$conn = $this->conn;
 		// Check if username exists 
 		$encrypted_username = hash_hmac('sha512', $username, $secrets['user_salt']);
 		$stmt = $conn->prepare('SELECT id, password, salt FROM ba_users WHERE username = ?');
@@ -138,11 +140,11 @@ class User {
 		}
 
 		// It does? Great! Return user info.
-		$this->set_jwts($new_id, $username, $secrets);
+		$this->set_jwts($row['id'], $username, $secrets);
 
 		return([
 			'status' => 1,
-			'id' => $new_id,
+			'id' => $row['id'],
 			'name' => $username,
 			'accessToken' => $this->jwt,
 		]);
