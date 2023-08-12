@@ -8,7 +8,7 @@ import { useBudget } from '../../contexts/BudgetContext';
 function AddBudget(props : Props) {
 	const [values, setValues] = useState({} as {[key : string] : string});
 	const [template, setTemplate] = useState(0);
-	const {db, t, selectBudget, dialogBox, deviceIdentifier} = useBudget();
+	const {db, t, selectBudget, deviceIdentifier} = useBudget();
 	const {setCloseDialog} = props;
 
 	const navigate = useNavigate();

@@ -1,11 +1,11 @@
-import React, {useState} from 'react'
+import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCloudArrowUp, faRotate, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { useBudget } from '../../contexts/BudgetContext';
 import { useAPI } from '../../contexts/APIContext';
 
 function SyncButton() {
-	const {activeBudget, setShowSidebar, t} = useBudget();
+	const {activeBudget, t} = useBudget();
 	const {isFetching, setIsFetching, syncBudget, syncCount} = useAPI();
 
 	const onClick = async () => {

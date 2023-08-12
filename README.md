@@ -21,7 +21,7 @@
 - [ ] Add savings goals
 - [ ] Auto-suggest budgeting amount 
 - [ ] Add "Forgot password?" function
-- [ ] Implement React.lazy to cut down on load time
+- [x] Implement React.lazy to cut down on load time
 - [ ] **Launch closed beta**
 
 ### Before launch
@@ -39,6 +39,7 @@
 ### If there's time for it before launch, maybe later
 - [ ] Custom "Install app to device" button
 - [ ] Add splash screen or something to inform user that a new service worker is available and that they can update the app to start using the new version
+- [ ] Reorganize CSS to prevent render-blocking
 
 ### Crazy unrealistic wishlist
 - [ ] Allow user to upload photos of receipts

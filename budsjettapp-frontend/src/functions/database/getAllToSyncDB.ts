@@ -1,5 +1,5 @@
 import { IDBPDatabase } from 'idb';
-import { Archive, BudgetInterface, Budgeted } from '../../interfaces/interfaces';
+import { Archive, BudgetInterface } from '../../interfaces/interfaces';
 
 /**
  * Get all database rows related to the given budget

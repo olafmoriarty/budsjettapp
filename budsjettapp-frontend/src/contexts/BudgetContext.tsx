@@ -58,9 +58,6 @@ export const BudgetProvider = (props : Props) => {
 	// State: What was the last date entered into the system?
 	const [defaultDate, setDefaultDate] = useState(yyyymmdd(new Date()));
 
-	// State: Access token to API
-	const [token, setToken] = useState(undefined as string | undefined);
-
 	// Ref: The <dialog> box used to display dialogs
 	const dialogBox = useRef<HTMLDialogElement>(null);
 
@@ -126,7 +123,7 @@ export const BudgetProvider = (props : Props) => {
 			setPayees([]);
 			setAccountBalances({});
 		}
-	}, [activeBudget]);
+	}, [activeBudget, db]);
 
 	// Return error if indexedDB is not supported
 	if (!('indexedDB' in window)) {

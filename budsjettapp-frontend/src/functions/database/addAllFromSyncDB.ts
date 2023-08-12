@@ -1,5 +1,5 @@
 import { IDBPDatabase } from 'idb';
-import { Archive, Budget, BudgetInterface, Budgeted } from '../../interfaces/interfaces';
+import { Archive, Budget, BudgetInterface } from '../../interfaces/interfaces';
 
 /**
  * Get all database rows related to the given budget
@@ -21,7 +21,6 @@ const addAllFromSyncDB = async (db : IDBPDatabase<BudgetInterface> | undefined, 
 		
 		let budgetId = await budgetStore.put(archive.budget as Budget);
 
-		let counterTransactions = {} as { [key : number] : number};
 		for (let i = 0; i < stores.length; i++) {
 			if (!archive[stores[i]]) {
 				continue;
@@ -119,6 +118,7 @@ const addAllFromSyncDB = async (db : IDBPDatabase<BudgetInterface> | undefined, 
 				}
 			}
 		}
+		await tx.done;
 	}
 }
 

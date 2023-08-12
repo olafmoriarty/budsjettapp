@@ -4,7 +4,6 @@ import React, {useState, createContext, useContext} from 'react';
 import '../css/budget.css';
 import { useBudget } from './BudgetContext';
 import getAllDB from '../functions/database/getAllDB';
-import addBudget from '../functions/database/addBudget';
 import { Account, Archive, Budget, Budgeted, Category, Payee, Transaction } from '../interfaces/interfaces';
 import { useNavigate } from 'react-router-dom';
 import getAllToSyncDB from '../functions/database/getAllToSyncDB';
