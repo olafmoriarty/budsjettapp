@@ -27,18 +27,35 @@ const getAllToSyncDB = async (db : IDBPDatabase<BudgetInterface> | undefined, bu
 
 		for (let i = 0; i < stores.length; i++) {
 			const store = tx.objectStore(stores[i]);
+			console.log(stores[i]);
 			const index = store.index("sync");
 			let value = await index.getAll([budgetId, 1]);
+			
 
 			if (stores[i] === 'budgeted') {
 				for (let j = 0; j < value.length; j++) {
 					let valueRow = value[j];
+					console.log(valueRow);
 					// Add external category id
 					if ('category' in valueRow) {
 						const categoryStore = tx.objectStore('categories');
 						const budgetedCategory = await categoryStore.get(valueRow.category);
 						if (budgetedCategory?.externalId) {
 							valueRow.exCategory = budgetedCategory.externalId;
+						}
+						value[j] = valueRow;
+					}
+				}
+			}
+
+			if (stores[i] === 'categories') {
+				for (let j = 0; j < value.length; j++) {
+					let valueRow = value[j];
+					// Add external parent category id
+					if ('parent' in valueRow && valueRow.parent) {
+						const parentCategory = await store.get(valueRow.parent);
+						if (parentCategory?.externalId) {
+							valueRow.exParent = parentCategory.externalId;
 						}
 						value[j] = valueRow;
 					}
@@ -59,7 +76,7 @@ const getAllToSyncDB = async (db : IDBPDatabase<BudgetInterface> | undefined, bu
 					}
 
 					// Add external account ID
-					const accountStore = tx.objectStore('categories');
+					const accountStore = tx.objectStore('accounts');
 					if ('accountId' in valueRow && valueRow.accountId) {
 						const transactionAccount = await accountStore.get(valueRow.accountId);
 						if (transactionAccount?.externalId) {

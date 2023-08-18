@@ -21,6 +21,7 @@
 - [ ] Add savings goals
 - [ ] Auto-suggest budgeting amount 
 - [ ] Add "Forgot password?" function
+- [ ] Reports! At least some
 - [x] Implement React.lazy to cut down on load time
 - [ ] **Launch closed beta**
 

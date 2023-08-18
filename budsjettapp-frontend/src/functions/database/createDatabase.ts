@@ -29,6 +29,7 @@ const createDatabase = async () => {
 				});
 				accounts.createIndex('externalId', 'externalId');
 				accounts.createIndex('budgetId', 'budgetId');
+				accounts.createIndex('sync', ['budgetId', 'sync']);
 			}
 			else {
 				if (oldVersion < 3) {
@@ -44,6 +45,7 @@ const createDatabase = async () => {
 				});
 				categories.createIndex('externalId', 'externalId');
 				categories.createIndex('budgetId', 'budgetId');
+				categories.createIndex('sync', ['budgetId', 'sync']);
 			}
 			else {
 				if (oldVersion < 3) {
@@ -61,6 +63,7 @@ const createDatabase = async () => {
 				transactions.createIndex('budgetId', 'budgetId');
 				transactions.createIndex('accountId', 'accountId');
 				transactions.createIndex('categoryId', 'categoryId');
+				transactions.createIndex('sync', ['budgetId', 'sync']);
 			}
 			else {
 				const store = transaction.objectStore("transactions");
@@ -79,6 +82,7 @@ const createDatabase = async () => {
 				});
 				payees.createIndex('externalId', 'externalId');
 				payees.createIndex('budgetId', 'budgetId');
+				payees.createIndex('sync', ['budgetId', 'sync']);
 			}
 			else {
 				if (oldVersion < 3) {
@@ -97,6 +101,7 @@ const createDatabase = async () => {
 				budgeted.createIndex('categoryMonth', ['budgetId', 'category', 'month']);
 				budgeted.createIndex('category', ['budgetId', 'category']);
 				budgeted.createIndex('month', ['budgetId', 'month']);
+				budgeted.createIndex('sync', ['budgetId', 'sync']);
 			}
 			else {
 				if (oldVersion < 3) {

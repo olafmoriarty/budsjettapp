@@ -107,6 +107,7 @@ export interface Category {
 	name: string,
 	sort?: number,
 	parent?: number,
+	exParent?: number,
 	externalId?: number,
 	hidden?: boolean,
 	sync?: number,

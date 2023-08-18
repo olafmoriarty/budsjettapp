@@ -40,6 +40,7 @@ function show_budgets() {
 	$budget_to_show = strtok('/');
 	if ($budget_to_show) {
 		// Show one budget
+		return sync_budget(intval($budget_to_show));
 	}
 	else {
 		// Show all budgets user has access to
@@ -160,6 +161,9 @@ function create_budget() {
 
 	$sync = sync_budget($budget_id, $budget_key);
 	
+	if (!$sync['status']) {
+		return($sync);
+	}
 	// Return values
 	$budget = $sync['data']['budget'];
 	if (isset($budget['sync'])) {
@@ -186,7 +190,7 @@ function sync_budget($budget_id, $budget_key = '') {
 	}
 
 	// Check that the correct parameters exist in the body
-	if (!$body || !is_array($body) || !isset($body['budget']) || !is_array($body['budget']) || !isset($body['budget']['device'])) {
+	if ($_SERVER['REQUEST_METHOD'] !== 'GET' && (!$body || !is_array($body) || !isset($body['budget']) || !is_array($body['budget']) || !isset($body['budget']['device']))) {
 		return [
 			'status' => 0,
 			'error' => 'MANDATORY_FIELDS_MISSING',
@@ -252,8 +256,8 @@ function sync_budget($budget_id, $budget_key = '') {
 	$storecount = count($stores);
 
 	// Get all transaction rows that have changed since last sync
-	$last_sync_date = '';
-	if (isset($body['budget']) && isset($body['budget']['lastSyncDate'])) {
+	$last_sync_date = '1970-01-01 00:00:01';
+	if (isset($body) && isset($body['budget']) && isset($body['budget']['lastSyncDate'])) {
 		$last_sync_date = $body['budget']['lastSyncDate'];
 	}
 	$stmt = $conn->prepare('SELECT id, store_type, idcheck, value, iv FROM ba_content WHERE budget_id = ? AND updated > ?');
@@ -261,6 +265,8 @@ function sync_budget($budget_id, $budget_key = '') {
 	$stmt->execute();
 	$result = $stmt->get_result();
 	$stmt->close();
+
+	$return_value['rowcount'] = $result->num_rows;
 
 	// For each row:
 	while ($row = $result->fetch_assoc()) {
@@ -280,6 +286,41 @@ function sync_budget($budget_id, $budget_key = '') {
 
 	// Set current timestamp
 	$timestamp = date('Y-m-d H:i:s') . substr( microtime(), 1, 4 );
+
+	// If this is just a GET request, we can abort here and return the values,
+	// without inserting anything.
+
+	if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+
+		// Get budget information
+		$stmt = $conn->prepare('SELECT name, iv FROM ba_budgets WHERE id = ?');
+		$stmt->bind_param('i', $budget_id);
+		$stmt->execute();
+		$result = $stmt->get_result();
+		$stmt->close();
+		if (!$result->num_rows) {
+			return ([
+				'status' => 0,
+				'error' => 'BUDGET_NOT_FOUND',
+			]);
+	
+		}
+
+		$row = $result->fetch_assoc();
+		$budget_row['lastSyncDate'] = $timestamp;
+		$return_value['budget'] = [
+			'name' => openssl_decrypt($row['name'], 'aes-256-cbc', $budget_key, 0, hex2bin($row['iv'])),
+			'externalId' => $budget_id,
+			'lastSyncDate' => $timestamp,
+		];
+	
+	
+		return ([
+			'status' => 1,
+			'data' => $return_value,
+		]);
+	
+	}
 
 	// Now that we have fetched the new data that was in the database, let's
 	// move on to inserting data, one store at a time:
@@ -318,8 +359,17 @@ function sync_budget($budget_id, $budget_key = '') {
 				if ( isset($row['category']) && isset($external_ids['categories'][ $row['category'] ]) ) {
 					$row_copy['exCategory'] = $external_ids['categories'][ $row['category'] ];
 				}
-				if (isset($row['category'])) {
-					unset($row['category']);
+				if (isset($row_copy['category'])) {
+					unset($row_copy['category']);
+				}
+			}
+
+			if ($stores[$i] === 'categories') {
+				if ( isset($row['parent']) && isset($external_ids['categories'][ $row['parent'] ]) ) {
+					$row_copy['exParent'] = $external_ids['categories'][ $row['parent'] ];
+				}
+				if (isset($row_copy['parent'])) {
+					unset($row_copy['parent']);
 				}
 			}
 
@@ -328,7 +378,6 @@ function sync_budget($budget_id, $budget_key = '') {
 			if ($stores[$i] === 'transactions') {
 				if ( isset($row['categoryId']) && isset($external_ids['categories'][ $row['categoryId'] ]) ) {
 					$row_copy['exCategoryId'] = $external_ids['categories'][ $row['categoryId'] ];
-					unset($row_copy['categoryId']);
 				}
 				if ( isset($row['accountId']) && isset($external_ids['accounts'][ $row['accountId'] ]) ) {
 					$row_copy['exAccountId'] = $external_ids['accounts'][ $row['accountId'] ];
@@ -344,7 +393,7 @@ function sync_budget($budget_id, $budget_key = '') {
 					$reset_counter = $external_ids['transactions'][ $row['counterTransaction'] ];
 				}
 				foreach (['accountId', 'categoryId', 'payeeId', 'counterAccount', 'counterTransaction'] as $field) {
-					if (isset($row_copy[$field])) {
+					if (isset($row_copy[$field]) && ($field !== 'categoryId' || $row_copy[$field] !== 0)) {
 						unset($row_copy[$field]);
 					}
 				}
@@ -457,7 +506,6 @@ function sync_budget($budget_id, $budget_key = '') {
 
 	return ([
 		'status' => 1,
-		'input' => $body,
 		'data' => $return_value,
 	]);
 }

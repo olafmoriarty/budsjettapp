@@ -13,7 +13,7 @@ const APIContext = createContext( {} as APIContextType );
 
 export const APIProvider = (props : Props) => {
 
-	const { db, activeBudget, selectBudget } = useBudget();
+	const { db, activeBudget, selectBudget, deviceIdentifier } = useBudget();
 
 	// State: Access token to API
 	const [token, setToken] = useState(undefined as string | undefined);
@@ -32,35 +32,6 @@ export const APIProvider = (props : Props) => {
 	const fetchFromAPI = async ( path : string, options? : FetchOptions) => {
 		const api = 'https://testapi.budsjett.app/v1/';
 
-		/*
-		// If we're trying to upload a budget, first check if budget exists
-		if (endpoint === 'sync' && (!activeBudget || !activeBudget.id)) {
-			return;
-		}
-
-		let authToken = token;
-
-		// If we're updating a budget, assume a refresh token exists
-		// - if not, check if it does before sending a giant file to the server
-		if (endpoint === 'sync' && !activeBudget?.externalId && !authToken) {
-			const response = await fetch(api + 'auth/', {
-				method: 'POST',
-				mode: 'cors',
-				credentials: 'include',
-			});
-			const json = await response.json();
-			if (json.authToken) {
-				authToken = json.authToken;
-				setToken(json.authToken);
-			}
-			else if (json.status === 0) {
-				console.log(json.error);
-				navigate('/log-in');
-				return;
-			}
-		}
-		*/
-
 		let headers = {
 			'Content-Type': 'application/json',
 			'Accept': 'application/json',
@@ -74,7 +45,6 @@ export const APIProvider = (props : Props) => {
 			headers['Authorization'] = 'Bearer ' + token;
 		}
 
-
 		try {
 			const response = await fetch(api + path, {
 				headers: headers,
@@ -83,13 +53,15 @@ export const APIProvider = (props : Props) => {
 				credentials: 'include',
 				body: options?.body ? JSON.stringify(options.body) : undefined,
 			});
-			console.log(response);
 			const json = await response.json();
 
 			if (json.accessToken) {
 				setToken(json.accessToken);
 			}
 			console.log(json);
+			if (json.data?.transactions) {
+				console.log(json.data.transactions);
+			}
 			return json;
 		} catch (error) {
 			console.log(error);
@@ -105,33 +77,45 @@ export const APIProvider = (props : Props) => {
 
 	const syncBudget = async ( options? : {
 		redirect : boolean,
+		import : number,
 	}) => {
-		// If no active budget is set, we can't sync it, so abort.
-		if (!activeBudget || !activeBudget.id) {
-			return;
-		}
 
-		// Get budget content from database
 		let budget : Archive | undefined;
-		if (activeBudget.externalId) {
-			budget = await getAllToSyncDB(db, activeBudget.id);
+		let url;
+		let method : 'GET' | 'POST' | 'PATCH';
 
+		if (options?.import) {
+			url = `budgets/${options.import}/`;
+			method = 'GET';
 		}
 		else {
-			budget = await getAllDB(db, activeBudget.id);
+			// If no active budget is set, we can't sync it, so abort.
+			if (!activeBudget || !activeBudget.id) {
+				return;
+			}
+
+			// Get budget content from database
+			if (activeBudget.externalId) {
+				budget = await getAllToSyncDB(db, activeBudget.id);
+
+			}
+			else {
+				budget = await getAllDB(db, activeBudget.id);
+			}
+
+			// Save the number of rows to sync to state so it can be displayed on
+			// the "Sync budget" button
+			if (budget) {
+
+
+				setSyncCount(Object.keys(budget).filter((el) => el !== 'budget').reduce((accumulator, current) => accumulator + (budget ? (budget[current] as Transaction[] | Budgeted[] | Account[] | Category[] | Payee[]).length : 0), ('sync' in budget.budget && budget.budget.sync ? 1 : 0)) );
+
+			}
+
+			// Set API URL and HTTP method based on whether this is the first upload or a later synchronization
+			method = activeBudget.externalId ? 'PATCH' : 'POST';
+			url = activeBudget.externalId ? `budgets/${activeBudget.externalId}/` : 'budgets/';
 		}
-
-		// Save the number of rows to sync to state so it can be displayed on
-		// the "Sync budget" button
-		if (budget) {
-			setSyncCount(Object.keys(budget).filter((el) => el !== 'budget').reduce((accumulator, current) => accumulator + (budget ? (budget[current] as Transaction[] | Budgeted[] | Account[] | Category[] | Payee[]).length : 0), ('sync' in budget.budget && budget.budget.sync ? 1 : 0)) );
-
-		}
-
-		// Set API URL and HTTP method based on whether this is the first upload or a later synchronization
-		const method = activeBudget.externalId ? 'PATCH' : 'POST';
-		const url = activeBudget.externalId ? `budgets/${activeBudget.externalId}/` : 'budgets/';
-
 		// Send sync data to API
 		const result = await fetchFromAPI(url, {
 			body: budget,
@@ -150,13 +134,13 @@ export const APIProvider = (props : Props) => {
 			return( result );
 		}
 
-		addAllFromSyncDB(db, result.data);
-
-		if (activeBudget.sync) {
-			selectBudget(result.data.budget);
+		const returnValue = await addAllFromSyncDB(db, result.data, deviceIdentifier);
+		console.log(returnValue);
+		if (options?.import || activeBudget && activeBudget.sync) {
+			selectBudget(returnValue?.budget || result.data.budget);
 		}
 		setSyncCount(0);
-		return( result );
+		return( returnValue );
 	}
 
 	const bp = {token, setToken, fetchFromAPI, isFetching,setIsFetching, syncBudget, syncCount} as APIContextType;
@@ -175,16 +159,12 @@ interface Props {
 }
 
 interface SyncResult {
-	status: number,
-	error?: string,
-	data?: {
-		budget?: Budget,
-		accounts?: Account[],
-		categories?: Category[],
-		budgeted?: Budgeted[],
-		payees?: Payee[],
-		transactions?: Transaction[],
-	}
+	budget?: Budget,
+	accounts?: Account[],
+	categories?: Category[],
+	budgeted?: Budgeted[],
+	payees?: Payee[],
+	transactions?: Transaction[],
 }
 
 export interface APIContextType {
@@ -198,6 +178,7 @@ export interface APIContextType {
 
 	syncBudget : ( options? : {
 		redirect? : boolean,
+		import? : number,
 	} ) => Promise<SyncResult>,
 
 	syncCount : number,

@@ -425,10 +425,18 @@ h1.app-name {
 main.settings {
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
 	padding: 1rem;
 	text-align: center;
 	min-height: 100vh;
+	max-height: 100vh;
+}
+
+main.settings > :first-child {
+	margin-top: auto!important;
+}
+
+main.settings > :last-child {
+	margin-bottom: auto!important;
 }
 
 main.settings .button {
@@ -443,6 +451,40 @@ main.settings .button.select-budget {
 	color: var(--black);
 	background: var(--white);
 	font-weight: normal;
+}
+
+main.settings .button.cloud-budget {
+	display: flex;
+	justify-content: center;
+	gap: .5rem;
+}
+
+main.settings .button.cloud-budget svg {
+	display: block;
+	color: var(--accent-green);
+}
+
+main.settings .button.cloud-budget span {
+	display: block;
+}
+
+main.settings .budget-select-login {
+	width: 100%;
+	max-width: 40rem;
+	margin: 0 auto 1rem;
+	background: var(--accent-yellow);
+	box-shadow: .25rem .25rem .25rem var(--black);
+	padding: 1rem;
+	border-radius: .5rem;
+	text-align: left;
+}
+
+main.settings .budget-select-login h2 {
+	margin: 0 0 .5rem;
+}
+
+main.settings .budget-select-login button {
+	margin-bottom: 0;
 }
 
 main.subsettings h3 {

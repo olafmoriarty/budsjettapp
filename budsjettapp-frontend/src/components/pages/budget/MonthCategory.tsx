@@ -53,6 +53,7 @@ function MonthCategory(props : Props) {
 		if (monthNumbers && monthNumbers.id) {
 			newValue.id = monthNumbers.id;
 		}
+		console.log(newValue);
 		addBudgeted(bp.db, newValue)
 			.then((id) => {
 				let newTotal = monthNumbers ? monthNumbers.budgetedTotal - monthNumbers.budgeted + inputValueFloat : inputValueFloat;

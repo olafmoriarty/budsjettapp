@@ -1,5 +1,5 @@
 import { IDBPDatabase } from 'idb';
-import { Archive, Budget, BudgetInterface } from '../../interfaces/interfaces';
+import { Account, Archive, Budget, BudgetInterface, Budgeted, Category, Payee, Transaction } from '../../interfaces/interfaces';
 
 /**
  * Get all database rows related to the given budget
@@ -7,7 +7,7 @@ import { Archive, Budget, BudgetInterface } from '../../interfaces/interfaces';
  * @param id The ID of the budget we wish to return information about
  * @returns An object of database rows
  */
-const addAllFromSyncDB = async (db : IDBPDatabase<BudgetInterface> | undefined, archive : Archive) => {
+const addAllFromSyncDB = async (db : IDBPDatabase<BudgetInterface> | undefined, archive : Archive, device? : string) => {
 
 	// Check that a database is given
 	if (db) {
@@ -19,7 +19,23 @@ const addAllFromSyncDB = async (db : IDBPDatabase<BudgetInterface> | undefined, 
 		const tx = db.transaction(['budgets', ...stores], 'readwrite');
 		const budgetStore = tx.objectStore('budgets');
 		
-		let budgetId = await budgetStore.put(archive.budget as Budget);
+		let newBudget = {
+			...archive.budget as Budget,
+		} as Budget;
+
+		if (device) {
+			newBudget.device = device;
+		}
+		let budgetId = await budgetStore.put(newBudget);
+
+		let output = {} as Archive;
+		output.budget = {
+			...archive.budget,
+			id: budgetId,
+		} as Budget;
+		if (device) {
+			output.budget.device = device;
+		}
 
 		for (let i = 0; i < stores.length; i++) {
 			if (!archive[stores[i]]) {
@@ -31,9 +47,11 @@ const addAllFromSyncDB = async (db : IDBPDatabase<BudgetInterface> | undefined, 
 			if (!Array.isArray(rowsToAdd)) {
 				continue;
 			}
+
+			let outputStore = [] as (Account | Budgeted | Category | Payee | Transaction)[];
 			const store = tx.objectStore(stores[i]);
 			for (let j = 0; j < rowsToAdd.length; j++) {
-				let row = rowsToAdd[j];
+				let row = rowsToAdd[j] as Account | Category | Payee | Budgeted | Transaction;
 				row.budgetId = budgetId;
 				if (row.externalId && !row.id) {
 					const externalIndex = store.index("externalId");
@@ -51,6 +69,16 @@ const addAllFromSyncDB = async (db : IDBPDatabase<BudgetInterface> | undefined, 
 						row.category = externalCategoryRow?.id || 0;
 					}
 					delete(row.exCategory);
+				}
+
+				if ('exParent' in row && row.exParent) {
+					if (!row.parent) {
+						const categoryStore = tx.objectStore('categories');
+						const externalCategoryIndex = categoryStore.index('externalId');
+						const externalCategoryRow = await externalCategoryIndex.get(row.exParent);
+						row.parent = externalCategoryRow?.id || 0;
+					}
+					delete(row.exParent);
 				}
 
 				if ('exCategoryId' in row && row.exCategoryId) {
@@ -105,8 +133,13 @@ const addAllFromSyncDB = async (db : IDBPDatabase<BudgetInterface> | undefined, 
 				}
 
 				const rowId = await store.put(row);
+				outputStore.push({
+					...row,
+					id: rowId,
+				});
 
 				if ('counterTransaction' in row) {
+
 					const oldCounterTransaction = await store.get(row.counterTransaction || 0);
 					if (oldCounterTransaction) {
 						const newCounterTransaction = {
@@ -114,11 +147,15 @@ const addAllFromSyncDB = async (db : IDBPDatabase<BudgetInterface> | undefined, 
 							counterTransaction: rowId,
 						}
 						await store.put(newCounterTransaction);
+						output.transactions = Array.isArray(output.transactions) ? output.transactions.map(el => el.id === oldCounterTransaction.id ? newCounterTransaction : el) : [];
 					}
 				}
 			}
+
+			output[stores[i]] = outputStore;
 		}
 		await tx.done;
+		return output;
 	}
 }
 

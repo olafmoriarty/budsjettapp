@@ -94,7 +94,7 @@ class User {
 		// No valid login method found, return an error
 		return([
 			'status' => 0,
-			'error' => 'USER_NOT_AUTHORIZED',
+			'error' => 'USER_NOT_AUTHENTICATED',
 		]);
 	}
 
