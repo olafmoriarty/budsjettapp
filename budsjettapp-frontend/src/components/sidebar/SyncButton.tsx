@@ -6,7 +6,7 @@ import { useAPI } from '../../contexts/APIContext';
 
 function SyncButton() {
 	const {activeBudget, t} = useBudget();
-	const {isFetching, setIsFetching, syncBudget, syncCount} = useAPI();
+	const {isFetching, setIsFetching, syncBudget, syncCount, syncButtonPressedTimes, setSyncButtonPressedTimes} = useAPI();
 
 	const onClick = async () => {
 		if (isFetching) {
@@ -16,6 +16,7 @@ function SyncButton() {
 		await syncBudget({
 			redirect: true,
 		});
+		setSyncButtonPressedTimes( syncButtonPressedTimes + 1 );
 		setIsFetching(false);
 	}
 

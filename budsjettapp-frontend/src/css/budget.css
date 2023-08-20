@@ -575,6 +575,7 @@ main.budget .b-o-b input {
 
 main.budget .b-o-b input:focus {
 	text-decoration: none;
+	outline: none;
 }
 
 main.budget .b-o-b div {

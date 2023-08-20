@@ -12,10 +12,13 @@ import BudgetMasterCategory from './budget/BudgetMasterCategory';
 import moveCategory from '../../functions/moveCategory';
 import getBudgetNumbersDB from '../../functions/database/getBudgetNumbersDB';
 import { useBudget } from '../../contexts/BudgetContext';
+import { useAPI } from '../../contexts/APIContext';
 
 function BudgetScreen() {
 	const bp = useBudget();
+	const {syncButtonPressedTimes} = useAPI();
 	const { db, t, activeBudget, showSidebar, setShowSidebar, categories, setCategories } = bp;
+
 
 	// Which category (name) is currently being edited?
 	const [categoryToEdit, setCategoryToEdit] = useState(undefined as number | undefined);
@@ -37,9 +40,10 @@ function BudgetScreen() {
 		// If budgetNumbers is already set, get the numbers
 		getBudgetNumbersDB( db, activeBudget.id || 0, currentMonth - 1, currentMonth + 1 )
 		.then((newBudgetNumbers) => {
+			console.log(newBudgetNumbers);
 				setBudgetNumbers(newBudgetNumbers);
 		});
-	}, [currentMonth]);
+	}, [currentMonth, syncButtonPressedTimes]);
 
 	if (!activeBudget || !activeBudget.id) {
 		return null;

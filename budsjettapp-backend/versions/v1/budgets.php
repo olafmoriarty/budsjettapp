@@ -341,6 +341,9 @@ function sync_budget($budget_id, $budget_key = '') {
 				continue;
 			}
 
+			// Get something to identify the row (added because the "budgeted" store does not have an id field)
+			$row_identifier = $stores[$i] == 'budgeted' ? $row['category'] . '-' . $row['month'] : $row['id'];
+
 			// The row to insert should be identical to the uploaded row
 			// except it shouldn't have a local or external id and it
 			// shouldn't have the "sync" flag
@@ -409,7 +412,7 @@ function sync_budget($budget_id, $budget_key = '') {
 			// case an error has occured so that the local object has not
 			// received one, we also generate an extra check based on its
 			// content.
-			$idcheck = md5( $body['budget']['device'] . $stores[ $i ] . $row['id'] );
+			$idcheck = md5( $body['budget']['device'] . $stores[ $i ] . $row_identifier);
 			$external_id = -1;
 			if (isset($row['externalId'])) {
 				$external_id = $row['externalId'];
@@ -449,7 +452,7 @@ function sync_budget($budget_id, $budget_key = '') {
 				if (!isset($external_ids[ $stores[$i] ])) {
 					$external_ids[ $stores[$i] ] = [];
 				}
-				$external_ids[ $stores[$i] ][ $row['id'] ] = $new_external_id;
+				$external_ids[ $stores[$i] ][ $row_identifier ] = $new_external_id;
 			}
 
 			// If this is a transaction with a countertransaction, update its counter

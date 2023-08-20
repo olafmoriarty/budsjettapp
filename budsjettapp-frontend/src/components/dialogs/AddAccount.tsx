@@ -9,6 +9,7 @@ import yyyymmdd from '../../functions/yyyymmdd';
 
 import { Account } from '../../interfaces/interfaces';
 import { useBudget } from '../../contexts/BudgetContext';
+import { useAPI } from '../../contexts/APIContext';
 
 /**
  * Content of the modal window used to create a new account.
@@ -25,7 +26,7 @@ function AddAccount() {
 
 	// Get contents of budget props
 	const {db, t, selectAccount, accounts, setAccounts, dialogBox, activeBudget, accountBalances, setAccountBalances} = useBudget();
-
+	const {syncBudget} = useAPI();
 	// On mount ...
 	useEffect(() => {
 		// Set date field to today's date
@@ -94,6 +95,7 @@ function AddAccount() {
 				out: accountBalance < 0 ? 0 - accountBalance : 0,
 				sync: 1,
 			})
+			.then(() => syncBudget())
 			.then (() => {
 				// Add new account to account balance list
 				const newAccountBalances = { ...accountBalances };

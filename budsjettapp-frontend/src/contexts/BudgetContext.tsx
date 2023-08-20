@@ -123,7 +123,7 @@ export const BudgetProvider = (props : Props) => {
 			setPayees([]);
 			setAccountBalances({});
 		}
-	}, [activeBudget, db]);
+	}, [activeBudget?.id, db]);
 
 	// Return error if indexedDB is not supported
 	if (!('indexedDB' in window)) {

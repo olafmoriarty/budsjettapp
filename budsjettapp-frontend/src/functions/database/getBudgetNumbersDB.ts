@@ -4,6 +4,7 @@ import { BudgetInterface, BudgetNumbers } from '../../interfaces/interfaces';
 const getBudgetNumbersDB = async (db : IDBPDatabase<BudgetInterface> | undefined, budgetId : number | undefined, minMonth : number, maxMonth : number) => {
 	let budgetNumbers = {} as BudgetNumbers;
 
+	
 	if (db && budgetId) {
 		const tx = db.transaction(['transactions', 'budgeted'], 'readonly');
 		const tStore = tx.objectStore('transactions');

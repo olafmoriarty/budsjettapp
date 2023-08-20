@@ -6,9 +6,11 @@ import prettyNumber from '../../functions/prettyNumber';
 import AddTransaction from './account/AddTransaction';
 import AccountTransaction from './account/AccountTransaction';
 import { useBudget } from '../../contexts/BudgetContext';
+import { useAPI } from '../../contexts/APIContext';
 
 function Account() {
 	const {accounts, categories, payees, t, activeBudget, db, numberOptions, accountBalances, openDialog} = useBudget();
+	const {syncBudget} = useAPI();
 	const params = useParams();
 	const [transactions, setTransactions] = useState([] as Transaction[]);
 	const [showAddNew, setShowAddNew] = useState('' as string);
@@ -35,13 +37,19 @@ function Account() {
 		}
 	}, [accounts, accountId, activeBudget]);
 
-	const updateAccount = (close? :  boolean, newTransaction? : Transaction) => {
+	const updateAccount = async (close? :  boolean, newTransaction? : Transaction) => {
+		if (close) {
+			setShowAddNew('');
+		}
 		if (newTransaction) {
 			const newTransactions = [ ... transactions.filter((el) => el.id !== newTransaction.id), newTransaction ];
 			setTransactions(newTransactions);
-		}
-		if (close) {
-			setShowAddNew('');
+			const syncedResult = await syncBudget();
+			if (syncedResult.status !== 0) {
+				const syncedTransactions = syncedResult.transactions?.filter(el => el.accountId === accountId) || [];
+				const unsyncedTransactions = newTransactions.filter(el => !syncedTransactions?.map(syncedEl => syncedEl.id).includes(el.id));
+				setTransactions([ ...unsyncedTransactions, ...syncedTransactions ])
+			}
 		}
 	}
 

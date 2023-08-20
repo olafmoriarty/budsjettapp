@@ -5,6 +5,7 @@ import { useAPI } from '../../contexts/APIContext';
 import Loading from '../Loading';
 import ErrorMessage from '../utils/ErrorMessage';
 import Warning from '../utils/Warning';
+import { useNavigate } from 'react-router-dom';
 
 function LogIn() {
 	const {t, activeBudget} = useBudget();
@@ -17,6 +18,7 @@ function LogIn() {
 
 	const [error, setError] = useState('');
 
+	const navigate = useNavigate();
 	useEffect(() => {
 		setMode(activeBudget?.externalId ? "login" : "create");
 	}, [activeBudget]);
@@ -43,9 +45,11 @@ function LogIn() {
 			});
 		}
 		setIsFetching(false);
-		console.log(result);
 		if (result.status === 0) {
 			setError(result.error);
+		}
+		else {
+			navigate('/');
 		}
 	}
 

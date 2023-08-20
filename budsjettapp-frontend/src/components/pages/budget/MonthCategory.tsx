@@ -3,11 +3,13 @@ import prettyNumber from '../../../functions/prettyNumber';
 import { BBP, BudgetNumbersSingleCategory, Budgeted } from '../../../interfaces/interfaces';
 import addBudgeted from '../../../functions/database/addBudgeted';
 import { useBudget } from '../../../contexts/BudgetContext';
+import { useAPI } from '../../../contexts/APIContext';
 
 function MonthCategory(props : Props) {
 	const {month, categoryIndex, isMasterCategory, category, categoryRefIndex1, categoryRefIndex2} = props;
 	const bp = useBudget();
 	const {budgetNumbers, setBudgetNumbers, currentMonth, categoryRefs} = props.bbp;
+	const {syncBudget} = useAPI();
 
 	const numberOptions = {
 		numberOfDecimals: Number(bp.t.numberOfDecimals),
@@ -27,22 +29,34 @@ function MonthCategory(props : Props) {
 	const [inputValue, setInputValue] = useState(prettyNumber(monthNumbers ? monthNumbers.budgeted : 0, numberOptions));
 	const [inputValueFloat, setInputValueFloat] = useState(monthNumbers ? monthNumbers.budgeted : 0);
 
+	const [hasFocus, setHasFocus] = useState(undefined as HTMLInputElement | undefined);
+
 	useEffect(() => {
 		setInputValue(prettyNumber(monthNumbers ? monthNumbers.budgeted : 0, numberOptions));
 		setInputValueFloat(monthNumbers ? monthNumbers.budgeted : 0);
 	}, [monthNumbers]);
 
+	useEffect(() => {
+		if (hasFocus) {
+			hasFocus.select();
+		}
+	}, [hasFocus])
 	const changeInputValue = (event : React.FormEvent<HTMLInputElement>) => {
 		setInputValue(event.currentTarget.value);
 		setInputValueFloat(parseFloat(event.currentTarget.value.replaceAll(' ', '').replaceAll(bp.t.thousandsSign, '').replace(bp.t.decimalSign, '.')) || 0);
 	}
 
-	const onFocus = () => {
+	const onFocus = ( event : React.FocusEvent<HTMLInputElement> ) => {
 		setInputValue(prettyNumber(inputValueFloat, numberOptions, true));
+		setHasFocus(event.target);
 	}
 
 	const onBlur = () => {
+		setHasFocus(undefined);
 		setInputValue(prettyNumber(inputValueFloat, numberOptions));
+		if (inputValueFloat === monthNumbers?.budgeted) {
+			return;
+		}
 		let newValue = {
 			budgetId: bp.activeBudget.id,
 			month: month, 
@@ -53,7 +67,6 @@ function MonthCategory(props : Props) {
 		if (monthNumbers && monthNumbers.id) {
 			newValue.id = monthNumbers.id;
 		}
-		console.log(newValue);
 		addBudgeted(bp.db, newValue)
 			.then((id) => {
 				let newTotal = monthNumbers ? monthNumbers.budgetedTotal - monthNumbers.budgeted + inputValueFloat : inputValueFloat;
@@ -87,6 +100,7 @@ function MonthCategory(props : Props) {
 					};
 				}
 				setBudgetNumbers(newBudgetNumbers);
+				syncBudget();
 			});
 	}
 
@@ -145,7 +159,7 @@ function MonthCategory(props : Props) {
 		<div className="b-o-b">
 			<div>{isMasterCategory ? prettyNumber(monthNumbers ? monthNumbers.budgeted : 0, numberOptions) : <input 
 				name={`amount-${category ? category : 'xxx'}-${month}`} inputMode="numeric" value={inputValue} onChange={(event) => changeInputValue(event)} 
-				onFocus={() => onFocus()} 
+				onFocus={onFocus} 
 				tabIndex={(month * 400) + categoryIndex} 
 				onBlur={() => onBlur()}
 				ref={categoryRefIndex1 !== undefined && categoryRefIndex2 !== undefined && categoryRefs !== undefined && categoryRefs[categoryRefIndex1] !== undefined && categoryRefs[categoryRefIndex1][categoryRefIndex2] !== undefined ? el => {

@@ -8,12 +8,15 @@ import { Account, Archive, Budget, Budgeted, Category, Payee, Transaction } from
 import { useNavigate } from 'react-router-dom';
 import getAllToSyncDB from '../functions/database/getAllToSyncDB';
 import addAllFromSyncDB from '../functions/database/addAllFromSyncDB';
+import getAccounts from '../functions/database/getAccounts';
+import getCategories from '../functions/database/getCategories';
+import getPayeesDB from '../functions/database/getPayeesDB';
 
 const APIContext = createContext( {} as APIContextType );
 
 export const APIProvider = (props : Props) => {
 
-	const { db, activeBudget, selectBudget, deviceIdentifier } = useBudget();
+	const { db, activeBudget, selectBudget, deviceIdentifier, updateAccountBalances, setAccounts, setCategories, setPayees } = useBudget();
 
 	// State: Access token to API
 	const [token, setToken] = useState(undefined as string | undefined);
@@ -22,6 +25,8 @@ export const APIProvider = (props : Props) => {
 	const [isFetching, setIsFetching] = useState(false);
 
 	const [syncCount, setSyncCount] = useState(0);
+
+	const [syncButtonPressedTimes, setSyncButtonPressedTimes] = useState(0);
 
 	const navigate = useNavigate();
 
@@ -140,10 +145,27 @@ export const APIProvider = (props : Props) => {
 			selectBudget(returnValue?.budget || result.data.budget);
 		}
 		setSyncCount(0);
+
+		// Update changed variables
+		if (result.data.accounts && activeBudget.id) {
+			const syncedAccounts = await getAccounts(db, activeBudget.id || 0);
+			setAccounts(syncedAccounts ? syncedAccounts : []);
+		}
+		if (result.data.categories && activeBudget.id) {
+			const syncedCategories = await getCategories(db, activeBudget.id);
+			setCategories(syncedCategories ? syncedCategories : []);
+
+		}
+		if (result.data.payees && activeBudget.id) {
+			const syncedPayees = await getPayeesDB(db, activeBudget.id);
+			setPayees(syncedPayees ? syncedPayees : []);
+		}
+
+		updateAccountBalances();
 		return( returnValue );
 	}
 
-	const bp = {token, setToken, fetchFromAPI, isFetching,setIsFetching, syncBudget, syncCount} as APIContextType;
+	const bp = {token, setToken, fetchFromAPI, isFetching,setIsFetching, syncBudget, syncCount, syncButtonPressedTimes, setSyncButtonPressedTimes} as APIContextType;
 
 	return (
 		<APIContext.Provider value={bp}>
@@ -165,6 +187,8 @@ interface SyncResult {
 	budgeted?: Budgeted[],
 	payees?: Payee[],
 	transactions?: Transaction[],
+	status?: number,
+	error?: string,
 }
 
 export interface APIContextType {
@@ -182,6 +206,9 @@ export interface APIContextType {
 	} ) => Promise<SyncResult>,
 
 	syncCount : number,
+
+	syncButtonPressedTimes : number,
+	setSyncButtonPressedTimes : ( a : number ) => void,
 }
 
 interface FetchOptions {

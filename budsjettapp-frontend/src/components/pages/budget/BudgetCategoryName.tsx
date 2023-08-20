@@ -3,23 +3,19 @@ import { BBP, Category } from '../../../interfaces/interfaces';
 import addCategory from '../../../functions/database/addCategory';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faGear } from '@fortawesome/free-solid-svg-icons';
+import { faGear } from '@fortawesome/free-solid-svg-icons';
 import { useBudget } from '../../../contexts/BudgetContext';
+import { useAPI } from '../../../contexts/APIContext';
 
 const BudgetCategoryName = (props : CategoryNameProps) => {
 	const bp = useBudget();
+	const {syncBudget} = useAPI();
 	const {id, name} = props.category;
 
 	const [categoryName, setCategoryName] = useState(name);
 
 	useEffect(() => {
 		setCategoryName(name);
-/*
-		if (categoryName !== name) {
-			changeCategoryName();
-		}
-		*/
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [props.bbp.categoryToEdit]);
 
 	const changeCategoryName = (event? : React.FormEvent<HTMLFormElement>) => {
@@ -41,6 +37,7 @@ const BudgetCategoryName = (props : CategoryNameProps) => {
 			const newCategories = bp.categories.map(oldCategory => oldCategory.id === newCategory.id ? newCategory : oldCategory);
 			bp.setCategories(newCategories);
 			props.bbp.setCategoryToEdit(undefined);
+			syncBudget();
 		});
 	}
 

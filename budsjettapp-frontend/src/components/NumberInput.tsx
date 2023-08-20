@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react'
 import prettyNumber from '../functions/prettyNumber';
-import { BBP, BudgetNumbersSingleCategory, Budgeted } from '../interfaces/interfaces';
 import { useBudget } from '../contexts/BudgetContext';
 
 function NumberInput(props : Props) {

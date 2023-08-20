@@ -6,8 +6,8 @@ const createDatabase = async () => {
 		return undefined;
 	}
 
-	const db = await openDB<BudgetInterface>('budgetApp', 3, {
-		upgrade(db, oldVersion, newVersion, transaction, event) {
+	const db = await openDB<BudgetInterface>('budgetApp', 4, {
+		async upgrade(db, oldVersion, newVersion, transaction, event) {
 			if (!db.objectStoreNames.contains('budgets')) {
 				const budgets = db.createObjectStore('budgets', {
 					keyPath: 'id',
@@ -93,20 +93,31 @@ const createDatabase = async () => {
 
 			if (!db.objectStoreNames.contains('budgeted')) {
 				const budgeted = db.createObjectStore('budgeted', {
-					keyPath: 'id',
-					autoIncrement: true,
+					keyPath: ['budgetId', 'category', 'month'],
 				});
 				budgeted.createIndex('externalId', 'externalId');
 				budgeted.createIndex('budgetId', 'budgetId');
-				budgeted.createIndex('categoryMonth', ['budgetId', 'category', 'month']);
 				budgeted.createIndex('category', ['budgetId', 'category']);
 				budgeted.createIndex('month', ['budgetId', 'month']);
 				budgeted.createIndex('sync', ['budgetId', 'sync']);
 			}
 			else {
-				if (oldVersion < 3) {
+				if (oldVersion < 4) {
 					const store = transaction.objectStore("budgeted");
-					store.createIndex('sync', ['budgetId', 'sync']);
+					const budgetedRows = await store.getAll();
+					await db.deleteObjectStore('budgeted');
+					const budgeted = db.createObjectStore('budgeted', {
+						keyPath: ['budgetId', 'category', 'month'],
+					});
+					budgeted.createIndex('externalId', 'externalId');
+					budgeted.createIndex('budgetId', 'budgetId');
+					budgeted.createIndex('category', ['budgetId', 'category']);
+					budgeted.createIndex('month', ['budgetId', 'month']);
+					budgeted.createIndex('sync', ['budgetId', 'sync']);
+
+					for ( let i = 0; i < budgetedRows.length; i++) {
+						await budgeted.put(budgetedRows[i]);
+					}
 				}
 			}
 		}

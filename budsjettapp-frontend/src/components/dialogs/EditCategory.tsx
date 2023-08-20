@@ -7,10 +7,12 @@ import deleteCategoryDB from '../../functions/database/deleteCategoryDB';
 import addCategory from '../../functions/database/addCategory';
 import moveCategory from '../../functions/moveCategory';
 import { useBudget } from '../../contexts/BudgetContext';
+import { useAPI } from '../../contexts/APIContext';
 
 function EditCategory( props : EditCategoryProps ) {
 	const {setCloseDialog, id} = props;
 	const bp = useBudget();
+	const {syncBudget} = useAPI();
 	const {db, activeBudget, t, categories, setCategories} = bp;
 
 	const [isLoading, setIsLoading] = useState(true);
@@ -78,6 +80,7 @@ function EditCategory( props : EditCategoryProps ) {
 			}
 			newCategory.sync = 1;
 			addCategory(db, newCategory)
+			.then(() => syncBudget())
 			.then(() => {
 				if (category && (category.parent !== parentInput || mode === 'hide')) {
 					moveCategory(bp, id, -1, mode === 'hide' ? category.parent : parentInput)
