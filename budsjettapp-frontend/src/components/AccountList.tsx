@@ -18,7 +18,7 @@ function AccountList() {
 			</div>
 			{accounts.length ? accounts.map(el => <div className="account-list-account" key={el.id}>
 				<p><Link to={el.id ? `/account/${el.id}` : '/'} onClick={() => setShowSidebar(false)}>{el.name}</Link></p>
-				<p>{prettyNumber(accountBalances[el.id || 0] || 0, numberOptions)}</p>
+				<p className={(accountBalances[el.id || 0] || 0) < 0 ? 'negative-number' : ''}>{prettyNumber(accountBalances[el.id || 0] || 0, numberOptions)}</p>
 				</div>) : <p className="no-accounts" onClick={() => openDialog('addAccount')}>{t.noAccountsCreated}</p>}
 		</section>
 	)
