@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { Category, DictionaryEntry, Transaction, BudgetNumbers, BAP } from '../../../interfaces/interfaces'
+import { Category, DictionaryEntry, Transaction, BudgetNumbers, BAP, Payee } from '../../../interfaces/interfaces'
 import NumberInput from '../../NumberInput'
 import AutoSuggest from '../../AutoSuggest';
 import prettyNumber from '../../../functions/prettyNumber';
@@ -51,6 +51,17 @@ function AddTransaction(props : Props) {
 	}, [accountId]);
 
 	useEffect(() => {
+		if (payee.key) {
+			const payeeCategories = bap.transactions.filter(el => el.payeeId === payee.key).map(el => el.categoryId || 0);
+			if (payeeCategories.length) {
+				setCategory({
+					key: payeeCategories[0],
+					value: bap.categoriesById[payeeCategories[0]].name,
+				});
+			}
+		}
+	}, [payee]);
+	useEffect(() => {
 		getBudgetNumbersDB(db, activeBudget.id, month, month)
 		.then(numbers => {
 			setBudgetNumbers(numbers);
@@ -77,6 +88,31 @@ function AddTransaction(props : Props) {
 			categoryIndex[el.id] = el;
 		}
 	})
+
+	const payeeValues = [] as number[];
+	bap.transactions.sort((a, b) => {
+		if (a.date < b.date) {
+			return 1;
+		}
+		if (a.date > b.date) {
+			return -1;
+		}
+		if (a.id && b.id && a.id < b.id) {
+			return 1;
+		}
+		return -1;
+	}).map(el => el.payeeId || 0).forEach(el => {
+		if (el && !payeeValues.includes(el)) {
+			payeeValues.push(el);
+		}
+	});
+	payees.sort((a, b) => a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1).forEach(el => {
+		if (el.id && !payeeValues.includes(el.id)) {
+			payeeValues.push(el.id);
+		}
+	});
+
+
 	const categoryValues = [
 		{
 			key: 0 as number | undefined,
@@ -220,20 +256,8 @@ function AddTransaction(props : Props) {
 			originalValue={payee}
 			form="newTransactionForm"
 			tabIndex={2}
-			dictionary={ payees.sort((a, b) => {
-				const aLastUsed = a.lastUsed || 0;
-				const bLastUsed = b.lastUsed || 0;
-
-				if (aLastUsed < bLastUsed) {
-					return 1;
-				}
-				if (aLastUsed > bLastUsed) {
-					return -1;
-				}
-				return 0;
-
-			}).map(el => {
-				return {key: el.id, value: el.name};
+			dictionary={ payeeValues.map(el => {
+				return {key: el, value: bap.payeesById[el].name};
 			}) } />}
 			</td>
 		<td className="category-td">
