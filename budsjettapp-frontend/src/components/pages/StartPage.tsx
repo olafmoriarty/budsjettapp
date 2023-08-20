@@ -12,7 +12,7 @@ import Loading from '../Loading';
 import ErrorMessage from '../utils/ErrorMessage';
 
 function StartPage() {
-	const {t, db, selectBudget, openDialog} = useBudget();
+	const {t, db, selectBudget, openDialog, version} = useBudget();
 	const {fetchFromAPI, isFetching, setIsFetching, syncBudget} = useAPI();
 	const [allBudgets, setAllBudgets] = useState([] as Budget[]);
 	const [showAllBudgets, setShowAllBudgets] = useState(false);
@@ -89,7 +89,6 @@ function StartPage() {
 			auth: auth,
 		});
 		setIsFetching(false);
-		console.log(result);
 		if (result.status === 0) {
 			setError(result.error);
 		}
@@ -106,10 +105,21 @@ function StartPage() {
 				.sort((a, b) => {
 					const date1 = a.lastSyncDate || '';
 					const date2 = b.lastSyncDate || '';
-					if (date1 >= date2) {
+					if (date1 > date2) {
 						return -1;
 					}
-					return 1;
+					if (date1 < date2) {
+						return 1;
+					}
+					const id1 = a.id || 0;
+					const id2 = b.id || 0;
+					if (id1 > id2) {
+						return -1;
+					}
+					if (id2 < id1) {
+						return 1;
+					}
+					return 0;
 				})
 				.slice(0, showAllBudgets ? undefined : budgetsToShow)
 				.map((el, index) => el.id ? <button 
@@ -153,6 +163,7 @@ function StartPage() {
 					: 
 				<button className="button" onClick={() => fetchBudgets()}>{t.downloadBudget}</button>)
 			}
+			<p className="version-number">{version}</p>
 		</main>
 	)
 }

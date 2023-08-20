@@ -36,8 +36,9 @@ const BudgetCategoryName = (props : CategoryNameProps) => {
 		.then(el => {
 			const newCategories = bp.categories.map(oldCategory => oldCategory.id === newCategory.id ? newCategory : oldCategory);
 			bp.setCategories(newCategories);
-			props.bbp.setCategoryToEdit(undefined);
-			syncBudget();
+			syncBudget()
+			.then(el => props.bbp.setCategoryToEdit(undefined));
+			
 		});
 	}
 

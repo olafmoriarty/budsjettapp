@@ -27,7 +27,6 @@ const getAllToSyncDB = async (db : IDBPDatabase<BudgetInterface> | undefined, bu
 
 		for (let i = 0; i < stores.length; i++) {
 			const store = tx.objectStore(stores[i]);
-			console.log(stores[i]);
 			const index = store.index("sync");
 			let value = await index.getAll([budgetId, 1]);
 			
@@ -35,7 +34,6 @@ const getAllToSyncDB = async (db : IDBPDatabase<BudgetInterface> | undefined, bu
 			if (stores[i] === 'budgeted') {
 				for (let j = 0; j < value.length; j++) {
 					let valueRow = value[j];
-					console.log(valueRow);
 					// Add external category id
 					if ('category' in valueRow) {
 						const categoryStore = tx.objectStore('categories');

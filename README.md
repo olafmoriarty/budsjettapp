@@ -9,8 +9,8 @@
 ## Todo list
 *Continuously updated*
 ### Before beta launch
-- [ ] Allow downloading budget from cloud
-- [ ] Call syncBudget() on budget updates and update info on screen to match reality
+- [x] Allow downloading budget from cloud
+- [x] Call syncBudget() on budget updates and update info on screen to match reality
 - [ ] Add account types and create a debt category when adding a credit card or loan
 - [ ] Add drag-and-drop reordering of accounts
 - [ ] Allow hiding/deleting accounts
@@ -21,11 +21,13 @@
 - [ ] Add savings goals
 - [ ] Auto-suggest budgeting amount 
 - [ ] Add "Forgot password?" function
+- [ ] Add calculator function to number fields
 - [ ] Reports! At least some
 - [x] Implement React.lazy to cut down on load time
 - [ ] **Launch closed beta**
 
 ### Before launch
+- [ ] Add a user page under settings
 - [ ] Consider pagination of API sync function
 - [ ] Let users share budgets with other users
 - [ ] Localize app - add Bokmål and English language files

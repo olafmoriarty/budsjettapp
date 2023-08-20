@@ -42,7 +42,7 @@ function Account() {
 			setShowAddNew('');
 		}
 		if (newTransaction) {
-			const newTransactions = [ ... transactions.filter((el) => el.id !== newTransaction.id), newTransaction ];
+			const newTransactions = [ ...transactions.filter((el) => el.id !== newTransaction.id), newTransaction ];
 			setTransactions(newTransactions);
 			const syncedResult = await syncBudget();
 			if (syncedResult.status !== 0) {

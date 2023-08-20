@@ -465,9 +465,9 @@ function sync_budget($budget_id, $budget_key = '') {
 
 				if ($result->num_rows) {
 					$counter_row = $result->fetch_assoc();
-					$counter_value = json_decode(openssl_decrypt($counter_row['value'], 'aes-256-cbc', $auth['name'] . $secrets['budget_encryption_part'], 0, hex2bin($counter_row['iv'])));
+					$counter_value = json_decode(openssl_decrypt($counter_row['value'], 'aes-256-cbc', $budget_key, 0, hex2bin($counter_row['iv'])), true);
 					$counter_value['exCounterTransaction'] = $new_external_id;
-					$new_counter_value = openssl_encrypt( json_encode($counter_value), 'aes-256-cbc', $auth['name'] . $secrets['budget_encryption_part'], 0, hex2bin($counter_row['iv']));
+					$new_counter_value = openssl_encrypt( json_encode($counter_value), 'aes-256-cbc', $budget_key, 0, hex2bin($counter_row['iv']));
 					$stmt = $conn->prepare('UPDATE ba_content SET value = ? WHERE id = ?');
 					$stmt->bind_param('si', $new_counter_value, $reset_counter);
 					$stmt->execute();

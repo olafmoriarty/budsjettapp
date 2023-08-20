@@ -43,7 +43,6 @@ export const APIProvider = (props : Props) => {
 		} as { [key : string] : string };
 
 		if (options?.auth) {
-			console.log(options.auth);
 			headers['Authorization'] = options.auth;
 		}
 		else if (token) {
@@ -62,10 +61,6 @@ export const APIProvider = (props : Props) => {
 
 			if (json.accessToken) {
 				setToken(json.accessToken);
-			}
-			console.log(json);
-			if (json.data?.transactions) {
-				console.log(json.data.transactions);
 			}
 			return json;
 		} catch (error) {
@@ -126,7 +121,6 @@ export const APIProvider = (props : Props) => {
 			body: budget,
 			method: method,
 		});
-		console.log(result);
 
 		// If error, return the error
 		if (!result.status) {
@@ -140,8 +134,7 @@ export const APIProvider = (props : Props) => {
 		}
 
 		const returnValue = await addAllFromSyncDB(db, result.data, deviceIdentifier);
-		console.log(returnValue);
-		if (options?.import || activeBudget && activeBudget.sync) {
+		if (options?.import || (activeBudget && activeBudget.sync)) {
 			selectBudget(returnValue?.budget || result.data.budget);
 		}
 		setSyncCount(0);

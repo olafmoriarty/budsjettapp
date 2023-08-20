@@ -16,8 +16,8 @@ import { useAPI } from '../../contexts/APIContext';
 
 function BudgetScreen() {
 	const bp = useBudget();
-	const {syncButtonPressedTimes} = useAPI();
-	const { db, t, activeBudget, showSidebar, setShowSidebar, categories, setCategories } = bp;
+	const {syncBudget, syncButtonPressedTimes} = useAPI();
+	const { db, t, activeBudget, categories, setCategories } = bp;
 
 
 	// Which category (name) is currently being edited?
@@ -40,8 +40,7 @@ function BudgetScreen() {
 		// If budgetNumbers is already set, get the numbers
 		getBudgetNumbersDB( db, activeBudget.id || 0, currentMonth - 1, currentMonth + 1 )
 		.then((newBudgetNumbers) => {
-			console.log(newBudgetNumbers);
-				setBudgetNumbers(newBudgetNumbers);
+			setBudgetNumbers(newBudgetNumbers);
 		});
 	}, [currentMonth, syncButtonPressedTimes]);
 
@@ -69,7 +68,8 @@ function BudgetScreen() {
 				newCategories.push(newCategory);
 				setCategories(newCategories);
 				setCategoryToEdit(categoryId);
-			});
+			})
+			.then(() => syncBudget());
 		}
 	}
 

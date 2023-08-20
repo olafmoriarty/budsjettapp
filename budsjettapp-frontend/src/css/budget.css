@@ -422,6 +422,11 @@ h1.app-name {
 	font-size: 3rem;
 }
 
+.version-number {
+	font-style: italic;
+	text-align: right;
+}
+
 main.settings {
 	display: flex;
 	flex-direction: column;
@@ -1111,6 +1116,10 @@ input.invalid:focus {
 	main.budget tr.add-new-category td:first-child, main.budget tbody:last-child .master-category .category-name {
 		border-bottom-left-radius: .25rem;
 		border-bottom-right-radius: .25rem;
+	}
+
+	main.budget .category-name .main-part-of-cell {
+		text-align: center;
 	}
 
 	main.budget .month-header, main.budget .b-o-b {

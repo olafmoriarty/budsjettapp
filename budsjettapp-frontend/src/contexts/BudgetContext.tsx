@@ -28,6 +28,8 @@ const BudgetContext = createContext( {
 
 export const BudgetProvider = (props : Props) => {
 
+	const version = 'v0.3.2';
+
 	// State: Has the page completed loading?
 	const [pageLoaded, setPageLoaded] = useState(false);
 
@@ -125,6 +127,12 @@ export const BudgetProvider = (props : Props) => {
 		}
 	}, [activeBudget?.id, db]);
 
+	useEffect(() => {
+		if (activeBudget && activeBudget.id) {
+			localStorage.setItem("activeBudget", JSON.stringify(activeBudget));
+		}
+	}, [activeBudget, db]);
+
 	// Return error if indexedDB is not supported
 	if (!('indexedDB' in window)) {
 		return <div>
@@ -182,7 +190,7 @@ export const BudgetProvider = (props : Props) => {
 		}
 	}
 
-	const bp = {db, t, activeBudget, selectBudget, selectAccount, openDialog, dialogBox, accounts, setAccounts, categories, setCategories, payees, setPayees, showSidebar, setShowSidebar, accountBalances, setAccountBalances, numberOptions, defaultDate, setDefaultDate, updateAccountBalances, dialogToShow, deviceIdentifier} as BP;
+	const bp = {db, t, activeBudget, selectBudget, selectAccount, openDialog, dialogBox, accounts, setAccounts, categories, setCategories, payees, setPayees, showSidebar, setShowSidebar, accountBalances, setAccountBalances, numberOptions, defaultDate, setDefaultDate, updateAccountBalances, dialogToShow, deviceIdentifier, version} as BP;
 
 	return (
 		<BudgetContext.Provider value={bp}>
@@ -225,6 +233,7 @@ export interface BP {
 	setAccountBalances : (a : AccountBalances) => void,
 	setDefaultDate : (a : string) => void,
 	updateAccountBalances : () => void,
+	version : string,
 
 	dialogBox : RefObject<HTMLDialogElement>,
 	dialogToShow : string | [string, DialogParams],

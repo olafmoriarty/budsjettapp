@@ -57,7 +57,7 @@ function AddAccount() {
 		ev.preventDefault();
 
 		// Check that the given date is a valid date
-		if (!/^\d{4}\-\d{2}\-\d{2}$/.test(values.accountBalanceDate)) {
+		if (!/^\d{4}-\d{2}-\d{2}$/.test(values.accountBalanceDate)) {
 			return;
 		}
 

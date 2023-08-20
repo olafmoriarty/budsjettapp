@@ -12,7 +12,7 @@ function SyncButton() {
 		if (isFetching) {
 			return;
 		}
-		setIsFetching(true);		
+		setIsFetching(true);
 		await syncBudget({
 			redirect: true,
 		});
