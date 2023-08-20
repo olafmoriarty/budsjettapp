@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Category, DictionaryEntry, Transaction, BudgetNumbers, BAP } from '../../../interfaces/interfaces'
 import NumberInput from '../../NumberInput'
 import AutoSuggest from '../../AutoSuggest';
@@ -14,6 +14,8 @@ function AddTransaction(props : Props) {
 	const {db, t, defaultDate, setDefaultDate, categories, activeBudget, payees, setPayees, accounts, updateAccountBalances, numberOptions} = useBudget();
 
 	const isTransfer = props.isTransfer || (transaction && transaction.counterAccount);
+
+	const firstField = useRef<HTMLInputElement>(null);
 
 	let startDate = defaultDate;
 	let startPayee = {key: undefined, value: ''} as DictionaryEntry;
@@ -56,7 +58,7 @@ function AddTransaction(props : Props) {
 	}, [month]);
 
 	const resetForm = () => {
-		setDate(startDate);
+		firstField.current?.focus();
 		setPayee(startPayee);
 		setCategory(startCategory);
 		setCounterAccount(startCounterAccount);
@@ -197,7 +199,7 @@ function AddTransaction(props : Props) {
 		<td className="checkbox-td"></td>
 		<td className="date-td">
 			<label htmlFor='date'>{t.date}</label>
-			<input type="date" id="date" value={date} onChange={(event) => setDate(event.target.value)} autoFocus form="newTransactionForm" tabIndex={1} />
+			<input type="date" id="date" value={date} onChange={(event) => setDate(event.target.value)} autoFocus form="newTransactionForm" tabIndex={1} ref={firstField} />
 		</td>
 		<td className="payee-td">
 			<label htmlFor='payee'>{t.payee}</label>
