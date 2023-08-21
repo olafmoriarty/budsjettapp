@@ -7,11 +7,13 @@ import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
 import AddTransaction from './AddTransaction';
 import deleteTransactionDB from '../../../functions/database/deleteTransactionDB';
 import { useBudget } from '../../../contexts/BudgetContext';
+import { useAPI } from '../../../contexts/APIContext';
 
 function AccountTransaction(props : Props) {
 	const {bap, transaction, checked} = props;
 	const {db, t, numberOptions, updateAccountBalances} = useBudget();
-	const {categoriesById, accountsById, payeesById, transactions, setTransactions, registerCheckbox} = bap;
+	const {syncBudget} = useAPI();
+	const {categoriesById, accountsById, payeesById, transactions, setTransactions, registerCheckbox, deleteTransaction} = bap;
 
 	const [editRow, setEditRow] = useState(false);
 	const [showMenu, setShowMenu] = useState(false);
@@ -24,15 +26,6 @@ function AccountTransaction(props : Props) {
 		if (close) {
 			setEditRow(false);
 		}
-	}
-
-	const deleteTransaction = () => {
-		deleteTransactionDB(db, transaction)
-		.then(() => {
-			updateAccountBalances();
-			const newTransactions = [ ... transactions.filter((el) => el.id !== transaction.id)];
-			setTransactions(newTransactions);
-		});
 	}
 
 	if (editRow) {
@@ -61,7 +54,7 @@ function AccountTransaction(props : Props) {
 							event.stopPropagation();
 						}}>{t.editTransaction}</button></li>
 						<li><button className="link" onClick={(event) => {
-							deleteTransaction();
+							deleteTransaction(transaction);
 							event.stopPropagation();
 						}}>{t.deleteTransaction}</button></li>
 					</ul>

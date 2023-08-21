@@ -176,6 +176,7 @@ export interface BAP {
 	transactions : Transaction[],
 	setTransactions : (a : Transaction[]) => void,
 	accountId : number,
+	deleteTransaction : (a : Transaction) => void,
 }
 
 export interface BudgetNumbers {

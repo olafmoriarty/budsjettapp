@@ -4,6 +4,7 @@ import { DictionaryEntry } from '../interfaces/interfaces';
 function AutoSuggest( props : Props ) {
 	const {dictionary, originalValue, setValue, options, form, tabIndex, required} = props;
 	const [text, setText] = useState('');
+	const [displaySuggestions, setDisplaySuggestions] = useState(true);
 	const [selectedIndex, setSelectedIndex] = useState(undefined as number | undefined);
 
 	let selection = [ ...dictionary ];
@@ -56,6 +57,7 @@ function AutoSuggest( props : Props ) {
 				value: selection[selectedIndex].value});
 			setText(selection[selectedIndex].value);
 			setSelectedIndex(0);
+			setDisplaySuggestions(false);
 		}
 	}
 
@@ -66,6 +68,7 @@ function AutoSuggest( props : Props ) {
 			value: selection[index].value});
 		setText(selection[index].value);
 		setSelectedIndex(0);
+		setDisplaySuggestions(false);
 	}
 
 	const updateText = (newText : string) => {
@@ -84,7 +87,10 @@ function AutoSuggest( props : Props ) {
 			<input 
 				type="text" 
 				value={text} 
-				onChange={(event) => updateText(event.target.value)}
+				onChange={(event) => {
+					updateText(event.target.value);
+					setDisplaySuggestions(true);
+				}}
 				autoComplete='off'
 				onKeyDown={event => onKeyDown(event)}
 				onFocus={event => onFocus(event)}
@@ -95,7 +101,7 @@ function AutoSuggest( props : Props ) {
 				name={props.name}
 				id={props.id} 
 			/>
-			{selection.length ? <div className="autocomplete-options">{
+			{selection.length && displaySuggestions ? <div className="autocomplete-options">{
 				selection.map((el, index) => <div className={index === selectedIndex ? 'selected' : ''} key={el.key} onMouseDown={(event) => selectOption(event, index)}>{el.displayValue || el.value}</div>)
 			}</div> : undefined}
 		</div>

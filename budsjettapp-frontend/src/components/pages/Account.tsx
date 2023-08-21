@@ -7,9 +7,10 @@ import AddTransaction from './account/AddTransaction';
 import AccountTransaction from './account/AccountTransaction';
 import { useBudget } from '../../contexts/BudgetContext';
 import { useAPI } from '../../contexts/APIContext';
+import deleteTransactionDB from '../../functions/database/deleteTransactionDB';
 
 function Account() {
-	const {accounts, categories, payees, t, activeBudget, db, numberOptions, accountBalances, openDialog} = useBudget();
+	const {accounts, categories, payees, t, activeBudget, db, numberOptions, accountBalances, openDialog, updateAccountBalances} = useBudget();
 	const {syncBudget} = useAPI();
 	const params = useParams();
 	const [transactions, setTransactions] = useState([] as Transaction[]);
@@ -36,6 +37,18 @@ function Account() {
 			})
 		}
 	}, [accounts, accountId, activeBudget]);
+
+	useEffect(() => {
+		syncBudget();
+	}, [transactions]);
+
+	const deleteTransaction = async (transactionToDelete : Transaction) => {
+		await deleteTransactionDB(db, transactionToDelete);
+		updateAccountBalances();
+		const newTransactions = [ ... transactions.filter((el) => el.id !== transactionToDelete.id)];
+		setTransactions(newTransactions);
+		await syncBudget();
+	}
 
 	const updateAccount = async (close? :  boolean, newTransaction? : Transaction) => {
 		if (close) {
@@ -80,7 +93,7 @@ function Account() {
 		return <main><p>{t.accountNotFound}</p></main>;
 	}
 
-	const bap = {payeesById, categoriesById, accountsById, registerCheckbox, accountId, transactions, setTransactions};
+	const bap = {payeesById, categoriesById, accountsById, registerCheckbox, accountId, transactions, setTransactions, deleteTransaction};
 	return (
 		<main className="account-page">
 			<div className="account-header">

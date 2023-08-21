@@ -51,7 +51,13 @@ function AddTransaction(props : Props) {
 	}, [accountId]);
 
 	useEffect(() => {
-		if (payee.key) {
+		if (transaction && payee.key === transaction.payeeId) {
+			setCategory({
+				key: transaction.categoryId,
+				value: transaction.categoryId ? bap.categoriesById[ transaction.categoryId ].name : '',
+			})
+		}
+		else if (payee.key) {
 			const payeeCategories = bap.transactions.filter(el => el.payeeId === payee.key).map(el => el.categoryId || 0);
 			if (payeeCategories.length) {
 				setCategory({
@@ -59,6 +65,12 @@ function AddTransaction(props : Props) {
 					value: bap.categoriesById[payeeCategories[0]].name,
 				});
 			}
+		}
+		else {
+			setCategory({
+				key: undefined,
+				value: '',
+			});
 		}
 	}, [payee]);
 	useEffect(() => {
