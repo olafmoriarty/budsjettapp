@@ -1,4 +1,4 @@
-import React, {useState, createContext, useContext} from 'react';
+import React, {useState, useEffect, createContext, useContext} from 'react';
 
 // Import CSS
 import '../css/budget.css';
@@ -29,6 +29,12 @@ export const APIProvider = (props : Props) => {
 	const [syncButtonPressedTimes, setSyncButtonPressedTimes] = useState(0);
 
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (activeBudget && activeBudget.id) {
+			syncBudget();
+		}
+	}, [activeBudget?.id]);
 
 	/**
 	 * Fetch data from the API 
