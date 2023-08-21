@@ -155,6 +155,7 @@ export interface Transaction {
 	exCounterTransaction?: number,
 	sync?: number,
 	deleted?: boolean,
+	monthOffset?: number,
 }
 
 export interface BBP {

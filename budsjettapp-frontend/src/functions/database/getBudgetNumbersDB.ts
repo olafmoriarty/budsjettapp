@@ -12,7 +12,7 @@ const getBudgetNumbersDB = async (db : IDBPDatabase<BudgetInterface> | undefined
 		let tCursor = await tIndex.openCursor(budgetId);
 
 		while (tCursor) {
-			const month = tCursor.value.month;
+			const month = tCursor.value.month + (tCursor.value.monthOffset || 0);
 			const category = tCursor.value.categoryId;
 
 			if (category === undefined) {

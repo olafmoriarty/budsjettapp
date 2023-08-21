@@ -53,8 +53,8 @@ function AddTransaction(props : Props) {
 	useEffect(() => {
 		if (transaction && payee.key === transaction.payeeId) {
 			setCategory({
-				key: transaction.categoryId,
-				value: transaction.categoryId ? bap.categoriesById[ transaction.categoryId ].name : '',
+				key: transaction.categoryId === 0 && transaction.monthOffset ? 0.5 : transaction.categoryId,
+				value: transaction.categoryId !== undefined ? (transaction.categoryId === 0 ? t.incomeMonth.replace('{m}', t.monthNames[(transaction.month + (transaction.monthOffset || 0)) % 12]) : bap.categoriesById[ transaction.categoryId ].name) : '',
 			})
 		}
 		else if (payee.key) {
@@ -77,6 +77,7 @@ function AddTransaction(props : Props) {
 		getBudgetNumbersDB(db, activeBudget.id, month, month)
 		.then(numbers => {
 			setBudgetNumbers(numbers);
+			console.log(numbers);
 		});
 	}, [month]);
 
@@ -128,11 +129,18 @@ function AddTransaction(props : Props) {
 	const categoryValues = [
 		{
 			key: 0 as number | undefined,
-			value: t.income,
+			value: t.incomeMonth.replace('{m}', t.monthNames[month % 12]),
 			displayValue: <div className="category-option-box">
-			<p className="category-option-name">{t.income}</p>
+			<p className="category-option-name">{t.incomeMonth.replace('{m}', t.monthNames[month % 12])}</p>
 			</div>,
-		}
+		},
+		{
+			key: 0.5 as number | undefined,
+			value: t.incomeMonth.replace('{m}', t.monthNames[(month + 1) % 12]),
+			displayValue: <div className="category-option-box">
+			<p className="category-option-name">{t.incomeMonth.replace('{m}', t.monthNames[(month + 1) % 12])}</p>
+			</div>,
+		},
 	]
 	.concat(categories.filter(el => el.parent && !el.deleted && !el.hidden).sort((a, b) => {
 		const parentA = categoryIndex[a.parent || 0];
@@ -159,7 +167,7 @@ function AddTransaction(props : Props) {
 		const displayValue = <div className="category-option-box">
 		<p className="category-option-parent">{categoryIndex[el.parent || 0]?.name} &gt;</p>
 		<p className="category-option-name">{el.name}</p>
-		<p className="category-option-balance">{prettyNumber(budgetNumbers[month] && el.id && budgetNumbers[month][el.id] ? budgetNumbers[month][el.id].budgetedTotal - budgetNumbers[month][el.id].spentTotal : 0, numberOptions)}</p>
+		<p className={`category-option-balance ${el.id && budgetNumbers[month] && budgetNumbers[month][el.id] && budgetNumbers[month][el.id].budgetedTotal + budgetNumbers[month][el.id].spentTotal < 0 ? "negative-number" : ""}`}>{prettyNumber(budgetNumbers[month] && el.id && budgetNumbers[month][el.id] ? budgetNumbers[month][el.id].budgetedTotal + budgetNumbers[month][el.id].spentTotal : 0, numberOptions)}</p>
 		</div>;
 
 		return {key: el.id, value: el.name, displayValue: displayValue };
@@ -202,6 +210,10 @@ function AddTransaction(props : Props) {
 		if (!isTransfer) {
 			newTransaction.payeeId = newPayee;
 			newTransaction.categoryId = category.key;
+			if (category.key === 0.5) {
+				newTransaction.monthOffset = 1;
+				newTransaction.categoryId = 0;
+			}
 		}
 		else {
 			newTransaction.counterAccount = counterAccount.key;
@@ -209,8 +221,11 @@ function AddTransaction(props : Props) {
 
 		if (transaction) {
 			newTransaction = { ...transaction, ...newTransaction };
+			if (transaction.monthOffset && category.key !== 0.5) {
+				delete(newTransaction.monthOffset);
+			}
 		}
-
+		
 		const newId = await addTransactionDB(db, newTransaction);
 		newTransaction.id = newId;
 

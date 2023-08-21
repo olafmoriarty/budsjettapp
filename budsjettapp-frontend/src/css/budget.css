@@ -1339,6 +1339,7 @@ input.invalid:focus {
 
 	.account-header {
 		position: sticky;
+		z-index: 20;
 		top: 0;
 		background: var(--background);
 	}
