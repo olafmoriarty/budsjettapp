@@ -50,12 +50,12 @@ function Account() {
 		await syncBudget();
 	}
 
-	const updateAccount = async (close? :  boolean, newTransaction? : Transaction) => {
+	const updateAccount = async (close? :  boolean, newTransaction? : Transaction | Transaction[]) => {
 		if (close) {
 			setShowAddNew('');
 		}
 		if (newTransaction) {
-			const newTransactions = [ ...transactions.filter((el) => el.id !== newTransaction.id), newTransaction ];
+			const newTransactions = Array.isArray(newTransaction) ? [ ...transactions.filter(el => !newTransaction.map(el2 => el2.id).includes(el.id)) ].concat(newTransaction) : [ ...transactions.filter((el) => el.id !== newTransaction.id), newTransaction ];
 			setTransactions(newTransactions);
 			const syncedResult = await syncBudget();
 			if (syncedResult.status !== 0) {
@@ -135,6 +135,7 @@ function Account() {
 				<tbody>
 					{showAddNew && account.id ? <AddTransaction bap={bap} updateAccount={updateAccount} accountId={account.id} isTransfer={showAddNew === 'transfer'} /> : undefined}
 					{transactions
+					.filter(el => !el.parentTransaction && !el.deleted)
 					.sort((a, b) => {
 						if (a.date < b.date) {
 							return 1;

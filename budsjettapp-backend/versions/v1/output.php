@@ -4,14 +4,15 @@ $okOrigins = [
 	'budsjett.app',
 	'www.budsjett.app',
 	'localhost',
-	'testversjon.budsjett.app'
+	'192.168.10.153',
+	'testversjon.budsjett.app',
 ];
 if (isset($_SERVER['HTTP_REFERER'])) {
 	$url_host = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
 }
 if (isset($url_host) && in_array($url_host, $okOrigins)) {
 	$origin = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_SCHEME) . '://' . $url_host;
-	if ($url_host == 'localhost') {
+	if ($url_host == 'localhost' || $url_host == '192.168.10.153') {
 		$origin .= ':' . parse_url($_SERVER['HTTP_REFERER'], PHP_URL_PORT);
 	}
 	header('Access-Control-Allow-Credentials: true');

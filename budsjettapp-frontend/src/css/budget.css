@@ -839,6 +839,9 @@ main.account-page {
 	display: none;
 }
 
+.transaction-list td p {
+	margin: 0;
+}
 .transaction-list tr:has(input[type=checkbox]:checked) td {
 	background: var(--accent-yellow);
 }
@@ -1250,24 +1253,102 @@ input.invalid:focus {
 		justify-content: flex-end;
 	}
 
-	.transaction-list .new-transaction {
+	.transaction-list tbody:has(.new-transaction) {
 		position: fixed;
 		z-index: 100;
 		top: 0;
 		left: 0;
 		right: 0;
 		bottom: 0;
-		height: 100vh;
-		display: block;
-		border-radius: 0;
-		border: none;
 		padding-top: 5rem;
+		height: 100vh;
 		overflow-y: auto;
+		background: var(--background);
 
 		animation-name: show-dialog;
 		animation-duration: .5s;
 		animation-timing-function: linear;
 		animation-fill-mode: both;
+	}
+
+	.transaction-list tbody:has(.new-transaction) .transaction-row {
+		display: none;
+	}
+
+	.transaction-list .new-transaction {
+		display: block;
+		border-radius: 0;
+		border: none;
+		background: transparent;
+		padding: 0;
+	}
+
+	.transaction-list .new-transaction td {
+		background: transparent;
+	}
+
+	.transaction-list .new-transaction:nth-child(even), .transaction-list .new-transaction:nth-child(even) td, .transaction-list .new-transaction:nth-child(odd), .transaction-list .new-transaction:nth-child(odd) td {
+		background: transparent;
+	}
+
+	.transaction-list .new-transaction.split-transaction-child {
+		border: solid 1px var(--sidebar);
+		border-radius: .5rem;
+		padding: .5rem;
+		background: var(--alternating-row);
+	}
+
+	.transaction-list .out-td input, .transaction-list .in-td input {
+		font-size: 2rem;
+		font-weight: bold;
+		background: var(--black);
+	}
+	.transaction-list .out-td input {
+		color: var(--accent-red);
+	}
+	.transaction-list .in-td input {
+		color: var(--accent-green);
+	}
+
+	.transaction-list .new-transaction:has(.select-in-or-out input[value=out]:checked) .in-td, .transaction-list .new-transaction:has(.select-in-or-out input[value=in]:checked) .out-td {
+		display: none;
+	}
+
+	.transaction-list .new-transaction.split-transaction-child .date-td {
+		text-align: right;
+	}
+
+	.transaction-list .new-transaction .select-in-or-out {
+		display: flex;
+		gap: .5rem;
+	}
+
+	.transaction-list .new-transaction.split-transaction-parent .select-in-or-out {
+		display: none;
+	}
+	.transaction-list .new-transaction .select-in-or-out input {
+		display: none;
+	}
+
+	.transaction-list .new-transaction .select-in-or-out label {
+		display: block;
+		flex-grow: 1;
+		text-align: center;
+		color: var(--sidebar);
+		font-weight: bold;
+		margin-top: .1rem;
+		padding: .5rem;
+		border-radius: .25rem;
+	}
+
+	.transaction-list .new-transaction .select-in-or-out label:has(input:checked) {
+		background: var(--accent-green);
+		color: var(--black);
+		box-shadow: .125rem .125rem .125rem var(--black);
+	}
+
+	.transaction-list .new-transaction .new-transaction-buttons {
+		margin-top: 2rem;
 	}
 
 	.transaction-list .new-transaction .new-transaction-buttons form {
@@ -1391,6 +1472,10 @@ input.invalid:focus {
 		display: none;
 	}
 
+	.transaction-list .select-in-or-out {
+		display: none;
+	}
+
 	.transaction-list .new-transaction .new-transaction-buttons {
 		position: absolute;
 		top: 100%;
@@ -1409,6 +1494,9 @@ input.invalid:focus {
 		font-size: .75rem;
 	}
 
+	.transaction-list .new-transaction.split-transaction td {
+		background: var(--accent-yellow);
+	}
 
 
 

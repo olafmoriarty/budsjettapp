@@ -10,7 +10,6 @@ function AutoSuggest( props : Props ) {
 	let selection = [ ...dictionary ];
 
 	useEffect(() => {
-		console.log(originalValue);
 		setText(originalValue.value);
 	}, [originalValue]);
 

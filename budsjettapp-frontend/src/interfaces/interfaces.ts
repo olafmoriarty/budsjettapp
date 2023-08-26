@@ -156,6 +156,9 @@ export interface Transaction {
 	sync?: number,
 	deleted?: boolean,
 	monthOffset?: number,
+	parentTransaction?: number,
+	exParentTransaction?: number,
+	isParent?: boolean,
 }
 
 export interface BBP {

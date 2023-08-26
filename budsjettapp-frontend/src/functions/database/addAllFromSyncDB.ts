@@ -132,6 +132,17 @@ const addAllFromSyncDB = async (db : IDBPDatabase<BudgetInterface> | undefined, 
 					delete(row.exCounterTransaction);
 				}
 
+				if ('exParentTransaction' in row && row.exParentTransaction) {
+					if (!row.parentTransaction) {
+						const transactionStore = tx.objectStore('transactions');
+						const externalTransactionIndex = transactionStore.index('externalId');
+						const externalTransactionRow = await externalTransactionIndex.get(row.exParentTransaction);
+
+						row.parentTransaction = externalTransactionRow?.id;
+					}
+					delete(row.exParentTransaction);
+				}
+
 				const rowId = await store.put(row);
 				outputStore.push({
 					...row,

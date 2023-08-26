@@ -395,7 +395,10 @@ function sync_budget($budget_id, $budget_key = '') {
 					$row_copy['exCounterTransaction'] = $external_ids['transactions'][ $row['counterTransaction'] ];
 					$reset_counter = $external_ids['transactions'][ $row['counterTransaction'] ];
 				}
-				foreach (['accountId', 'categoryId', 'payeeId', 'counterAccount', 'counterTransaction'] as $field) {
+				if ( isset($row['parentTransaction']) && isset($external_ids['transactions'][ $row['parentTransaction'] ]) ) {
+					$row_copy['exParentTransaction'] = $external_ids['transactions'][ $row['parentTransaction'] ];
+				}
+				foreach (['accountId', 'categoryId', 'payeeId', 'counterAccount', 'counterTransaction', 'parentTransaction'] as $field) {
 					if (isset($row_copy[$field]) && ($field !== 'categoryId' || $row_copy[$field] !== 0)) {
 						unset($row_copy[$field]);
 					}

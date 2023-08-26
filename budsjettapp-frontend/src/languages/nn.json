@@ -64,6 +64,7 @@
 	"iDontHaveAnUser": "Eg vil opprette ein ny brukar",
 	"iHaveAnUser": "Eg har allereie ein brukar",
 	"in": "Inn",
+	"inVerbose": "Inn på konto",
 	"income": "Inntekt",
 	"incomeMonth": "Inntekt, {m}",
 	"iUnderstand": "OK, eg skjønner",
@@ -87,6 +88,7 @@
 	"noTemplateEmptyBudget": "Ingen mal - tomt budsjett",
 
 	"out": "Ut",
+	"outVerbose": "Ut av konto",
 	"outflows": "Utgifter",
 	"overbudgeted": "for mykje budsjettert",
 
@@ -112,6 +114,7 @@
 	"sidebarButtonSaveToCloud": "Lagre i skyen",
 	"sidebarButtonSettings": "Innstillingar",
 	"sidebarButtonSync": "Synkroniser",
+	"split": "Fordel ...",
 	"startFreeTrial": "Start gratis prøveperiode",
 
 	"templateLabel": "Kategorimal:",

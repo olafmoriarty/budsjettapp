@@ -8,9 +8,12 @@ import addPayeeDB from '../../../functions/database/addPayeeDB';
 import addTransactionDB from '../../../functions/database/addTransactionDB';
 import getBudgetNumbersDB from '../../../functions/database/getBudgetNumbersDB';
 import { useBudget } from '../../../contexts/BudgetContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import deleteTransactionDB from '../../../functions/database/deleteTransactionDB';
 
 function AddTransaction(props : Props) {
-	const {bap, updateAccount, accountId, transaction} = props;
+	const {bap, updateAccount, accountId, transaction, isChild} = props;
 	const {db, t, defaultDate, setDefaultDate, categories, activeBudget, payees, setPayees, accounts, updateAccountBalances, numberOptions} = useBudget();
 
 	const isTransfer = props.isTransfer || (transaction && transaction.counterAccount);
@@ -29,7 +32,10 @@ function AddTransaction(props : Props) {
 		startDate = transaction.date;
 		startPayee = {key : transaction.payeeId, value: transaction.payeeId ? bap.payeesById[transaction.payeeId].name : ''};
 		startCounterAccount = {key : transaction.counterAccount, value: transaction.counterAccount ? bap.accountsById[transaction.counterAccount].name : ''};
-		startCategory = {key : transaction.categoryId, value: transaction.categoryId !== undefined ? bap.categoriesById[transaction.categoryId].name : ''};
+		startCategory = {key: transaction.categoryId, value: transaction.categoryId !== undefined ? bap.categoriesById[transaction.categoryId].name : ''};
+		if (transaction.isParent) {
+			startCategory = {key: -1, value: t.split};
+		}
 		startMemo = transaction.memo || '';
 		startAmountIn = transaction.in || 0;
 		startAmountOut = transaction.out || 0;
@@ -44,13 +50,53 @@ function AddTransaction(props : Props) {
 	const [amountIn, setAmountIn] = useState(startAmountIn);
 	const [amountOut, setAmountOut] = useState(startAmountOut);
 
+	const [showInOrOut, setShowInOrOut] = useState('out');
+	const [children, setChildren] = useState(transaction?.isParent && props.childTransactions?.length ? props.childTransactions.map((el, index) => {
+		return {id: el.id,
+			category: el.categoryId,
+			memo: el.memo,
+			in: el.in,
+			out: el.out,
+		} as ChildContent;
+	}) : [{}, {}] as ChildContent[]);
+	const isParent = category.key === -1 && !isChild ? true : false;
 	let month = getMonth(date);
 
 	useEffect(() => {
 		resetForm();
 	}, [accountId]);
 
+	const updateChildren = (row : number, updatedChild : ChildContent) => {
+		const newChildren = children.map((el, index) => index === row ? updatedChild : el);
+		setChildren(newChildren);
+	}
+
+	const addRow = () => {
+		const newChildren = [ ...children, {} ];
+		setChildren(newChildren);
+	}
+
+	const deleteRow = (row : number) => {
+		const newChildren = children.map((el, index) => index !== row ? el : {id: el.id, deleted: true});
+		setChildren(newChildren);
+	}
+	
 	useEffect(() => {
+		if (isChild && props.childRowNumber !== undefined && props.updateInParent) {
+			props.updateInParent(props.childRowNumber, {
+				id: transaction?.id,
+				category: category.key,
+				memo: memo,
+				in: amountIn,
+				out: amountOut,
+			})
+		}
+	}, [category.key, memo, amountIn, amountOut]);
+
+	useEffect(() => {
+		if (transaction && payee.key === transaction.payeeId && transaction.isParent) {
+			return;
+		}
 		if (transaction && payee.key === transaction.payeeId) {
 			setCategory({
 				key: transaction.categoryId === 0 && transaction.monthOffset ? 0.5 : transaction.categoryId,
@@ -77,11 +123,17 @@ function AddTransaction(props : Props) {
 		getBudgetNumbersDB(db, activeBudget.id, month, month)
 		.then(numbers => {
 			setBudgetNumbers(numbers);
-			console.log(numbers);
 		});
 	}, [month]);
 
+	const selectInOutOption = (event : React.FormEvent<HTMLInputElement>) => {
+		setShowInOrOut(event.currentTarget.value);
+	}
+
 	const resetForm = () => {
+		if (!transaction) {
+			return;
+		}
 		firstField.current?.focus();
 		setPayee(startPayee);
 		setCategory(startCategory);
@@ -171,7 +223,15 @@ function AddTransaction(props : Props) {
 		</div>;
 
 		return {key: el.id, value: el.name, displayValue: displayValue };
-	}))
+	}));
+
+	if (!isChild) {
+		categoryValues.unshift({
+			key: -1,
+			value: t.split,
+			displayValue: <div className="category-option-box">{t.split}</div>,
+		});
+	}
 
 	const onSubmit = async (event : React.FormEvent, close? : boolean) => {
 		event.preventDefault();
@@ -180,7 +240,12 @@ function AddTransaction(props : Props) {
 			return;
 		}
 
-		let newPayee;
+		if (isChild && props.onSubmit) {
+			props.onSubmit(event, close);
+			return;
+		}
+
+		let newPayee : number | undefined;
 		if (payee.key) {
 			newPayee = payee.key;
 		}
@@ -214,6 +279,12 @@ function AddTransaction(props : Props) {
 				newTransaction.monthOffset = 1;
 				newTransaction.categoryId = 0;
 			}
+			if (category.key === -1) {
+				newTransaction.isParent = true;
+				delete(newTransaction.categoryId);
+				delete(newTransaction.in);
+				delete(newTransaction.out);
+			}
 		}
 		else {
 			newTransaction.counterAccount = counterAccount.key;
@@ -228,6 +299,60 @@ function AddTransaction(props : Props) {
 		
 		const newId = await addTransactionDB(db, newTransaction);
 		newTransaction.id = newId;
+		let returnArray = [] as Transaction[];
+
+		if (isParent) {
+			const childrenById = props.childTransactions?.reduce((accumulator, value) => ({ ...accumulator, [value.id || -1]: value }), {} as {[key : number]: Transaction});
+			returnArray.push(newTransaction);
+			for (let i = 0; i < children.length; i++) {
+				const el = children[i];
+				if (el.deleted) {
+					if (el.id && childrenById && childrenById[el.id]) {
+						const oldTransaction = childrenById[el.id];
+						await deleteTransactionDB(db, oldTransaction );
+
+						const newTransaction = {
+							id: oldTransaction.id,
+							externalId: oldTransaction.externalId,
+							budgetId: oldTransaction.budgetId,
+							date: '',
+							month: 0,
+							accountId: 0,
+							sync: 1,
+							deleted: true,
+						} as Transaction;
+						returnArray.push(newTransaction);
+			
+					}
+					continue;
+				}
+				let childTransaction = {
+					budgetId: activeBudget.id,
+					date: date,
+					month: getMonth(date),
+					accountId: accountId,
+					payeeId: newPayee,
+					categoryId: el.category,
+					memo: el.memo,
+					in: el.in,
+					out: el.out,
+					sync: 1,
+					parentTransaction: newId,
+				} as Transaction;
+				if (el.id) {
+					const oldTransaction = childrenById?.[el.id];
+					if (oldTransaction) {
+						childTransaction = {
+							...oldTransaction,
+							...childTransaction,
+						};
+					}
+				}
+				const childId = await addTransactionDB(db, childTransaction);
+				childTransaction.id = childId;
+				returnArray.push(childTransaction);
+			}
+		}
 
 		if (isTransfer) {
 			let counterTransaction = { ...newTransaction };
@@ -254,78 +379,155 @@ function AddTransaction(props : Props) {
 		setDefaultDate(date);
 		updateAccountBalances();
 		resetForm();
-		updateAccount(close, newTransaction);
+		console.log(returnArray);
+		updateAccount(close, isParent ? returnArray : newTransaction);
 	}
 
+	const tabIndexOffset = props.childRowNumber !== undefined ? (props.childRowNumber + 1) * 20 : 0;
+	const totalOut = children.reduce((accumulator, currentValue) => accumulator + (currentValue.out || 0), 0);
+	const totalIn = children.reduce((accumulator, currentValue) => accumulator + (currentValue.in || 0), 0);
 	return (
-	<tr className="new-transaction">
+		<>
+	<tr className={`new-transaction ${isParent || isChild ? 'split-transaction' : ''} ${isChild ? 'split-transaction-child' : ''} ${isParent ? 'split-transaction-parent' : ''}`}>
 		<td className="checkbox-td"></td>
-		<td className="date-td">
-			<label htmlFor='date'>{t.date}</label>
-			<input type="date" id="date" value={date} onChange={(event) => setDate(event.target.value)} autoFocus form="newTransactionForm" tabIndex={1} ref={firstField} />
+		<td className="date-td">{
+			!isChild ?
+			<>
+				<label htmlFor='date'>{t.date}</label>
+				<input type="date" id="date" value={date} onChange={(event) => setDate(event.target.value)} autoFocus form="newTransactionForm" tabIndex={1} ref={firstField} />
+			</>
+			: <button className="icon" onClick={() => props.deleteRow ? props.deleteRow(props.childRowNumber !== undefined ? props.childRowNumber : -1) : null}><FontAwesomeIcon icon={faTrashCan} /></button>
+			}
 		</td>
 		<td className="payee-td">
-			<label htmlFor='payee'>{t.payee}</label>
-			{isTransfer ? <AutoSuggest
-				id="payee"
-				originalValue={counterAccount}
-				setValue={setCounterAccount}
-				dictionary={accounts.filter(el => el.id !== accountId).map(el => {
-					return {key: el.id, value: el.name}
-				})
-				}
+			
+		{!isChild ?
+			<>
+				<label htmlFor='payee'>{t.payee}</label>
+				{isTransfer ? <AutoSuggest
+					id="payee"
+					originalValue={counterAccount}
+					setValue={setCounterAccount}
+					dictionary={accounts.filter(el => el.id !== accountId).map(el => {
+						return {key: el.id, value: el.name}
+					})
+					}
+					form="newTransactionForm"
+					required
+					tabIndex={2}
+				/> : 
+				<AutoSuggest 
+				setValue={setPayee}
+				originalValue={payee}
 				form="newTransactionForm"
-				required
 				tabIndex={2}
-			/> : 
-			<AutoSuggest 
-			setValue={setPayee}
-			originalValue={payee}
-			form="newTransactionForm"
-			tabIndex={2}
-			dictionary={ payeeValues.map(el => {
-				return {key: el, value: bap.payeesById[el].name};
-			}) } />}
+				dictionary={ payeeValues.map(el => {
+					return {key: el, value: bap.payeesById[el].name};
+				}) } />}
+			</> : undefined}
 			</td>
 		<td className="category-td">
 			{isTransfer ? undefined : <>
 				<label htmlFor="category">{t.category}</label>
-				<AutoSuggest id="category" dictionary={categoryValues} setValue={setCategory} originalValue={category} options={5} form="newTransactionForm" tabIndex={4} required />
+				<AutoSuggest id="category" dictionary={categoryValues} setValue={setCategory} originalValue={category} options={5} form="newTransactionForm" tabIndex={tabIndexOffset + 4} required />
 			</>}
 		</td>
 		<td className="memo-td">
 			<label htmlFor="memo">{t.memo}</label>
-			<input id="memo" type="text" value={memo} onChange={(event) => setMemo(event.target.value)}  form="newTransactionForm" tabIndex={6} /></td>
-		<td className="out-td">
-			<label htmlFor="out">{t.out}</label>
-			<NumberInput name="out" id="out" amount={amountOut} setAmount={setAmountOut}
-			form="newTransactionForm"
-			tabIndex={category.key === 0 ? 8 : 7}
-		/></td>
-		<td className="in-td">
-			<label htmlFor="in">{t.in}</label>
-			<NumberInput name="in" id="in" amount={amountIn} setAmount={setAmountIn}
-		form="newTransactionForm"
-		tabIndex={category.key === 0 ? 7 : 8}
- /></td>
-		<td className="edit-td"></td>
-		<td className="new-transaction-buttons">
-			<form id="newTransactionForm" onSubmit={(event) => onSubmit(event, true)}>
-				<button className="button submit" type="submit" tabIndex={9}>{t.save}</button>
-				{transaction ? undefined : 
-				<button className="button submit" onClick={(event) => onSubmit(event, false)} tabIndex={10}>{t.saveAndAdd}</button>}
-				<button className="button abort" onClick={(event) => updateAccount(true)} tabIndex={11}>{t.cancel}</button>
-			</form>
+			<input id="memo" type="text" value={memo} onChange={(event) => setMemo(event.target.value)}  form="newTransactionForm" tabIndex={tabIndexOffset + 6} /></td>
+		<td className="select-in-or-out">
+			<label tabIndex={tabIndexOffset + 5}><input type="radio" name={`selectInOrOut${isChild ? '-' + props.childRowNumber : ''}`} value="out" checked={showInOrOut === 'out'} onChange={selectInOutOption} /> {t.outVerbose}</label>
+			<label tabIndex={tabIndexOffset + 6}><input type="radio" name={`selectInOrOut${isChild ? '-' + props.childRowNumber : ''}`} value="in" checked={showInOrOut === 'in'} onChange={selectInOutOption} /> {t.inVerbose}</label>
 		</td>
+		<td className="out-td">
+			{!isParent ?
+				<NumberInput 
+				name="out" 
+				id="out" 
+				amount={amountOut} 
+				setAmount={setAmountOut}
+				form="newTransactionForm"
+				tabIndex={tabIndexOffset + (category.key === 0 ? 10 : 9)}
+				/>
+			: (totalOut > totalIn ? prettyNumber( totalOut - totalIn, numberOptions) : "")}</td>
+		<td className="in-td">
+			{!isParent ?
+				<NumberInput 
+				name="in" 
+				id="in" 
+				amount={amountIn} 
+				setAmount={setAmountIn}
+				form="newTransactionForm"
+				tabIndex={tabIndexOffset + (category.key === 0 ? 9 : 10)}
+				/>
+			: (totalIn > totalOut ? prettyNumber( totalIn - totalOut, numberOptions) : "")}
+		</td>
+		<td className="edit-td"></td>
+		{(!isParent && !isChild) || props.isLastChild ? 
+			<td className="new-transaction-buttons">
+			<form id="newTransactionForm" onSubmit={(event) => onSubmit(event, true)}>
+				{isChild ? <button className="button" type="button" onClick={props.addRow} tabIndex={tabIndexOffset + 12}><FontAwesomeIcon icon={faPlus} /></button> : undefined}
+				<button className="button submit" type="submit" tabIndex={tabIndexOffset + 12}>{t.save}</button>
+				{transaction ? undefined : 
+				<button className="button submit" onClick={(event) => onSubmit(event, false)} tabIndex={tabIndexOffset + 13}>{t.saveAndAdd}</button>}
+				<button className="button abort" onClick={(event) => updateAccount(true)} tabIndex={tabIndexOffset + 14}>{t.cancel}</button>
+			</form>
+			</td>
+		: undefined}
 	</tr>
+	{isParent ? children.map((el, index) => 
+		el.deleted ? undefined :
+		<AddTransaction 
+			bap={bap} 
+			updateAccount={updateAccount} 
+			onSubmit={onSubmit} 
+			accountId={accountId} 
+			isChild={true} 
+			isLastChild={index + 1 === children.length || children.slice(index + 1).filter(el => !el.deleted).length === 0}
+			updateInParent={updateChildren} 
+			childRowNumber={index} 
+			transaction={{
+				budgetId: activeBudget.id || 0, 
+				date: date, 
+				month: month, 
+				accountId: accountId, 
+				id: el.id, 
+				categoryId: el.category, 
+				memo: el.memo, 
+				in: el.in, 
+				out: el.out
+			}}
+			addRow={addRow} 
+			deleteRow={deleteRow} 
+			key={index}
+		/>) : undefined}
+	</>
 	)
 }
 
 interface Props {
 	bap: BAP,
 	transaction?: Transaction,
-	updateAccount: (c? : boolean | undefined, t? : Transaction | undefined) => void,
+	updateAccount: (c? : boolean | undefined, t? : Transaction | Transaction[] | undefined) => void,
 	accountId: number,
 	isTransfer?: boolean,
+
+	childTransactions?: Transaction[],
+	isChild?: boolean,
+	isLastChild?: boolean,
+	childRowNumber?: number,
+	onSubmit?: (event: React.FormEvent, close?: boolean) => void,
+	updateInParent?: (a : number, b : ChildContent) => void,
+	addRow?: () => void,
+	deleteRow?: (a : number) => void,
+}
+
+interface ChildContent {
+	id?: number,
+	category?: number,
+	memo?: string,
+	in?: number,
+	out?: number,
+	deleted?: boolean,
 }
 export default AddTransaction

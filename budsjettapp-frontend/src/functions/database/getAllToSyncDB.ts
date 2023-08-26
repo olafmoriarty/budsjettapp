@@ -90,6 +90,14 @@ const getAllToSyncDB = async (db : IDBPDatabase<BudgetInterface> | undefined, bu
 						}
 					}
 
+					// Add external parent transaction ID
+					if ('parentTransaction' in valueRow && valueRow.parentTransaction) {
+						const transactionParent = await store.get(valueRow.parentTransaction);
+						if (transactionParent?.externalId) {
+							valueRow.exParentTransaction = transactionParent.externalId;
+						}
+					}
+					
 					// Add external counteraccount ID
 					if ('counterAccount' in valueRow && valueRow.counterAccount) {
 						const transactionAccount = await accountStore.get(valueRow.counterAccount);
