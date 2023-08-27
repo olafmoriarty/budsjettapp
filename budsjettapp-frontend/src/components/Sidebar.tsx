@@ -26,10 +26,12 @@ function Sidebar() {
 
 		<SyncButton />
 
+		{/*
 		<Link to="/" className="button big-button" onClick={() => setShowSidebar(false)}>
 			<span className="button-icon"><FontAwesomeIcon icon={faChartLine} /></span>
 			<span className="button-text">{t.sidebarButtonReports}</span>
 		</Link>
+		*/}
 
 		<Link to="/settings" className="button big-button" onClick={() => setShowSidebar(false)}>
 			<span className="button-icon"><FontAwesomeIcon icon={faCogs} /></span>

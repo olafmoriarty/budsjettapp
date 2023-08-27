@@ -28,7 +28,7 @@ const BudgetContext = createContext( {
 
 export const BudgetProvider = (props : Props) => {
 
-	const version = 'v0.3.2';
+	const version = 'v0.4.0';
 
 	// State: Has the page completed loading?
 	const [pageLoaded, setPageLoaded] = useState(false);

@@ -166,7 +166,7 @@ function ExportBudget() {
 				onChange={() => setFormat('json')}
 				/> <label htmlFor="json">{t.exportFormatJson}</label></p>
 			<p className="format-explanation">{t.exportFormatJsonLabel}</p>
-			<button className="button" type="submit">Test</button>
+			<button className="button" type="submit">{t.downloadBudget}</button>
 			</form>
 		</main>
 	)

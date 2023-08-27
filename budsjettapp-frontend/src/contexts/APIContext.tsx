@@ -41,7 +41,7 @@ export const APIProvider = (props : Props) => {
 	 * @param endpoint - the API endpoint to access
 	 */
 	const fetchFromAPI = async ( path : string, options? : FetchOptions) => {
-		const api = 'https://testapi.budsjett.app/v1/';
+		const api = 'https://api.budsjett.app/v1/';
 
 		let headers = {
 			'Content-Type': 'application/json',
