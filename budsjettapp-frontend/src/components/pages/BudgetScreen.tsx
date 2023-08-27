@@ -60,7 +60,7 @@ function BudgetScreen() {
 				parent: parent, 
 				budgetId: activeBudget.id,
 				sort: sort,
-				synced: false,
+				sync: 1,
 			} as Category;
 			addCategory(db, newCategory)
 			.then((categoryId) => {

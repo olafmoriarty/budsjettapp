@@ -304,6 +304,10 @@ input.number-input {
 	margin: 0 0 1rem;
 }
 
+.dialog-form .accountBalanceCreateCategoryCheckbox {
+	margin-bottom: 1rem;
+}
+
 .modal .button {
 	margin: 0 0 1rem;
 	font-weight: bold;
@@ -1053,6 +1057,10 @@ input.invalid:focus {
 		animation-duration: .5s;
 		animation-fill-mode: both;
 		animation-timing-function: linear;
+	}
+
+	.account-list-account {
+		margin: 0 0 1rem;
 	}
 	
 	/* ShowMenuButton.tsx */

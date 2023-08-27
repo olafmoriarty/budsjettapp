@@ -112,6 +112,7 @@ export interface Category {
 	hidden?: boolean,
 	sync?: number,
 	deleted?: boolean,
+	isDebtCategory?: boolean,
 }
 
 export interface Payee {

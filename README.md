@@ -11,7 +11,7 @@
 ### Before beta launch
 - [x] Allow downloading budget from cloud
 - [x] Call syncBudget() on budget updates and update info on screen to match reality
-- [ ] Add account types and create a debt category when adding a credit card or loan
+- [x] Add account types and create a debt category when adding a credit card or loan
 - [ ] Add drag-and-drop reordering of accounts
 - [ ] Allow hiding/deleting accounts
 - [ ] Allow deleting categories

@@ -115,7 +115,7 @@ function Account() {
 					</div>
 					<div className="account-balance">
 						<h3>{t.accountBalance}</h3>
-						<p className={`account-balance-amount ${account.id && accountBalances[account.id] && accountBalances[account.id] < 0 ? 'negative' : ''}`}>{account.id && accountBalances[account.id] !== undefined ? prettyNumber(accountBalances[account.id], numberOptions) : ''}</p>
+						<p className={`account-balance-amount ${account.id && accountBalances[account.id] && accountBalances[account.id] < 0 ? 'negative' : ''}`}>{account.id ? prettyNumber(accountBalances[account.id] || 0, numberOptions) : ''}</p>
 					</div>
 				</div>
 			</div>
