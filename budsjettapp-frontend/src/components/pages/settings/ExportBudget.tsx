@@ -135,7 +135,7 @@ function ExportBudget() {
 			const allDataString = JSON.stringify(allData);
 
 			// Download it
-			downloadTextFile(allDataString, 'Budget.json', 'json');
+			downloadTextFile(allDataString, 'Budsjett.json', 'json');
 
 			// Navigate back to settings page
 			navigate('/settings');
